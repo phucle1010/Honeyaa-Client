@@ -8,4 +8,4 @@ import {name as appName} from './app.json';
 import RestoreAccount from './screens/RestoreAccount';
 import VerifyPhoneNumber from './screens/VerifyPhoneNumber';
 import VerifyOTP from './screens/VerifyOTP';
-AppRegistry.registerComponent(appName, () => VerifyPhoneNumber);
+AppRegistry.registerComponent(appName, () => App);

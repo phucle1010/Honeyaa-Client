@@ -10,7 +10,7 @@ const Stack = createNativeStackNavigator();
 const App = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='BottomTab' screenOptions={{headerShown:false}}>
+      <Stack.Navigator initialRouteName='VerifyPhoneNumber' screenOptions={{headerShown:false}}>
         <Stack.Screen name="RestoreAccount" component={RestoreAccount} />
         <Stack.Screen name="VerifyOTP" component={VerifyOTP} />
         <Stack.Screen name="BottomTab" component={BottomTab} />
