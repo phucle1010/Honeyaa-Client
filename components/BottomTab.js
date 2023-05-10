@@ -17,9 +17,7 @@ const BottomTab = () => {
             screenOptions={{
                 headerShown: false,
                 tabBarStyle: styles.container,
-            }}
-            tabBarOptions={{
-                showLabel: false,
+                tabBarShowLabel: false,
             }}
         >
             {screens.map((screen, index) => (

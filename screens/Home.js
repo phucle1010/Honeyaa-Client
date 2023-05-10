@@ -5,6 +5,9 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import AwesomeIcon from 'react-native-vector-icons/FontAwesome5';
 import AwesomeExtraIcon from 'react-native-vector-icons/FontAwesome';
 import OctIcon from 'react-native-vector-icons/Octicons';
+import { useSelector, useDispatch } from 'react-redux';
+
+import { addUserIntoApp, removeUserFromApp } from '../reducers/user';
 
 const NUMBER_IMAGES_OF_EACH_PROFILE = 5;
 
@@ -64,7 +67,12 @@ const PROFILE = {
 };
 
 const Home = ({ navigation, route }) => {
+    const user = useSelector((state) => state.user);
+    const dispatch = useDispatch();
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+
+    console.log('chosed user: ', user);
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
@@ -129,18 +137,24 @@ const Home = ({ navigation, route }) => {
                     />
                 </View>
                 <View style={styles.profileOptions}>
-                    <View style={{ ...styles.profileOptionItem, borderColor: '#ffbf00' }}>
+                    <TouchableOpacity style={{ ...styles.profileOptionItem, borderColor: '#ffbf00' }}>
                         <AwesomeIcon name="redo" size={24} color="#ffbf00" />
-                    </View>
-                    <View style={{ ...styles.profileOptionItem, borderColor: '#fa5f55' }}>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={{ ...styles.profileOptionItem, borderColor: '#fa5f55' }}
+                        onPress={() => dispatch(removeUserFromApp())}
+                    >
                         <AwesomeExtraIcon name="close" size={30} color="#fa5f55" />
-                    </View>
-                    <View style={{ ...styles.profileOptionItem, borderColor: '#00bfff' }}>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{ ...styles.profileOptionItem, borderColor: '#00bfff' }}>
                         <AwesomeExtraIcon name="star" size={24} color="#00bfff" />
-                    </View>
-                    <View style={{ ...styles.profileOptionItem, borderColor: '#40b5ad' }}>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={{ ...styles.profileOptionItem, borderColor: '#40b5ad' }}
+                        onPress={() => dispatch(addUserIntoApp(PROFILE))}
+                    >
                         <AwesomeExtraIcon name="heart" size={24} color="#40b5ad" />
-                    </View>
+                    </TouchableOpacity>
                 </View>
             </View>
         </SafeAreaView>
