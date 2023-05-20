@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome5';
 const VerifyOTP = (props) => {
-    const { navigation } = props
     return (
         <View style={styles.container}>
 
