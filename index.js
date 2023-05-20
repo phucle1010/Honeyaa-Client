@@ -18,4 +18,5 @@ import SettingDateObject from './screens/SettingDateObject';
 import SettingInterest from './screens/SettingInterest';
 import FinishSignUp from './screens/FinishSignUp';
 import SignUp from './screens/SignUp';
-AppRegistry.registerComponent(appName, () => App);
+import ProfileScreen from './screens/ProfileScreen';
+AppRegistry.registerComponent(appName, () => ProfileScreen);
