@@ -15,8 +15,14 @@
     "@react-navigation/bottom-tabs": "^6.5.7",
     "@react-navigation/native": "^6.1.6",
     "@react-navigation/native-stack": "^6.9.12",
+<<<<<<< HEAD
     "axios": "^1.4.0",
     "fs": "^0.0.1-security",
+=======
+    "@twotalltotems/react-native-otp-input": "^1.3.11",
+    "axios": "^1.4.0",
+    "formik": "^2.2.9",
+>>>>>>> 581f1bf88fbf53ab839c82a10e38c44521fbbf61
     "react": "18.2.0",
     "react-native": "0.71.7",
     "react-native-date-picker": "^4.2.13",
@@ -27,7 +33,11 @@
     "react-native-screens": "^3.20.0",
     "react-native-svg": "^13.9.0",
     "react-native-vector-icons": "^9.2.0",
+<<<<<<< HEAD
     "rn-fetch-blob": "^0.12.0"
+=======
+    "yup": "^1.1.1"
+>>>>>>> 581f1bf88fbf53ab839c82a10e38c44521fbbf61
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
