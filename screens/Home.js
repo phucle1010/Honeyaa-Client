@@ -1,5 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaView, Text, View, StyleSheet, Image, Alert, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import AwesomeIcon from 'react-native-vector-icons/FontAwesome5';
@@ -7,7 +9,8 @@ import AwesomeExtraIcon from 'react-native-vector-icons/FontAwesome';
 import OctIcon from 'react-native-vector-icons/Octicons';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { addUserIntoApp, removeUserFromApp } from '../reducers/user';
+import { setUser, removeUserFromApp } from '../reducers/user';
+import Loading from '../components/Loading';
 
 const NUMBER_IMAGES_OF_EACH_PROFILE = 5;
 
@@ -66,97 +69,138 @@ const PROFILE = {
     approachObject: 'Cần tìm người yêu',
 };
 
+const API_URL = 'http://192.168.1.186:8080';
+
 const Home = ({ navigation, route }) => {
     const user = useSelector((state) => state.user);
     const dispatch = useDispatch();
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+    const [loaded, setLoaded] = useState(false);
 
-    console.log('chosed user: ', user);
+    const storeUserData = async (token) => {
+        await axios
+            .get(`${API_URL}/api/user/data`, { params: { token } })
+            .then((res) => {
+                if (res.data.statusCode === 200) {
+                    dispatch(setUser(res.data.responseData[0]));
+                    setLoaded(true);
+                }
+            })
+            .catch((err) => Alert.alert('Error', err.toString()));
+    };
+
+    const handleGetUser = () => {
+        const userToken = AsyncStorage.getItem('user_token');
+        if (userToken === null) {
+            AsyncStorage.setItem('user_token', JSON.stringify(''));
+        } else {
+            AsyncStorage.getItem('user_token')
+                .then((token) => {
+                    if (token !== 'null') {
+                        storeUserData(token);
+                    } else {
+                        navigation.navigate('Login');
+                    }
+                })
+                .catch((err) => Alert.alert('Error', err));
+        }
+    };
+
+    useEffect(() => {
+        handleGetUser();
+    }, []);
 
     return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
-                <Image source={require('../assets/img/HoneyaaLogo.png')} style={styles.logo} />
-                <View style={styles.options}>
-                    <Icon name="ios-notifications-outline" size={20} style={styles.optionIcon} />
-                    <AwesomeIcon name="sliders-h" size={20} style={styles.optionIcon} />
-                </View>
-            </View>
-            <View style={styles.profile}>
-                <View style={styles.slider}>
-                    <TouchableOpacity style={styles.sliderItem} onPress={() => setSelectedImageIndex(0)} />
-                    <TouchableOpacity style={styles.sliderItem} onPress={() => setSelectedImageIndex(1)} />
-                    <TouchableOpacity style={styles.sliderItem} onPress={() => setSelectedImageIndex(2)} />
-                    <TouchableOpacity style={styles.sliderItem} onPress={() => setSelectedImageIndex(3)} />
-                    <TouchableOpacity style={styles.sliderItem} onPress={() => setSelectedImageIndex(4)} />
-                </View>
-                {
-                    <Image
-                        source={{
-                            uri: PROFILE.img[selectedImageIndex].url,
-                        }}
-                        style={styles.profileImage}
-                    />
-                }
-                <View style={styles.profileInfo}>
-                    <View style={styles.profileDesc}>
-                        <Text style={{ ...styles.profileDetailItem, fontWeight: '700', letterSpacing: 1 }}>
-                            {PROFILE.name}
-                        </Text>
-                        <Text style={{ ...styles.profileDetailItem, fontSize: 26 }}>{PROFILE.age}</Text>
-                        <AwesomeExtraIcon name="check-circle" size={34} color="#0d98ba" />
+        <SafeAreaView>
+            {loaded ? (
+                <View style={styles.container}>
+                    <View style={styles.header}>
+                        <Image source={require('../assets/img/HoneyaaLogo.png')} style={styles.logo} />
+                        <View style={styles.options}>
+                            <Icon name="ios-notifications-outline" size={20} style={styles.optionIcon} />
+                            <AwesomeIcon name="sliders-h" size={20} style={styles.optionIcon} />
+                        </View>
                     </View>
-                    <View style={styles.profileDesc}>
-                        <Text style={{ ...styles.profileDetailItem, fontSize: 16, color: '#fff' }}>
-                            {PROFILE.status}
-                        </Text>
-                        <OctIcon
-                            name="dot-fill"
-                            style={{ ...styles.profileDetailItem, fontSize: 18, color: '#7cfc00' }}
-                        />
-                    </View>
-                    <View style={styles.profileDesc}>
-                        <Text
-                            style={{ ...styles.profileDetailItem, fontSize: 16, color: '#fff' }}
-                        >{`Cách xa ${PROFILE.distance}km`}</Text>
-                        <Icon
-                            name="location-sharp"
-                            style={{ ...styles.profileDetailItem, fontSize: 18, color: '#ff7f50', marginLeft: 0 }}
-                        />
-                    </View>
-                    <Icon
-                        name="arrow-down-circle-sharp"
-                        size={30}
-                        color="#fff"
-                        style={{ marginLeft: 'auto' }}
-                        onPress={() =>
-                            navigation.navigate('ProfileDetail', {
-                                profile: PROFILE,
-                            })
+                    <View style={styles.profile}>
+                        <View style={styles.slider}>
+                            <TouchableOpacity style={styles.sliderItem} onPress={() => setSelectedImageIndex(0)} />
+                            <TouchableOpacity style={styles.sliderItem} onPress={() => setSelectedImageIndex(1)} />
+                            <TouchableOpacity style={styles.sliderItem} onPress={() => setSelectedImageIndex(2)} />
+                            <TouchableOpacity style={styles.sliderItem} onPress={() => setSelectedImageIndex(3)} />
+                            <TouchableOpacity style={styles.sliderItem} onPress={() => setSelectedImageIndex(4)} />
+                        </View>
+                        {
+                            <Image
+                                source={{
+                                    uri: PROFILE.img[selectedImageIndex].url,
+                                }}
+                                style={styles.profileImage}
+                            />
                         }
-                    />
+                        <View style={styles.profileInfo}>
+                            <View style={styles.profileDesc}>
+                                <Text style={{ ...styles.profileDetailItem, fontWeight: '700', letterSpacing: 1 }}>
+                                    {user.full_name}
+                                </Text>
+                                <Text style={{ ...styles.profileDetailItem, fontSize: 26 }}>{PROFILE.age}</Text>
+                                <AwesomeExtraIcon name="check-circle" size={34} color="#0d98ba" />
+                            </View>
+                            <View style={styles.profileDesc}>
+                                <Text style={{ ...styles.profileDetailItem, fontSize: 16, color: '#fff' }}>
+                                    {PROFILE.status}
+                                </Text>
+                                <OctIcon
+                                    name="dot-fill"
+                                    style={{ ...styles.profileDetailItem, fontSize: 18, color: '#7cfc00' }}
+                                />
+                            </View>
+                            <View style={styles.profileDesc}>
+                                <Text
+                                    style={{ ...styles.profileDetailItem, fontSize: 16, color: '#fff' }}
+                                >{`Cách xa ${PROFILE.distance}km`}</Text>
+                                <Icon
+                                    name="location-sharp"
+                                    style={{
+                                        ...styles.profileDetailItem,
+                                        fontSize: 18,
+                                        color: '#ff7f50',
+                                        marginLeft: 0,
+                                    }}
+                                />
+                            </View>
+                            <Icon
+                                name="arrow-down-circle-sharp"
+                                size={30}
+                                color="#fff"
+                                style={{ marginLeft: 'auto' }}
+                                onPress={() => {}}
+                            />
+                        </View>
+                        <View style={styles.profileOptions}>
+                            <TouchableOpacity style={{ ...styles.profileOptionItem, borderColor: '#ffbf00' }}>
+                                <AwesomeIcon name="redo" size={24} color="#ffbf00" />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={{ ...styles.profileOptionItem, borderColor: '#fa5f55' }}
+                                onPress={() => {}}
+                            >
+                                <AwesomeExtraIcon name="close" size={30} color="#fa5f55" />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{ ...styles.profileOptionItem, borderColor: '#00bfff' }}>
+                                <AwesomeExtraIcon name="star" size={24} color="#00bfff" />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={{ ...styles.profileOptionItem, borderColor: '#40b5ad' }}
+                                onPress={() => {}}
+                            >
+                                <AwesomeExtraIcon name="heart" size={24} color="#40b5ad" />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
                 </View>
-                <View style={styles.profileOptions}>
-                    <TouchableOpacity style={{ ...styles.profileOptionItem, borderColor: '#ffbf00' }}>
-                        <AwesomeIcon name="redo" size={24} color="#ffbf00" />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={{ ...styles.profileOptionItem, borderColor: '#fa5f55' }}
-                        onPress={() => dispatch(removeUserFromApp())}
-                    >
-                        <AwesomeExtraIcon name="close" size={30} color="#fa5f55" />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={{ ...styles.profileOptionItem, borderColor: '#00bfff' }}>
-                        <AwesomeExtraIcon name="star" size={24} color="#00bfff" />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={{ ...styles.profileOptionItem, borderColor: '#40b5ad' }}
-                        onPress={() => dispatch(addUserIntoApp(PROFILE))}
-                    >
-                        <AwesomeExtraIcon name="heart" size={24} color="#40b5ad" />
-                    </TouchableOpacity>
-                </View>
-            </View>
+            ) : (
+                <Loading />
+            )}
         </SafeAreaView>
     );
 };

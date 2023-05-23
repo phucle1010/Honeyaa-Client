@@ -112,10 +112,10 @@ android {
     }
     signingConfigs {
         debug {
-            storeFile file('debug.keystore')
-            storePassword 'android'
-            keyAlias 'androiddebugkey'
-            keyPassword 'android'
+            storeFile file('firebase.keystore')
+            storePassword '123456'
+            keyAlias 'fbalias'
+            keyPassword '123456'
         }
     }
     buildTypes {
@@ -149,8 +149,16 @@ android {
 }
 
 dependencies {
+    // compile(project(":react-native-google-sign-in")) { // ADD this
+    //     exclude group: "com.google.android.gms"
+    // }
+    // compile("com.google.android.gms:play-services-auth:10.0.1")
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
+    
+    implementation("com.facebook.android:facebook-android-sdk:[4,5)")
+    // implementation("co.apptailor.android:googlesignin:0.8.0")
+    // implementation(project(":react-native-google-signin"))
 
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.0.0")
 
@@ -169,3 +177,4 @@ dependencies {
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
+apply plugin: "com.google.gms.google-services"

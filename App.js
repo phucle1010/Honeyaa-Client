@@ -6,20 +6,6 @@ import BottomTab from './components/BottomTab';
 import store from './store';
 
 const App = () => {
-    // const userState = useSelector((state) => state.user);
-    // const [users, setUsers] = useState([]);
-
-    // useEffect(() => {
-    //     fetch('http://192.168.1.186:8000/api/user', {
-    //         method: 'GET',
-    //     })
-    //         .then((res) => res.json())
-    //         .then((data) => setUsers(data.responseData))
-    //         .catch((err) => console.log('Lỗi: ', err));
-    // }, []);
-
-    // console.log(userState);
-
     return (
         <Provider store={store}>
             <NavigationContainer>
