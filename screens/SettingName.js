@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
         width: 24,
         height: 24,
         left: 22,
-        top: 73,
+        top: 50,
     },
     vector: {
         width: 24,

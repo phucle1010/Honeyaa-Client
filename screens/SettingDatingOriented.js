@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, SafeAreaView, StyleSheet, Image } from 'r
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
 const SettingDatingOriented = ({ navigation, route }) => {
-    // const { phone, pass, name, birthday, photo, photo1, gender } = route.params;
+    const { phone, pass, name, birthday, photo, photo1, gender } = route.params;
     const [obgender, setObGender] = useState(0);
     const chooseDateObject = (_gender) => {
         setObGender(_gender);
@@ -16,16 +16,15 @@ const SettingDatingOriented = ({ navigation, route }) => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={{ flex: 1 }}>
-                <View style={{ flex: 1, flexDirection: 'row' }}>
-                    <TouchableOpacity style={{ width: 24, height: 24 }} onPress={() => handleGoBack()}>
+            <View style={{ marginTop: 50 }}>
+                <View style={{ flexDirection: 'row' }}>
+                    <TouchableOpacity onPress={() => handleGoBack()}>
                         <Icon name="arrow-left" style={{ color: '#8B7ED7' }} size={24} />
                     </TouchableOpacity>
                     <Text
                         style={{
                             color: '#B2B2B2',
                             width: 256,
-                            height: 21,
                             textAlign: 'center',
                             marginLeft: 66 - 24 - 22,
                             marginRight: 66 - 22,
@@ -34,11 +33,11 @@ const SettingDatingOriented = ({ navigation, route }) => {
                         Step 5 of 6
                     </Text>
                 </View>
-                <View style={{ flex: 1 }}>
+                <View style={{ marginTop: 80 }}>
                     <Text style={styles.title}>Who would you like to date?</Text>
                 </View>
             </View>
-            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
+            <View style={{ marginTop: 70, flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
                 <TouchableOpacity onPress={() => chooseDateObject(1)}>
                     <View
                         style={[
@@ -70,7 +69,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         paddingHorizontal: 22,
         backgroundColor: '#FFFFFF',
-        padding: 74,
     },
     title: {
         fontSize: 30,

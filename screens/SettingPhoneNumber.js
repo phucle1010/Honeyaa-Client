@@ -13,7 +13,7 @@ const SettingPhoneNumber = (props) => {
     };
     return (
         <View style={styles.container}>
-            <View style={{ flex: 1 / 5, flexDirection: 'row', marginTop: 61 }}>
+            <View style={{ flex: 1 / 5, flexDirection: 'row', marginTop: 50 }}>
                 <TouchableOpacity style={{ width: 24, height: 24 }} onPress={handleReturn}>
                     <Icon name="arrow-left" style={{ color: '#8B7ED7' }} size={24} />
                 </TouchableOpacity>

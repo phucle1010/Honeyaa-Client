@@ -17,16 +17,15 @@ const SettingGender = ({ navigation, route }) => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={{ flex: 1 }}>
-                <View style={{ flex: 1, flexDirection: 'row' }}>
-                    <TouchableOpacity style={{ width: 24, height: 24 }} onPress={() => handleGoBack()}>
+            <View style={{ marginTop: 50 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <TouchableOpacity onPress={() => handleGoBack()}>
                         <Icon name="arrow-left" style={{ color: '#8B7ED7' }} size={24} />
                     </TouchableOpacity>
                     <Text
                         style={{
                             color: '#B2B2B2',
                             width: 256,
-                            height: 21,
                             textAlign: 'center',
                             marginLeft: 66 - 24 - 22,
                             marginRight: 66 - 22,
@@ -35,11 +34,18 @@ const SettingGender = ({ navigation, route }) => {
                         Step 4 of 6
                     </Text>
                 </View>
-                <View style={{ flex: 1 }}>
+                <View style={{ marginTop: 80 }}>
                     <Text style={styles.title}>What's your gender?</Text>
                 </View>
             </View>
-            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
+            <View
+                style={{
+                    marginTop: 70,
+                    flex: 1,
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                }}
+            >
                 <TouchableOpacity onPress={() => chooseGender(1)}>
                     <View
                         style={[
@@ -71,13 +77,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         paddingHorizontal: 22,
         backgroundColor: '#FFFFFF',
-        padding: 74,
     },
     title: {
         fontSize: 30,
         color: '#000000',
         fontWeight: 'bold',
-        marginRight: 87,
+        // marginRight: 87,
     },
     img: {
         width: 160,

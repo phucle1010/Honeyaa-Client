@@ -45,7 +45,6 @@ const SettingBirth = ({ navigation, route }) => {
                                 marginTop: 16,
                                 borderRadius: 10,
                                 flexDirection: 'row',
-                                paddingRight: 10,
                             }}
                         >
                             <Text style={styles.day}>{birthday.getDate()}</Text>
@@ -72,7 +71,7 @@ const SettingBirth = ({ navigation, route }) => {
                         </TouchableOpacity>
                     </View>
                     <View style={{ flex: 1, marginLeft: 47, flexDirection: 'column' }}>
-                        <Text style={styles.date}>year</Text>
+                        <Text style={styles.date}>Year</Text>
                         <TouchableOpacity onPress={() => setOpenDatePicker(true)} style={styles.year}>
                             <Text style={{ color: 'black', width: 90, alignSelf: 'center' }}>
                                 {birthday.getFullYear()}

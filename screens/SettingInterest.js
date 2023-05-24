@@ -80,7 +80,7 @@ const SettingInterest = ({ navigation, route }) => {
                     Step 6 of 6
                 </Text>
             </View>
-            <View style={{ flex: 1 }}>
+            <View style={{ flex: 1, justifyContent: 'center' }}>
                 <Text style={styles.title}>Your interests?</Text>
                 <View style={styles.listInterest}>
                     <TouchableOpacity
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         paddingHorizontal: 22,
         backgroundColor: '#FFFFFF',
-        padding: 74,
+        padding: 50,
     },
     title: {
         fontSize: 30,

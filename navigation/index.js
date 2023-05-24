@@ -92,16 +92,6 @@ const screens = [
         isHideNavigationTab: false,
     },
     {
-        name: 'EditProfile',
-        component: EditProfile,
-        tabIconName: 'account-circle-outline',
-        tabIconSize: 30,
-        tabIconColor: '#faa0a0',
-        activeColor: '#ee4b2b',
-        isHideTabItem: true,
-        isHideNavigationTab: true,
-    },
-    {
         name: 'SignUp',
         component: SignUp,
         tabIconName: 'account-circle-outline',

@@ -44,12 +44,24 @@ const renderTabBar = (props) => (
                             style={[
                                 styles.tab,
                                 {
-                                    borderColor: isFocused ? '#FF6868' : '#000000',
-                                    borderBottomWidth: isFocused ? 1 : 0,
+                                    // borderColor: isFocused ? '#FF6868' : '#000000',
+                                    // borderBottomWidth: isFocused ? 1 : 0,
+                                    // borderColor: '#B2B2B2',
+                                    // borderBottomWidth: 1,
                                 },
                             ]}
                         >
-                            <Text style={[styles.headerText, { color: isFocused ? '#FF6868' : '#000000' }]}>
+                            <Text
+                                style={[
+                                    styles.headerText,
+                                    {
+                                        paddingBottom: 10,
+                                        color: isFocused ? '#FF6868' : '#000000',
+                                        borderColor: isFocused ? '#FF6868' : '#000000',
+                                        borderBottomWidth: isFocused ? 1 : 0,
+                                    },
+                                ]}
+                            >
                                 {route.title}
                             </Text>
                         </View>
@@ -100,7 +112,6 @@ const styles = StyleSheet.create({
         width: 100,
         height: 100,
     },
-
     headerText: {
         color: '#666666',
         fontSize: 14,

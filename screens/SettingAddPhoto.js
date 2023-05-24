@@ -13,7 +13,7 @@ const SettingAddPhoto = ({ navigation, route }) => {
         launchImageLibrary({ noData: true }, (response) => {
             if (response) {
                 if (!response.didCancel) {
-                    setPhoto(response.assets(0).uri);
+                    setPhoto(response.assets[0].uri);
                 }
             }
         });
@@ -89,7 +89,7 @@ const SettingAddPhoto = ({ navigation, route }) => {
                         marginTop: 56,
                     }}
                 >
-                    <Text style={{ color: '#FFFFFF' }} onPress={handleContinue}>
+                    <Text style={{ color: '#FFFFFF', fontSize: 18 }} onPress={handleContinue}>
                         Continue
                     </Text>
                 </TouchableOpacity>
@@ -125,13 +125,12 @@ const styles = StyleSheet.create({
         display: 'flex',
         alignItems: 'center',
         color: '#B2B2B2',
-        marginRight: 48,
+        // marginRight: 48,
         paddingTop: 10,
     },
     containerImages: {
         marginTop: 20,
         flexDirection: 'row',
-        // flexWrap: 'wrap',
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -139,7 +138,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFFFF',
         borderWidth: 1,
         borderStyle: 'dashed',
-        borderColor: '#B2B2B2',
+        borderColor: '#FF6868',
         borderRadius: 25,
         width: 160,
         height: 160,
@@ -149,7 +148,7 @@ const styles = StyleSheet.create({
     },
     icon: {
         fontSize: 50,
-        color: '#797979',
+        color: '#FF6868',
         justifyContent: 'center',
         alignItems: 'center',
     },
