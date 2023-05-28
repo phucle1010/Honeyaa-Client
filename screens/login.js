@@ -1,342 +1,254 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import auth from '@react-native-firebase/auth';
+import React, {useState} from 'react';
 import {
-    StyleSheet,
-    View,
-    Image,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    Platform,
-    SafeAreaView,
-    Alert,
-    ImageBackground,
+  StyleSheet,
+  View,
+  Image,
+  Text,
+  TextInput,
+  TouchableOpacity, AsyncStorage
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
-import {
-    LoginButton,
-    AccessToken,
-    LoginManager,
-    Settings,
-    Profile,
-    AuthenticationToken,
-} from 'react-native-fbsdk-next';
-import { useSelector, useDispatch } from 'react-redux';
-import { setUser } from '../reducers/user';
+import axios from 'axios';
 
-const API_URL = 'http://192.168.1.186:8080';
+const Login = () => {
+  const [username, setPhone] = useState('');
+  const [password, setPassword] = useState('');
+  // export const userPostFetch = user => {
+  //   return dispatch => {
+  //     return fetch("http://localhost:3000/api/v1/users", {
+  //       method: "POST",
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         Accept: 'application/json',
+  //       },
+  //       body: JSON.stringify({user})
+  //     })
+  //       .then(resp => resp.json())
+  //       .then(data => {
+  //         if (data.message) {
+  //         } else {
+  //           localStorage.setItem("token", data.jwt)
+  //           dispatch(loginUser(data.user))
+  //         }
+  //       })
+  //   }
+  // // }
+  
+  // const loginUser = userObj => ({
+  //     type: 'LOGIN_USER',
+  //     payload: userObj
+  // })
+  const handleLogin =() =>  {
+    // try {
+    //   const response = await axios.get('https://192.168.0.134:8080/user');
+    //   // const response = await axios.get('https://192.168.154.37:8080/user', {
+    //   //   username,
+    //   //   password,
+    //   // });
 
-const Login = ({ navigation }) => {
-    const initUserInput = {
-        phone: '',
-        pass: '',
-    };
-    const [userInput, setUserInput] = useState(initUserInput);
-    const [successLogin, setSuccessLogin] = useState(false);
+    //   //const { token } = response.data;
+    //   console.log(response.data);
 
-    useEffect(() => {
-        if (successLogin) {
-            navigation.navigate('Home');
-        }
-    }, [successLogin]);
+    //   // Store JWT token securely on the device
+    //  // await AsyncStorage.setItem('jwt', token);
 
-    const handleLogin = async () => {
-        await axios
-            .post(`${API_URL}/api/user/login`, userInput)
-            .then((res) => {
-                if (res.data.statusCode === 400) {
-                    Alert.alert('Warning', res.data.responseData);
-                } else {
-                    const token = res.data.responseData;
-                    AsyncStorage.setItem('user_token', JSON.stringify(token)).then(() => {
-                        setSuccessLogin(true);
-                        setUserInput(initUserInput);
-                        Alert.alert('Success', 'Login successfully');
-                    });
-                }
-            })
-            .catch((err) => Alert.alert('Error', err));
-    };
+    //   // Redirect to the authenticated screen or perform other actions
+    // } catch (error) {
+    //   console.error(error);
+    //   // Handle login error
+    axios.get(`https://192.168.0.134:8080/user`)
+    .then(res => {
+      const persons = res.data;
+      this.setState({ persons });
+    })
+    .catch(error => console.log(error));
+  }    
 
-    const onGoogleSignin = async () => {
-        try {
-            await GoogleSignin.hasPlayServices();
-            const userInfo = await GoogleSignin.signIn();
-            console.log({ userInfo });
-        } catch (error) {
-            console.log({ error });
-            if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-                alert('Cancel');
-            } else if (error.code === statusCodes.IN_PROGRESS) {
-                alert('Signin in progress');
-            } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-                alert('PLAY_SERVICES_NOT_AVAILABLE');
-            } else {
-            }
-        }
-    };
-
-    const onGoogleSignout = async () => {
-        try {
-            await GoogleSignin.revokeAccess();
-            await GoogleSignin.signOut();
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    const onFacebookSignin = async () => {
-        const result = await LoginManager.logInWithPermissions(['public_profile', 'email']);
-        if (result.isCancelled) {
-            throw 'User cancelled the login process';
-        }
-        const data = await AccessToken.getCurrentAccessToken();
-        if (!data) {
-            throw 'Something went wrong obtaining access token';
-        }
-        const facebookCredential = auth.FacebookAuthProvider.credential(data.accessToken);
-        return auth().signInWithCredential(facebookCredential);
-    };
-
-    function onAuthStateChanged(user) {
-        // setUserInfo(user);
-        // console.log(user);
-        // if (user) setloggedIn(true);
-    }
-
-    return (
-        <SafeAreaView style={styles.container}>
-            <ImageBackground style={styles.imgbackground} source={require('../sources/images/background-login.png')}>
-                <View style={styles.section}>
-                    <View>
-                        {/* <Image style={styles.imgbackground} source={require('../sources/images/dating-App.png')} /> */}
-                        <Text style={styles.txthead}>Welcome to Honeyaa</Text>
-                    </View>
-                    <View>
-                        <TextInput
-                            style={styles.phone}
-                            placeholder="Phone Number"
-                            keyboardType="phone-pad"
-                            defaultValue={userInput.phone}
-                            onChangeText={(phone) =>
-                                setUserInput((prevUser) => {
-                                    return {
-                                        ...prevUser,
-                                        phone,
-                                    };
-                                })
-                            }
-                        />
-                    </View>
-                    <View style={styles.passcontainer}>
-                        <TextInput
-                            style={styles.password}
-                            placeholder="Password"
-                            secureTextEntry={true}
-                            defaultValue={userInput.pass}
-                            onChangeText={(pass) =>
-                                setUserInput((prevUser) => {
-                                    return {
-                                        ...prevUser,
-                                        pass,
-                                    };
-                                })
-                            }
-                        />
-                        <TouchableOpacity>
-                            <Image style={styles.icon} source={require('../sources/icons/eye.png')} />
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.options}>
-                        <Text style={styles.txtRemember}>Remember me</Text>
-                        <TouchableOpacity>
-                            <Text style={styles.txtForgotPass}>Forgot password?</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View>
-                        <TouchableOpacity style={styles.btnlogin} onPress={handleLogin}>
-                            <Text style={styles.txtbtn}>Sign In</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.signUpContainer}>
-                        <Text style={styles.txt1}>You don't have any account?</Text>
-                        <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
-                            <Text style={styles.txt2}>Create new here</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View>
-                        <Text style={styles.txtline}> ──────── OR ──────── </Text>
-                    </View>
-                    <View>
-                        <TouchableOpacity style={styles.btnloginFb} onPress={onFacebookSignin}>
-                            <Text style={styles.txtFb}>Sign In with Facebook</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.btnloginGg} onPress={onGoogleSignin}>
-                            <Text style={styles.txtGg}>Sign In with Google</Text>
-                        </TouchableOpacity>
-                        {/* <GoogleSigninButton
-                    style={styles.btnloginGg}
-                    size={GoogleSigninButton.Size.Wide}
-                    color={GoogleSigninButton.Color.Light}
-                    // onPress={this._signIn}
-                    // disabled={this.state.isSigninInProgress}
-                /> */}
-                    </View>
-                </View>
-            </ImageBackground>
-        </SafeAreaView>
-    );
+  return (
+    <View style={styles.container}>
+      <View>
+        <Image
+          style={styles.imgbackground}
+          source={require('../sources/images/dating-App.png')}
+        />
+        <Text style={styles.txthead}>Welcome to Honeyaa</Text>
+      </View>
+      <View>
+        <TextInput
+          style={styles.phone}
+          placeholder="Phone"
+          value={username}
+          onChangeText={setPhone}
+        />
+      </View>
+      <View style={styles.passcontainer}>
+        <TextInput
+          style={styles.password}
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+        <TouchableOpacity>
+          <Image
+            style={styles.icon}
+            source={require('../sources/icons/eye.png')}
+          />
+        </TouchableOpacity>
+      </View>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          marginHorizontal: 22,
+        }}>
+        <Text style={styles.txtRemember}>Remember me</Text>
+        <Text style={styles.txtForgotPass}>Forgot password?</Text>
+      </View>
+      <View>
+        <TouchableOpacity style={styles.btnlogin}
+        onPress={handleLogin}>
+          <Text style={styles.txtbtn}>Sign In</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.signUpContainer}>
+        <Text style={styles.txt1}>You don’t have any account?</Text>
+        <TouchableOpacity>
+          <Text style={styles.txt2}>Create new here</Text>
+        </TouchableOpacity>
+      </View>
+      <View>
+        <Text style={styles.txtline}> ──────── OR ────────</Text>
+      </View>
+      <View>
+        <TouchableOpacity style={styles.btnloginFb}>
+          <Text style={styles.txtbtn}>Login with Facebook</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.btnloginGg}>
+          <Text style={styles.txtbtn}>Login with Google</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#fff',
-    },
-    section: {
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    txthead: {
-        fontFamily: 'Poppins',
-        fontWeight: 'bold',
-        fontSize: 30,
-        color: '#777676',
-        textAlign: 'center',
-        marginHorizontal: 33,
-    },
-    imgbackground: {
-        flex: 1,
-        justifyContent: 'center',
-    },
-    phone: {
-        width: 346,
-        height: 46,
-        marginHorizontal: 19,
-        padding: 10,
-        borderWidth: 1,
-        borderColor: 'transparent',
-        borderBottomColor: '#767676',
-        marginBottom: 20,
-        marginTop: 60,
-    },
-    passcontainer: {
-        flexDirection: 'row',
-        width: 346,
-        height: 46,
-        marginHorizontal: 20,
-        marginBottom: 10,
-        borderWidth: 1,
-        borderColor: 'transparent',
-        borderBottomColor: '#767676',
-        alignItems: 'center',
-    },
-    password: {
-        flex: 1,
-        paddingHorizontal: 10,
-    },
-    icon: {
-        width: 24,
-        height: 24,
-        marginHorizontal: 10,
-    },
-    options: {
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
-        marginHorizontal: 19,
-    },
-    checkbox: {
-        alignSelf: 'center',
-    },
-    txtRemember: {
-        fontFamily: 'Overpass',
-        fontSize: 14,
-        fontWeight: 300,
-        color: '#000000',
-    },
-    txtForgotPass: {
-        fontFamily: 'Overpass',
-        fontSize: 14,
-        fontWeight: 300,
-        marginLeft: 100,
-        color: '#B74545',
-    },
-    btnlogin: {
-        marginTop: 20,
-        marginHorizontal: 19,
-        backgroundColor: '#503EBF',
-        width: 346,
-        height: 42,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 10,
-    },
-    btnloginGg: {
-        marginTop: 20,
-        marginHorizontal: 19,
-        backgroundColor: '#FFDCDC',
-        width: 346,
-        height: 42,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 10,
-    },
-    btnloginFb: {
-        marginTop: 20,
-        marginHorizontal: 19,
-        backgroundColor: '#DCEEFF',
-        width: 346,
-        height: 42,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: 20,
-        borderRadius: 10,
-    },
-    txtbtn: {
-        fontSize: 16,
-        fontWeight: 500,
-        fontFamily: 'Poppins',
-        color: '#fff',
-    },
-    txtGg: {
-        fontSize: 16,
-        fontWeight: 500,
-        fontFamily: 'Poppins',
-        color: '#DB4141',
-    },
-    txtFb: {
-        fontSize: 16,
-        fontWeight: 500,
-        fontFamily: 'Poppins',
-        color: '#006ED4',
-    },
-    txt1: {
-        marginTop: 15,
-        fontFamily: 'Overpass',
-        fontSize: 13,
-        color: '#8C8C8C',
-    },
-    txt2: {
-        marginLeft: 4,
-        marginTop: 15,
-        fontFamily: 'Overpass',
-        fontSize: 13,
-        color: '#503EBF',
-        fontWeight: 'bold',
-    },
-    signUpContainer: {
-        flexDirection: 'row',
-    },
-    txtline: {
-        marginTop: 15,
-        color: '#959595',
-    },
+  container: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  txthead: {
+    fontFamily: 'Poppins',
+    fontWeight: 'bold',
+    fontSize: 30,
+    color: '#000000',
+    textAlign: 'center',
+    marginHorizontal: 33,
+  },
+  imgbackground: {
+    width: 327,
+    height: 300,
+    marginHorizontal: 33,
+  },
+  phone: {
+    width: 346,
+    height: 46,
+    borderRadius: 10,
+    marginHorizontal: 19,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#767676',
+    marginBottom: 20,
+    marginTop: 20,
+  },
+  passcontainer: {
+    flexDirection: 'row',
+    width: 346,
+    height: 46,
+    borderRadius: 10,
+    marginHorizontal: 20,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#767676',
+    alignItems: 'center',
+  },
+  password: {
+    flex: 1,
+    paddingHorizontal: 10,
+  },
+  icon: {
+    width: 24,
+    height: 24,
+    marginHorizontal: 10,
+  },
+  btnlogin: {
+    backgroundColor: '#503EBF',
+    width: 326,
+    height: 42,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+    borderRadius: 30,
+  },
+  checkbox: {
+    alignSelf: 'center',
+  },
+  txtRemember: {
+    fontFamily: 'Overpass',
+    fontSize: 14,
+    fontWeight: 300,
+    color: '#000000',
+  },
+  txtForgotPass: {
+    fontFamily: 'Overpass',
+    fontSize: 14,
+    fontWeight: 300,
+    marginLeft: 70,
+    color: '#B74545',
+  },
+  btnloginGg: {
+    backgroundColor: '#FC9E9E',
+    width: 350,
+    height: 42,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+    borderRadius: 30,
+  },
+  btnloginFb: {
+    backgroundColor: '#2190F7',
+    width: 350,
+    height: 42,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+    borderRadius: 30,
+  },
+  txtbtn: {
+    fontSize: 18,
+    fontWeight: 500,
+    fontFamily: 'Poppins',
+    color: '#fff',
+  },
+  txt1: {
+    marginTop: 15,
+    fontFamily: 'Overpass',
+    fontSize: 13,
+    color: '#8C8C8C',
+  },
+  txt2: {
+    marginTop: 15,
+    fontFamily: 'Overpass',
+    fontSize: 13,
+    color: '#503EBF',
+    fontWeight: 'bold',
+  },
+  signUpContainer: {
+    flexDirection: 'row',
+  },
+  txtline: {
+    marginTop: 15,
+    color: '#959595',
+  },
 });
 
 export default Login;
