@@ -4,7 +4,7 @@ import { SafeAreaView, Text, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const ProfileDetail = ({ navigation, route }) => {
-    const profile = { ...route.params.profile };
+    // const profile = { ...route.params.profile };
 
     return (
         <SafeAreaView style={styles.container}>

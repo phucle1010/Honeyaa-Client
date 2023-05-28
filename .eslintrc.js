@@ -1,11 +1,8 @@
-<<<<<<< HEAD
 module.exports = {
-  root: true,
-  extends: '@react-native-community',
+    root: true,
+    extends: '@react-native-community',
+    ignorePatterns: ['temp.js', '**/vendor/*.js'],
+    rules: {
+        'prettier/prettier': ['error', { endOfLine: 'auto' }],
+    },
 };
-=======
-module.exports = {
-  root: true,
-  extends: '@react-native-community',
-};
->>>>>>> 5ec8354c7905369f64ef2fdd3d971368f94eea2a
