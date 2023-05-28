@@ -24,7 +24,7 @@ const PROFILE = {
     img: [
         {
             id: 1,
-            url: 'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/299c36a8-6b55-41b8-89ba-a2a33c7a18a6/df06ey6-c0a0faa5-cd5c-488e-a29a-72b3768979af.jpg/v1/fill/w_623,h_1282,q_70,strp/hd_wallpaper_cute_anime_girl_pink_kawaii_by_callmehlexie_df06ey6-pre.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTY0NCIsInBhdGgiOiJcL2ZcLzI5OWMzNmE4LTZiNTUtNDFiOC04OWJhLWEyYTMzYzdhMThhNlwvZGYwNmV5Ni1jMGEwZmFhNS1jZDVjLTQ4OGUtYTI5YS03MmIzNzY4OTc5YWYuanBnIiwid2lkdGgiOiI8PTgwMCJ9XV0sImF1ZCI6WyJ1cm46c2VydmljZTppbWFnZS5vcGVyYXRpb25zIl19.XYQFdLwg6tv24B-YgZtCePSEWZW9jCjJimF5tMBDUMQ',
+            url: 'https://cdn.tgdd.vn//GameApp/1350037//50-800x1422.jpg',
         },
         {
             id: 2,
@@ -123,11 +123,19 @@ const Home = ({ navigation, route }) => {
                     </View>
                     <View style={styles.profile}>
                         <View style={styles.slider}>
-                            <TouchableOpacity style={styles.sliderItem} onPress={() => setSelectedImageIndex(0)} />
-                            <TouchableOpacity style={styles.sliderItem} onPress={() => setSelectedImageIndex(1)} />
-                            <TouchableOpacity style={styles.sliderItem} onPress={() => setSelectedImageIndex(2)} />
-                            <TouchableOpacity style={styles.sliderItem} onPress={() => setSelectedImageIndex(3)} />
-                            <TouchableOpacity style={styles.sliderItem} onPress={() => setSelectedImageIndex(4)} />
+                            {PROFILE.img.map((profile, index) => (
+                                <TouchableOpacity
+                                    key={index}
+                                    style={{
+                                        ...styles.sliderItem,
+                                        backgroundColor:
+                                            index !== selectedImageIndex
+                                                ? 'rgba(103, 103, 103, 0.3)'
+                                                : 'rgba(255, 255, 255, 0.8)',
+                                    }}
+                                    onPress={() => setSelectedImageIndex(index)}
+                                />
+                            ))}
                         </View>
                         {
                             <Image
@@ -139,42 +147,86 @@ const Home = ({ navigation, route }) => {
                         }
                         <View style={styles.profileInfo}>
                             <View style={styles.profileDesc}>
-                                <Text style={{ ...styles.profileDetailItem, fontWeight: '700', letterSpacing: 1 }}>
-                                    {user.full_name}
+                                <Text
+                                    style={{
+                                        ...styles.profileDetailItem,
+                                        fontWeight: '700',
+                                        letterSpacing: 1,
+                                        fontFamily: 'Poppins',
+                                    }}
+                                >
+                                    {user.full_name.length > 14
+                                        ? user.full_name.substring(0, 11) + '...'
+                                        : user.full_name}
                                 </Text>
                                 <Text style={{ ...styles.profileDetailItem, fontSize: 26 }}>{PROFILE.age}</Text>
-                                <AwesomeExtraIcon name="check-circle" size={34} color="#0d98ba" />
+                                <View
+                                    style={{
+                                        width: 26,
+                                        height: 26,
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        backgroundColor: '#fff',
+                                        borderRadius: 50,
+                                        elevation: 4,
+                                    }}
+                                >
+                                    <AwesomeExtraIcon name="check" size={18} color="#0096FF" />
+                                </View>
                             </View>
                             <View style={styles.profileDesc}>
-                                <Text style={{ ...styles.profileDetailItem, fontSize: 16, color: '#fff' }}>
+                                <Text
+                                    style={{
+                                        ...styles.profileDetailItem,
+                                        fontSize: 18,
+                                        color: '#fff',
+                                        fontWeight: '500',
+                                    }}
+                                >
                                     {PROFILE.status}
                                 </Text>
                                 <OctIcon
                                     name="dot-fill"
-                                    style={{ ...styles.profileDetailItem, fontSize: 18, color: '#7cfc00' }}
+                                    style={{
+                                        ...styles.profileDetailItem,
+                                        fontSize: 18,
+                                        color: '#7cfc00',
+                                    }}
                                 />
                             </View>
                             <View style={styles.profileDesc}>
                                 <Text
-                                    style={{ ...styles.profileDetailItem, fontSize: 16, color: '#fff' }}
+                                    style={{
+                                        ...styles.profileDetailItem,
+                                        fontSize: 18,
+                                        color: '#fff',
+                                        fontWeight: '500',
+                                    }}
                                 >{`Cách xa ${PROFILE.distance}km`}</Text>
                                 <Icon
                                     name="location-sharp"
                                     style={{
                                         ...styles.profileDetailItem,
                                         fontSize: 18,
-                                        color: '#ff7f50',
+                                        color: '#FF3131',
                                         marginLeft: 0,
                                     }}
                                 />
                             </View>
-                            <Icon
-                                name="arrow-down-circle-sharp"
-                                size={30}
-                                color="#fff"
-                                style={{ marginLeft: 'auto' }}
-                                onPress={() => {}}
-                            />
+                            <TouchableOpacity
+                                style={{
+                                    marginLeft: 'auto',
+                                    width: 25,
+                                    height: 25,
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    backgroundColor: '#fff',
+                                    borderRadius: 50,
+                                    elevation: 4,
+                                }}
+                            >
+                                <Icon name="arrow-down" size={15} color="#767676" onPress={() => {}} />
+                            </TouchableOpacity>
                         </View>
                         <View style={styles.profileOptions}>
                             <TouchableOpacity style={{ ...styles.profileOptionItem, borderColor: '#ffbf00' }}>
@@ -186,14 +238,14 @@ const Home = ({ navigation, route }) => {
                             >
                                 <AwesomeExtraIcon name="close" size={30} color="#fa5f55" />
                             </TouchableOpacity>
-                            <TouchableOpacity style={{ ...styles.profileOptionItem, borderColor: '#00bfff' }}>
-                                <AwesomeExtraIcon name="star" size={24} color="#00bfff" />
-                            </TouchableOpacity>
                             <TouchableOpacity
                                 style={{ ...styles.profileOptionItem, borderColor: '#40b5ad' }}
                                 onPress={() => {}}
                             >
                                 <AwesomeExtraIcon name="heart" size={24} color="#40b5ad" />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{ ...styles.profileOptionItem, borderColor: '#00bfff' }}>
+                                <AwesomeExtraIcon name="star" size={24} color="#00bfff" />
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -240,16 +292,20 @@ const styles = StyleSheet.create({
     },
     slider: {
         position: 'absolute',
-        bottom: '97%',
+        bottom: '98%',
         zIndex: 100,
-        height: 8,
+        height: 6,
+        left: 10,
+        right: 10,
         flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: 'rgba(103, 103, 103, 0.3)',
+        borderRadius: 13,
     },
     sliderItem: {
         height: '100%',
-        width: '18%',
-        marginHorizontal: '1%',
-        backgroundColor: 'rgba(255,255,255, .6)',
+        width: '20%',
+        backgroundColor: 'rgba(255, 255, 255, 0.8)',
         borderRadius: 10,
     },
     profileImage: {
@@ -259,9 +315,15 @@ const styles = StyleSheet.create({
     },
     profileInfo: {
         position: 'absolute',
-        bottom: 75,
-        left: 10,
-        right: 10,
+        bottom: 70,
+        left: 0,
+        right: 0,
+        paddingLeft: 30,
+        paddingTop: 10,
+        paddingRight: 10,
+        backgroundColor: 'rgba(103, 103, 103, 0.6)',
+        borderTopLeftRadius: 10,
+        borderTopRightRadius: 10,
     },
     profileDesc: {
         flexDirection: 'row',
@@ -269,18 +331,21 @@ const styles = StyleSheet.create({
     },
     profileDetailItem: {
         marginRight: 10,
-        fontSize: 30,
+        fontSize: 28,
         color: '#fff',
     },
     profileOptions: {
         position: 'absolute',
-        bottom: 10,
-        left: 10,
-        right: 10,
-        height: 60,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: 70,
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
+        justifyContent: 'space-evenly',
+        backgroundColor: 'rgba(103, 103, 103, 0.6)',
+        borderBottomLeftRadius: 10,
+        borderBottomRightRadius: 10,
     },
     profileOptionItem: {
         height: 50,

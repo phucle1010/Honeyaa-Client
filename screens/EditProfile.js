@@ -747,7 +747,7 @@ const styles = StyleSheet.create({
         marginVertical: 40,
     },
     btnText: {
-        fontSize: 20,
+        fontSize: 18,
         color: '#FFFFFF',
     },
     iconInput: {
