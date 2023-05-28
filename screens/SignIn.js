@@ -28,7 +28,7 @@ import { setUser } from '../reducers/user';
 
 const API_URL = 'http://192.168.1.186:8080';
 
-const Login = ({ navigation }) => {
+const SignIn = ({ navigation }) => {
     const initUserInput = {
         phone: '',
         pass: '',
@@ -339,4 +339,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Login;
+export default SignIn;

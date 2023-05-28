@@ -1,22 +1,51 @@
 import React from 'react';
-import { SafeAreaView, View, Image, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { SafeAreaView, View, Image, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../reducers/user';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import AwesomeExtraIcon from 'react-native-vector-icons/FontAwesome';
 
+const API_URL = 'http://192.168.1.186:8080';
+
+const myAccount = {
+    id: 1,
+    name: 'Thần Báo',
+    age: 20,
+    status: 'Hoạt động gần đây',
+    distance: 1,
+    gender: 'Nữ',
+    img: [
+        {
+            id: 1,
+            url: 'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/299c36a8-6b55-41b8-89ba-a2a33c7a18a6/df06ey6-c0a0faa5-cd5c-488e-a29a-72b3768979af.jpg/v1/fill/w_623,h_1282,q_70,strp/hd_wallpaper_cute_anime_girl_pink_kawaii_by_callmehlexie_df06ey6-pre.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTY0NCIsInBhdGgiOiJcL2ZcLzI5OWMzNmE4LTZiNTUtNDFiOC04OWJhLWEyYTMzYzdhMThhNlwvZGYwNmV5Ni1jMGEwZmFhNS1jZDVjLTQ4OGUtYTI5YS03MmIzNzY4OTc5YWYuanBnIiwid2lkdGgiOiI8PTgwMCJ9XV0sImF1ZCI6WyJ1cm46c2VydmljZTppbWFnZS5vcGVyYXRpb25zIl19.XYQFdLwg6tv24B-YgZtCePSEWZW9jCjJimF5tMBDUMQ',
+        },
+    ],
+};
+
 const Account = ({ navigation }) => {
-    const myAccount = {
-        id: 1,
-        name: 'Thần Báo',
-        age: 20,
-        status: 'Hoạt động gần đây',
-        distance: 1,
-        gender: 'Nữ',
-        img: [
-            {
-                id: 1,
-                url: 'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/299c36a8-6b55-41b8-89ba-a2a33c7a18a6/df06ey6-c0a0faa5-cd5c-488e-a29a-72b3768979af.jpg/v1/fill/w_623,h_1282,q_70,strp/hd_wallpaper_cute_anime_girl_pink_kawaii_by_callmehlexie_df06ey6-pre.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTY0NCIsInBhdGgiOiJcL2ZcLzI5OWMzNmE4LTZiNTUtNDFiOC04OWJhLWEyYTMzYzdhMThhNlwvZGYwNmV5Ni1jMGEwZmFhNS1jZDVjLTQ4OGUtYTI5YS03MmIzNzY4OTc5YWYuanBnIiwid2lkdGgiOiI8PTgwMCJ9XV0sImF1ZCI6WyJ1cm46c2VydmljZTppbWFnZS5vcGVyYXRpb25zIl19.XYQFdLwg6tv24B-YgZtCePSEWZW9jCjJimF5tMBDUMQ',
-            },
-        ],
+    const dispatch = useDispatch();
+
+    const handleLogout = async () => {
+        const token = '';
+        await axios
+            .post(`${API_URL}/api/user/signout`, {
+                token,
+            })
+            .then((res) => {
+                if (res.data.statusCode === 200) {
+                    AsyncStorage.setItem('user_token', JSON.stringify(null)).then(() => {
+                        dispatch(setUser({}));
+                        Alert.alert('Success', res.data.responseData);
+                        navigation.navigate('Login');
+                    });
+                } else {
+                    Alert.alert('Error', res.data.responseData);
+                }
+            })
+            .catch((err) => Alert.alert('Error', err.toString()));
     };
+
     return (
         <SafeAreaView style={styles.container}>
             <View>
@@ -51,10 +80,8 @@ const Account = ({ navigation }) => {
                 </View>
             </TouchableOpacity>
 
-            <TouchableOpacity>
-                <View style={styles.btnLogOut}>
-                    <Text style={styles.txtLogOut}>Log Out</Text>
-                </View>
+            <TouchableOpacity style={styles.btnLogOut} onPress={handleLogout}>
+                <Text style={styles.txtLogOut}>Log Out</Text>
             </TouchableOpacity>
         </SafeAreaView>
     );

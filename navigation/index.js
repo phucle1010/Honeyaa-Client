@@ -4,7 +4,7 @@ import Discover from '../screens/Discover';
 import Favorites from '../screens/Favorites';
 import Home from '../screens/Home';
 import ProfileDetail from '../screens/ProfileDetail';
-import Login from '../screens/Login';
+import SignIn from '../screens/SignIn';
 import Profile from '../screens/Profile';
 import EditProfile from '../screens/EditProfile';
 import SignUp from '../screens/SignUp';
@@ -24,7 +24,7 @@ import VerifyResetPhone from '../screens/VerifyResetPhone';
 const screens = [
     {
         name: 'Login',
-        component: Login,
+        component: SignIn,
         tabIconName: 'account-circle-outline',
         tabIconSize: 30,
         tabIconColor: '#faa0a0',
