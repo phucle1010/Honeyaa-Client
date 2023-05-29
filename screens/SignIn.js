@@ -23,7 +23,7 @@ import {
     Profile,
     AuthenticationToken,
 } from 'react-native-fbsdk-next';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { setUser } from '../reducers/user';
 
 const API_URL = 'http://192.168.1.186:8080';
@@ -38,7 +38,9 @@ const SignIn = ({ navigation }) => {
 
     useEffect(() => {
         if (successLogin) {
-            navigation.navigate('Home');
+            navigation.navigate('Home', {
+                successfulLogin: true,
+            });
         }
     }, [successLogin]);
 
