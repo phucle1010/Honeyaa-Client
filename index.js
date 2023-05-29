@@ -20,4 +20,4 @@ import FinishSignUp from './screens/FinishSignUp';
 import SignUp from './screens/SignUp';
 import ProfileScreen from './screens/ProfileScreen';
 
-AppRegistry.registerComponent(appName, () => ProfileScreen);
+AppRegistry.registerComponent(appName, () => App);
