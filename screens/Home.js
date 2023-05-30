@@ -269,7 +269,8 @@ const Home = ({ navigation, route }) => {
                 })
                 .then((res) => {
                     if (res.data.statusCode === 200) {
-                        showInteractMessage(type, res.data.responseData);
+                        showInteractMessage(type, res.data.responseData); /// Hiển thị thanh trượt xuống thông báo tương tác vừa thực hiện
+                        /// Xử lý phần gọi profile mới
                     } else {
                         Alert.alert('Fail', res.data.responseData);
                     }

@@ -1,31 +1,41 @@
-import React from 'react';
-import { SafeAreaView, View, Image, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { SafeAreaView, View, Image, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUser } from '../reducers/user';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AwesomeExtraIcon from 'react-native-vector-icons/FontAwesome';
 
-const API_URL = 'http://192.168.1.186:8080';
+import Loading from '../components/Loading';
 
-const myAccount = {
-    id: 1,
-    name: 'Thần Báo',
-    age: 20,
-    status: 'Hoạt động gần đây',
-    distance: 1,
-    gender: 'Nữ',
-    img: [
-        {
-            id: 1,
-            url: 'https://cdn.wallpapersafari.com/30/24/Vwmyh9.jpg',
-        },
-    ],
-};
+const API_URL = 'http://192.168.1.186:8080';
 
 const Account = ({ navigation }) => {
     const user = useSelector((state) => state.user);
+    const [avatar, setAvatar] = useState(null);
+    const [loaded, setLoaded] = useState(false);
+
     const dispatch = useDispatch();
+
+    const getUserAvatar = async () => {
+        await axios
+            .get(`${API_URL}/api/user/profile/img/avatar`, {
+                params: {
+                    user_id: user.id,
+                },
+            })
+            .then((res) => {
+                if (res.data.statusCode === 200) {
+                    setAvatar(res.data.responseData);
+                    setLoaded(true);
+                }
+            })
+            .catch((err) => Alert.alert('Error', err.toString()));
+    };
+
+    useEffect(() => {
+        getUserAvatar();
+    }, []);
 
     const currentYearsOld = (date) => {
         const currentDate = new Date();
@@ -60,56 +70,60 @@ const Account = ({ navigation }) => {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
-            <View>
-                <Image source={require('../assets/img/HoneyaaLogo.png')} style={styles.logo} />
-            </View>
-            <Text style={styles.txt}>My Account </Text>
-            {/* <View>
-        <AwesomeExtraIcon name="check-circle" size={20} color="#0d98ba" />
-      </View> */}
-            {Object.keys(user).length > 0 && (
-                <React.Fragment>
-                    <View style={styles.wrapImg}>
-                        <Image
-                            source={{
-                                uri: myAccount.img[0].url,
-                            }}
-                            style={styles.img}
-                        />
+        <React.Fragment>
+            {loaded ? (
+                <SafeAreaView style={styles.container}>
+                    <View>
+                        <Image source={require('../assets/img/HoneyaaLogo.png')} style={styles.logo} />
                     </View>
-                    <View style={styles.detailInfo}>
-                        <Text style={styles.txtName}>
-                            {user.full_name.length > 14 ? user.full_name.substring(0, 11) + ' ...' : user.full_name}
-                        </Text>
-                        <Text style={styles.txtAge}> {currentYearsOld(user.dob)}</Text>
-                        <View style={styles.icon}>
-                            <AwesomeExtraIcon name="check-circle" size={20} color="#2F88FF" />
-                        </View>
-                        <TouchableOpacity style={styles.icon} onPress={() => navigation.navigate('Profile')}>
-                            <AwesomeExtraIcon name="pencil" size={20} color="#3DA686" />
-                        </TouchableOpacity>
-                    </View>
+                    <Text style={styles.txt}>My Account </Text>
+                    {Object.keys(user).length > 0 && (
+                        <React.Fragment>
+                            <View style={styles.wrapImg}>
+                                <Image
+                                    source={{
+                                        uri: avatar || 'https://www.toolworld.in/storage/media/product/noimage.png',
+                                    }}
+                                    style={styles.img}
+                                />
+                            </View>
+                            <View style={styles.detailInfo}>
+                                <Text style={styles.txtName}>
+                                    {user.full_name.length > 14
+                                        ? user.full_name.substring(0, 11) + ' ...'
+                                        : user.full_name}
+                                </Text>
+                                <Text style={styles.txtAge}> {currentYearsOld(user.dob)}</Text>
+                                <View style={styles.icon}>
+                                    <AwesomeExtraIcon name="check-circle" size={20} color="#2F88FF" />
+                                </View>
+                                <TouchableOpacity style={styles.icon} onPress={() => navigation.navigate('Profile')}>
+                                    <AwesomeExtraIcon name="pencil" size={20} color="#3DA686" />
+                                </TouchableOpacity>
+                            </View>
 
-                    <TouchableOpacity>
-                        <View style={styles.btnSettings}>
-                            <Text style={styles.txtSettings}>Settings</Text>
-                        </View>
-                    </TouchableOpacity>
+                            <TouchableOpacity>
+                                <View style={styles.btnSettings}>
+                                    <Text style={styles.txtSettings}>Settings</Text>
+                                </View>
+                            </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.btnLogOut} onPress={handleLogout}>
-                        <Text style={styles.txtLogOut}>Log Out</Text>
-                    </TouchableOpacity>
-                </React.Fragment>
+                            <TouchableOpacity style={styles.btnLogOut} onPress={handleLogout}>
+                                <Text style={styles.txtLogOut}>Log Out</Text>
+                            </TouchableOpacity>
+                        </React.Fragment>
+                    )}
+                </SafeAreaView>
+            ) : (
+                <Loading />
             )}
-        </SafeAreaView>
+        </React.Fragment>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
-        //justifyContent: 'center',
         height: '100%',
         backgroundColor: '#fff',
         flex: 1,
@@ -120,10 +134,9 @@ const styles = StyleSheet.create({
         width: 156,
     },
     txt: {
-        //height: '50%',
         width: '100%',
         fontFamily: 'Poppins',
-        fontWeight: 400,
+        // fontWeight: 400,
         color: '#666666',
         fontSize: 18,
         marginLeft: 30,
@@ -152,13 +165,13 @@ const styles = StyleSheet.create({
     },
     txtName: {
         fontFamily: 'Overpass',
-        fontWeight: 400,
+        // fontWeight: 400,
         fontSize: 28,
         color: '#575757',
     },
     txtAge: {
         fontFamily: 'Overpass',
-        fontWeight: 400,
+        // fontWeight: 400,
         fontSize: 24,
         alignSelf: 'flex-end',
         color: '#575757',
@@ -186,7 +199,7 @@ const styles = StyleSheet.create({
     txtSettings: {
         fontFamily: 'Poppins',
         fontSize: 18,
-        fontWeight: 400,
+        // fontWeight: 400,
         alignSelf: 'center',
         color: '#FFFFFF',
     },
@@ -203,7 +216,7 @@ const styles = StyleSheet.create({
     txtLogOut: {
         fontFamily: 'Poppins',
         fontSize: 18,
-        fontWeight: 400,
+        // fontWeight: 400,
         alignSelf: 'center',
         color: '#848484',
     },
