@@ -201,12 +201,12 @@ const Home = ({ navigation, route }) => {
             .catch((err) => Alert.alert('Error', err.toString()));
     };
 
-    const handleGetUser = () => {
+    const handleGetUser = async () => {
         const userToken = AsyncStorage.getItem('user_token');
         if (userToken === null) {
             AsyncStorage.setItem('user_token', JSON.stringify(''));
         } else {
-            AsyncStorage.getItem('user_token')
+            await AsyncStorage.getItem('user_token')
                 .then((token) => {
                     if (token !== 'null') {
                         storeUserData(token);
@@ -215,6 +215,7 @@ const Home = ({ navigation, route }) => {
                     }
                 })
                 .catch((err) => Alert.alert('Error', err));
+            getProfiles();
         }
     };
 
