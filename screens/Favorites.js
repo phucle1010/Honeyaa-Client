@@ -4,6 +4,8 @@ import { TabView, SceneMap } from 'react-native-tab-view';
 import EditProfileScreen from './EditProfileScreen';
 import Icon from 'react-native-vector-icons/Ionicons';
 import TopLike from './TopLike';
+import Xlikes from './Xlikes';
+import Sent from './Sent';
 const FirstRoute = () => (
     <View style={styles.frame} >
       <Text>Hello</Text>
@@ -16,8 +18,8 @@ const FirstRoute = () => (
   );
 
   const renderScene = SceneMap({
-    first: FirstRoute,
-    second: SecondRoute,
+    first: Xlikes,
+    second: Sent,
     thirst: TopLike,
   });
   const renderTabBar = (props) => (
@@ -62,7 +64,6 @@ const Favorites = () => {
   
     return (
         <TabView
-        style={{ backgroundColor: 'red', height: 400 }}
         navigationState={{ index, routes }}
         renderScene={renderScene}
         onIndexChange={setIndex}
