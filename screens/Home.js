@@ -154,14 +154,14 @@ const InteractNotice = ({ ...props }) => {
         </Animated.View>
     );
 };
-//0363243719 123456
+
 const Home = ({ navigation, route }) => {
     const user = useSelector((state) => state.user);
     const successfulLogin = route.params?.successfulLogin;
 
     const dispatch = useDispatch();
     const [currentProfileIndex, setCurrentProfileIndex] = useState(0);
-    const sliderItemWidth = 100 ;/// userProfile.img.length;
+    const sliderItemWidth = 100; /// userProfile.img.length;
     const [profiles, setProfiles] = useState([]);
     const [loadedProfiles, setLoadedProfiles] = useState(false);
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -171,15 +171,15 @@ const Home = ({ navigation, route }) => {
         color: '',
     });
     const [userProfile, setUserProfile] = useState({});
-    const API_URL = 'http://192.168.1.13:8080';
+    const API_URL = 'http://192.168.1.186:8080';
 
     const getUserProfile = async () => {
         const token = JSON.parse(await AsyncStorage.getItem('user_token'));
         console.log(token);
-        const response = await axios.get(`${API_URL}/api/user/potential_love`, {params: {token}});
+        const response = await axios.get(`${API_URL}/api/user/potential_love`, { params: { token } });
         return response.data;
     };
-    
+
     const fetchUserProfile = async () => {
         try {
             const data = await getUserProfile();
@@ -189,7 +189,7 @@ const Home = ({ navigation, route }) => {
             console.log(error);
         }
     };
-    
+
     useEffect(() => {
         fetchUserProfile();
     }, []);
@@ -326,7 +326,7 @@ const Home = ({ navigation, route }) => {
                     </View>
                     <View style={styles.profile}>
                         <View style={styles.slider}>
-                            {(userProfile.img?userProfile.img:PROFILES[0].img).map((profile, index) => (
+                            {(userProfile.img ? userProfile.img : PROFILES[0].img).map((profile, index) => (
                                 <TouchableOpacity
                                     key={index}
                                     style={{
@@ -360,9 +360,8 @@ const Home = ({ navigation, route }) => {
                                         fontFamily: 'Poppins',
                                     }}
                                 >
-                                    {userProfile.name &&
-                                    userProfile.name.length > 14
-                                    ? userProfile.name.substring(0, 11) + '...'
+                                    {userProfile.name && userProfile.name.length > 14
+                                        ? userProfile.name.substring(0, 11) + '...'
                                         : userProfile.name}
                                 </Text>
                                 {/* Ngày sinh */}

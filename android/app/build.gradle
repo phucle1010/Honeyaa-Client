@@ -114,7 +114,7 @@ android {
         debug {
             storeFile file('firebase.keystore')
             storePassword '123456'
-            keyAlias 'myalias'
+            keyAlias 'fbalias'
             keyPassword '123456'
         }
     }

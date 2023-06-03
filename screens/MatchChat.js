@@ -13,7 +13,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const img = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-const chats = [1, 2, 3, 4, 5];
+const chats = [1];
 const full_name = 'Nguyễn Quỳnh Hương Giang Vũ';
 const chat_content = 'Hi, chào bạn. Rất vui vì được làm quen với bạn';
 
