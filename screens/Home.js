@@ -103,8 +103,6 @@ const PROFILES = [
     },
 ];
 
-const API_URL = 'http://192.168.1.186:8080';
-
 const LIKE = 1;
 const DISLIKE = 2;
 const SUPER_LIKE = 3;
@@ -156,14 +154,14 @@ const InteractNotice = ({ ...props }) => {
         </Animated.View>
     );
 };
-
+//0363243719 123456
 const Home = ({ navigation, route }) => {
     const user = useSelector((state) => state.user);
     const successfulLogin = route.params?.successfulLogin;
 
     const dispatch = useDispatch();
     const [currentProfileIndex, setCurrentProfileIndex] = useState(0);
-    const sliderItemWidth = 100 / PROFILES[currentProfileIndex].img.length;
+    const sliderItemWidth = 100 ;/// userProfile.img.length;
     const [profiles, setProfiles] = useState([]);
     const [loadedProfiles, setLoadedProfiles] = useState(false);
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -172,6 +170,29 @@ const Home = ({ navigation, route }) => {
         message: '',
         color: '',
     });
+    const [userProfile, setUserProfile] = useState({});
+    const API_URL = 'http://192.168.1.13:8080';
+
+    const getUserProfile = async () => {
+        const token = JSON.parse(await AsyncStorage.getItem('user_token'));
+        console.log(token);
+        const response = await axios.get(`${API_URL}/api/user/potential_love`, {params: {token}});
+        return response.data;
+    };
+    
+    const fetchUserProfile = async () => {
+        try {
+            const data = await getUserProfile();
+            setUserProfile(data);
+            console.log(data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    
+    useEffect(() => {
+        fetchUserProfile();
+    }, []);
 
     const getProfiles = async () => {
         await axios
@@ -265,13 +286,13 @@ const Home = ({ navigation, route }) => {
             axios
                 .post(`${API_URL}/api/match/interact`, {
                     person_id: user.id,
-                    target_id: profiles[0].id,
+                    target_id: userProfile.id,
                     interact_type: type,
                 })
-                .then((res) => {
+                .then(async (res) => {
                     if (res.data.statusCode === 200) {
                         showInteractMessage(type, res.data.responseData); /// Hiển thị thanh trượt xuống thông báo tương tác vừa thực hiện
-                        /// Xử lý phần gọi profile mới
+                        await fetchUserProfile();
                     } else {
                         Alert.alert('Fail', res.data.responseData);
                     }
@@ -303,116 +324,55 @@ const Home = ({ navigation, route }) => {
                             <AwesomeIcon name="sliders-h" size={20} style={styles.optionIcon} />
                         </View>
                     </View>
-                    {Object.keys(profiles).length > 0 && (
-                        <View style={styles.profile}>
-                            <View style={styles.slider}>
-                                {PROFILES[currentProfileIndex].img.map((profile, index) => (
-                                    <TouchableOpacity
-                                        key={index}
-                                        style={{
-                                            ...styles.sliderItem,
-                                            backgroundColor:
-                                                index !== selectedImageIndex
-                                                    ? 'rgba(103, 103, 103, 0.3)'
-                                                    : 'rgba(255, 255, 255, 0.8)',
-                                            width: `${sliderItemWidth}%`,
-                                        }}
-                                        onPress={() => setSelectedImageIndex(index)}
-                                    />
-                                ))}
-                            </View>
-                            {
-                                <Image
-                                    source={{
-                                        uri: PROFILES[currentProfileIndex].img[selectedImageIndex].url,
-                                    }}
-                                    style={styles.profileImage}
-                                />
-                            }
-                            <View style={styles.profileInfo}>
-                                <View style={styles.profileDesc}>
-                                    {/* Họ tên */}
-                                    <Text
-                                        style={{
-                                            ...styles.profileDetailItem,
-                                            fontWeight: '700',
-                                            letterSpacing: 1,
-                                            fontFamily: 'Poppins',
-                                        }}
-                                    >
-                                        {profiles[currentProfileIndex].full_name &&
-                                        profiles[currentProfileIndex].full_name.length > 14
-                                            ? profiles[currentProfileIndex].full_name.substring(0, 11) + '...'
-                                            : profiles[currentProfileIndex].full_name}
-                                    </Text>
-                                    {/* Ngày sinh */}
-                                    <Text style={{ ...styles.profileDetailItem, fontSize: 26 }}>
-                                        {currentYearsOld(profiles[currentProfileIndex].dob)}
-                                    </Text>
-                                    <View
-                                        style={{
-                                            width: 26,
-                                            height: 26,
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                            backgroundColor: '#fff',
-                                            borderRadius: 50,
-                                            elevation: 4,
-                                        }}
-                                    >
-                                        <AwesomeExtraIcon name="check" size={18} color="#0096FF" />
-                                    </View>
-                                </View>
-                                <View style={styles.profileDesc}>
-                                    <Text
-                                        style={{
-                                            ...styles.profileDetailItem,
-                                            marginTop: 10,
-                                            marginBottom: 4,
-                                            paddingHorizontal: 10,
-                                            paddingVertical: 4,
-                                            fontSize: 16,
-                                            color: '#fff',
-                                            fontWeight: '400',
-                                            backgroundColor: '#0BDA51',
-                                            borderRadius: 20,
-                                        }}
-                                    >
-                                        {PROFILES[currentProfileIndex].status}
-                                    </Text>
-                                    {/* <OctIcon
-                                        name="dot-fill"
-                                        style={{
-                                            ...styles.profileDetailItem,
-                                            fontSize: 18,
-                                            color: '#7cfc00',
-                                        }}
-                                    /> */}
-                                </View>
-                                <View style={styles.profileDesc}>
-                                    <Text
-                                        style={{
-                                            ...styles.profileDetailItem,
-                                            fontSize: 18,
-                                            color: '#fff',
-                                            fontWeight: '500',
-                                        }}
-                                    >{`Cách xa ${PROFILES[currentProfileIndex].distance}km`}</Text>
-                                    <Icon
-                                        name="location-sharp"
-                                        style={{
-                                            ...styles.profileDetailItem,
-                                            fontSize: 18,
-                                            color: '#ffff',
-                                            marginLeft: 0,
-                                        }}
-                                    />
-                                </View>
+                    <View style={styles.profile}>
+                        <View style={styles.slider}>
+                            {(userProfile.img?userProfile.img:PROFILES[0].img).map((profile, index) => (
                                 <TouchableOpacity
+                                    key={index}
                                     style={{
-                                        marginLeft: 'auto',
-                                        width: 25,
-                                        height: 25,
+                                        ...styles.sliderItem,
+                                        backgroundColor:
+                                            index !== selectedImageIndex
+                                                ? 'rgba(103, 103, 103, 0.3)'
+                                                : 'rgba(255, 255, 255, 0.8)',
+                                        width: `${sliderItemWidth}%`,
+                                    }}
+                                    onPress={() => setSelectedImageIndex(index)}
+                                />
+                            ))}
+                        </View>
+                        {
+                            <Image
+                                source={{
+                                    uri: PROFILES[0].img[selectedImageIndex].url,
+                                }}
+                                style={styles.profileImage}
+                            />
+                        }
+                        <View style={styles.profileInfo}>
+                            <View style={styles.profileDesc}>
+                                {/* Họ tên */}
+                                <Text
+                                    style={{
+                                        ...styles.profileDetailItem,
+                                        fontWeight: '700',
+                                        letterSpacing: 1,
+                                        fontFamily: 'Poppins',
+                                    }}
+                                >
+                                    {userProfile.name &&
+                                    userProfile.name.length > 14
+                                    ? userProfile.name.substring(0, 11) + '...'
+                                        : userProfile.name}
+                                </Text>
+                                {/* Ngày sinh */}
+                                <Text style={{ ...styles.profileDetailItem, fontSize: 26 }}>
+                                    {currentYearsOld(userProfile.dob)}
+                                </Text>
+                                <View
+                                    style={{
+                                        width: 26,
+                                        height: 26,
                                         justifyContent: 'center',
                                         alignItems: 'center',
                                         backgroundColor: '#fff',
@@ -420,37 +380,96 @@ const Home = ({ navigation, route }) => {
                                         elevation: 4,
                                     }}
                                 >
-                                    <Icon name="arrow-down" size={15} color="#767676" onPress={() => {}} />
-                                </TouchableOpacity>
+                                    <AwesomeExtraIcon name="check" size={18} color="#0096FF" />
+                                </View>
                             </View>
-                            <View style={styles.profileOptions}>
-                                <TouchableOpacity
-                                    style={{ ...styles.profileOptionItem, borderColor: '#ffbf00' }}
-                                    onPress={handleRedoProfile}
+                            <View style={styles.profileDesc}>
+                                <Text
+                                    style={{
+                                        ...styles.profileDetailItem,
+                                        marginTop: 10,
+                                        marginBottom: 4,
+                                        paddingHorizontal: 10,
+                                        paddingVertical: 4,
+                                        fontSize: 16,
+                                        color: '#fff',
+                                        fontWeight: '400',
+                                        backgroundColor: '#0BDA51',
+                                        borderRadius: 20,
+                                    }}
                                 >
-                                    <AwesomeIcon name="redo" size={24} color="#ffbf00" />
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={{ ...styles.profileOptionItem, borderColor: '#fa5f55' }}
-                                    onPress={() => handlePostInteract(DISLIKE)}
-                                >
-                                    <AwesomeExtraIcon name="close" size={30} color="#fa5f55" />
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={{ ...styles.profileOptionItem, borderColor: '#40b5ad' }}
-                                    onPress={() => handlePostInteract(LIKE)}
-                                >
-                                    <AwesomeExtraIcon name="heart" size={24} color="#40b5ad" />
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={{ ...styles.profileOptionItem, borderColor: '#00bfff' }}
-                                    onPress={() => handlePostInteract(SUPER_LIKE)}
-                                >
-                                    <AwesomeExtraIcon name="star" size={24} color="#00bfff" />
-                                </TouchableOpacity>
+                                    {userProfile.status}
+                                </Text>
+                                {/* <OctIcon
+                                    name="dot-fill"
+                                    style={{
+                                    ...styles.profileDetailItem,
+                                        fontSize: 18,
+                                        color: '#7cfc00',
+                                    }}
+                                /> */}
                             </View>
+                            <View style={styles.profileDesc}>
+                                <Text
+                                    style={{
+                                        ...styles.profileDetailItem,
+                                        fontSize: 18,
+                                        color: '#fff',
+                                        fontWeight: '500',
+                                    }}
+                                >{`Cách xa ${userProfile.distance}km`}</Text>
+                                <Icon
+                                    name="location-sharp"
+                                    style={{
+                                        ...styles.profileDetailItem,
+                                        fontSize: 18,
+                                        color: '#ffff',
+                                        marginLeft: 0,
+                                    }}
+                                />
+                            </View>
+                            <TouchableOpacity
+                                style={{
+                                    marginLeft: 'auto',
+                                    width: 25,
+                                    height: 25,
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    backgroundColor: '#fff',
+                                    borderRadius: 50,
+                                    elevation: 4,
+                                }}
+                            >
+                                <Icon name="arrow-down" size={15} color="#767676" onPress={() => {}} />
+                            </TouchableOpacity>
                         </View>
-                    )}
+                        <View style={styles.profileOptions}>
+                            <TouchableOpacity
+                                style={{ ...styles.profileOptionItem, borderColor: '#ffbf00' }}
+                                onPress={handleRedoProfile}
+                            >
+                                <AwesomeIcon name="redo" size={24} color="#ffbf00" />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={{ ...styles.profileOptionItem, borderColor: '#fa5f55' }}
+                                onPress={() => handlePostInteract(DISLIKE)}
+                            >
+                                <AwesomeExtraIcon name="close" size={30} color="#fa5f55" />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={{ ...styles.profileOptionItem, borderColor: '#40b5ad' }}
+                                onPress={() => handlePostInteract(LIKE)}
+                            >
+                                <AwesomeExtraIcon name="heart" size={24} color="#40b5ad" />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={{ ...styles.profileOptionItem, borderColor: '#00bfff' }}
+                                onPress={() => handlePostInteract(SUPER_LIKE)}
+                            >
+                                <AwesomeExtraIcon name="star" size={24} color="#00bfff" />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
                     {interactMessageConfig.message && (
                         <InteractNotice
                             interactMessageConfig={interactMessageConfig}
