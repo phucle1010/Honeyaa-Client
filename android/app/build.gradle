@@ -110,14 +110,14 @@ android {
             include (*reactNativeArchitectures())
         }
     }
-    signingConfigs {
-        debug {
-            storeFile file('firebase.keystore')
-            storePassword '123456'
-            keyAlias 'fbalias'
-            keyPassword '123456'
-        }
-    }
+    // signingConfigs {
+    //     debug {
+    //         storeFile file('firebase.keystore')
+    //         storePassword '123456'
+    //         keyAlias 'fbalias'
+    //         keyPassword '123456'
+    //     }
+    // }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug

@@ -133,7 +133,6 @@ const InteractNotice = ({ ...props }) => {
                 message: '',
                 color: '',
             });
-            props.setCurrentProfileIndex((prev) => (prev < props.profiles.length - 1 ? prev + 1 : prev));
         }, 1200);
 
         return clearTimeout();
@@ -160,9 +159,7 @@ const Home = ({ navigation, route }) => {
     const successfulLogin = route.params?.successfulLogin;
 
     const dispatch = useDispatch();
-    const [currentProfileIndex, setCurrentProfileIndex] = useState(0);
     const sliderItemWidth = 100; /// userProfile.img.length;
-    const [profiles, setProfiles] = useState([]);
     const [loadedProfiles, setLoadedProfiles] = useState(false);
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
     const [loaded, setLoaded] = useState(false);
@@ -172,43 +169,6 @@ const Home = ({ navigation, route }) => {
     });
     const [userProfile, setUserProfile] = useState({});
     const API_URL = 'http://192.168.1.186:8080';
-
-    const getUserProfile = async () => {
-        const token = JSON.parse(await AsyncStorage.getItem('user_token'));
-        console.log(token);
-        const response = await axios.get(`${API_URL}/api/user/potential_love`, { params: { token } });
-        return response.data;
-    };
-
-    const fetchUserProfile = async () => {
-        try {
-            const data = await getUserProfile();
-            setUserProfile(data);
-            console.log(data);
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    useEffect(() => {
-        fetchUserProfile();
-    }, []);
-
-    const getProfiles = async () => {
-        await axios
-            .get(`${API_URL}/api/user/recommendation`, {
-                params: {
-                    user_id: user.id,
-                },
-            })
-            .then((res) => {
-                if (res.data.statusCode === 200) {
-                    setProfiles(res.data.responseData);
-                    setLoadedProfiles(true);
-                }
-            })
-            .catch((err) => Alert.alert('Error', err));
-    };
 
     const storeUserData = async (token) => {
         await axios
@@ -229,14 +189,13 @@ const Home = ({ navigation, route }) => {
         } else {
             await AsyncStorage.getItem('user_token')
                 .then((token) => {
-                    if (token !== 'null') {
+                    if (token !== null) {
                         storeUserData(token);
                     } else {
                         navigation.navigate('Login');
                     }
                 })
                 .catch((err) => Alert.alert('Error', err));
-            getProfiles();
         }
     };
 
@@ -246,9 +205,25 @@ const Home = ({ navigation, route }) => {
         handleGetUser();
     }, []);
 
+    const getUserProfile = async () => {
+        const token = JSON.parse(await AsyncStorage.getItem('user_token'));
+        const response = await axios.get(`${API_URL}/api/user/potential_love`, { params: { token } });
+        return response.data;
+    };
+
+    const fetchUserProfile = async () => {
+        try {
+            const data = await getUserProfile();
+            setUserProfile(data);
+            setLoadedProfiles(true);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     useEffect(() => {
         if (user?.id && !loadedProfiles) {
-            getProfiles();
+            fetchUserProfile();
         }
     }, [user]);
 
@@ -326,7 +301,7 @@ const Home = ({ navigation, route }) => {
                     </View>
                     <View style={styles.profile}>
                         <View style={styles.slider}>
-                            {(userProfile.img ? userProfile.img : PROFILES[0].img).map((profile, index) => (
+                            {(userProfile.img.length > 0 ? userProfile.img : PROFILES[0].img).map((profile, index) => (
                                 <TouchableOpacity
                                     key={index}
                                     style={{
@@ -399,14 +374,6 @@ const Home = ({ navigation, route }) => {
                                 >
                                     {userProfile.status}
                                 </Text>
-                                {/* <OctIcon
-                                    name="dot-fill"
-                                    style={{
-                                    ...styles.profileDetailItem,
-                                        fontSize: 18,
-                                        color: '#7cfc00',
-                                    }}
-                                /> */}
                             </View>
                             <View style={styles.profileDesc}>
                                 <Text
@@ -473,8 +440,6 @@ const Home = ({ navigation, route }) => {
                         <InteractNotice
                             interactMessageConfig={interactMessageConfig}
                             setInteractMessageConfig={setInteractMessageConfig}
-                            setCurrentProfileIndex={setCurrentProfileIndex}
-                            profiles={profiles}
                         />
                     )}
                 </View>
