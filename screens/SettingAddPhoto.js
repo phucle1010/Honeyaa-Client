@@ -23,7 +23,7 @@ const SettingAddPhoto = ({ navigation, route }) => {
         launchImageLibrary({ noData: true }, (response) => {
             if (response) {
                 if (!response.didCancel) {
-                    setPhoto1(response.assets(0).uri);
+                    setPhoto1(response.assets[0].uri);
                 }
             }
         });

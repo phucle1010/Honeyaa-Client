@@ -9,7 +9,7 @@ const SettingBirth = ({ navigation, route }) => {
     const [openDatePicker, setOpenDatePicker] = useState(false);
 
     const handlePress = useCallback(() => {
-        navigation.navigate('SettingAddPhotos', {
+        navigation.navigate('SettingAddPhoto', {
             phone,
             pass,
             name,
