@@ -5,7 +5,7 @@ import SentItem from '../components/SentItem';
 
 export default function Sent() {
     const [data, setData] = useState([])
-    const API_URL = 'http://192.168.0.105:8080/api/user';
+    const API_URL = 'http://192.168.0.134:8080/api/user';
     useEffect(() => {
         axios.get(`${API_URL}/toplike`)
             .then(response => {

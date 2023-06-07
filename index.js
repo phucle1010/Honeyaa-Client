@@ -19,5 +19,9 @@ import SettingInterest from './screens/SettingInterest';
 import FinishSignUp from './screens/FinishSignUp';
 import SignUp from './screens/SignUp';
 import ProfileScreen from './screens/ProfileScreen';
+import SettingProfile from './screens/SettingProfile';
+import Discover from './screens/Discover';
+import Tendency from './screens/Tendency';
+import AnswerQuestion from './screens/AnswerQuestion'
 
-AppRegistry.registerComponent(appName, () => App);
+AppRegistry.registerComponent(appName, () => Tendency);

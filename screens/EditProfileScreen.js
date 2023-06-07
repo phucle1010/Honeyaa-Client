@@ -65,7 +65,7 @@ const EditProfileScreen = (props) => {
     const [relationshipOriented, setRelationshipOriented] = useState()
     const [relationshipOrientedId, setRelationshipOrientedId] = useState('')
     const [listRelationshipOriented, setListRelationshipOriented] = useState([])
-    const API_URL = 'http://192.168.0.105:8080/api/user';
+    const API_URL = 'http://192.168.0.134:8080/api/user';
 
     const e = 1
     useEffect(() => {

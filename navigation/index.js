@@ -4,6 +4,9 @@ import Discover from '../screens/Discover';
 import Favorites from '../screens/Favorites';
 import Home from '../screens/Home';
 import ProfileDetail from '../screens/ProfileDetail';
+import Tendency from '../screens/Tendency';
+import SettingProfile from '../screens/SettingProfile';
+import AnswerQuestion from '../screens/AnswerQuestion';
 
 const screens = [
     {
@@ -54,6 +57,25 @@ const screens = [
     {
         name: 'ProfileDetail',
         component: ProfileDetail,
+        tabIconName: 'account-circle-outline',
+        tabIconSize: 30,
+        tabIconColor: '#faa0a0',
+        activeColor: '#ee4b2b',
+        isHideTab: true,
+    },
+   
+    {
+        name:'SettingProfile',
+        component: SettingProfile,
+        tabIconName: 'account-circle-outline',
+        tabIconSize: 30,
+        tabIconColor: '#faa0a0',
+        activeColor: '#ee4b2b',
+        isHideTab: true,
+    },
+    {
+        name:'AnswerQuestion',
+        component: AnswerQuestion,
         tabIconName: 'account-circle-outline',
         tabIconSize: 30,
         tabIconColor: '#faa0a0',

@@ -10,7 +10,7 @@ const SignUp = (props) => {
     const [phone, setPhone] = useState('');
     const [pass, setPass] = useState('');
     const [repass, setRePass] = useState('');
-    const API_URI = 'http://192.168.1.13:8080';
+    const API_URI = 'http://192.168.0.134:8080';
 
     const handleShowRePassword = () => {
         setShowRePassword(!showRePassword);
