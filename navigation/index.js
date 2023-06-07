@@ -3,6 +3,8 @@ import Chat from '../screens/Chat';
 import Discover from '../screens/Discover';
 import Favorites from '../screens/Favorites';
 import Home from '../screens/Home';
+import Matched from '../screens/Matched';
+import MatchChat from '../screens/MatchChat';
 import ProfileDetail from '../screens/ProfileDetail';
 import SignIn from '../screens/SignIn';
 import Profile from '../screens/Profile';
@@ -64,8 +66,8 @@ const screens = [
         isHideNavigationTab: false,
     },
     {
-        name: 'Chat',
-        component: Chat,
+        name: 'MatchChat',
+        component: MatchChat,
         tabIconName: 'chat-outline',
         tabIconSize: 30,
         tabIconColor: '#faa0a0',
@@ -92,6 +94,26 @@ const screens = [
         activeColor: '#ee4b2b',
         isHideTabItem: true,
         isHideNavigationTab: false,
+    },
+    {
+        name: 'Chat',
+        component: Chat,
+        tabIconName: 'chat-outline',
+        tabIconSize: 30,
+        tabIconColor: '#faa0a0',
+        activeColor: '#ee4b2b',
+        isHideTabItem: true,
+        isHideNavigationTab: true,
+    },
+    {
+        name: 'Matched',
+        component: Matched,
+        tabIconName: 'robot-love-outline',
+        tabIconSize: 30,
+        tabIconColor: '#faa0a0',
+        activeColor: '#ee4b2b',
+        isHideTabItem: true,
+        isHideNavigationTab: true,
     },
     {
         name: 'EditProfile',

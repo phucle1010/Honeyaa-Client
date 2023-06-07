@@ -12,22 +12,15 @@ import { TabView, SceneMap } from 'react-native-tab-view';
 import EditProfileScreen from './EditProfile';
 import Icon from 'react-native-vector-icons/Ionicons';
 import TopLike from './TopLike';
-const FirstRoute = () => (
-    <View style={styles.frame}>
-        <Text>Hello</Text>
-    </View>
-);
-const SecondRoute = () => (
-    <View style={styles.frame}>
-        <Text>Hello</Text>
-    </View>
-);
+import Xlikes from './XLikes';
+import Sent from './Sent';
 
 const renderScene = SceneMap({
-    first: FirstRoute,
-    second: SecondRoute,
+    first: Xlikes,
+    second: Sent,
     thirst: TopLike,
 });
+
 const renderTabBar = (props) => (
     <View style={styles.container}>
         <Image source={require('../assets/img/HoneyaaLogo.png')} resizeMode="stretch" style={styles.logo} />
@@ -73,7 +66,6 @@ const Favorites = () => {
 
     return (
         <TabView
-            style={{ backgroundColor: 'red', height: 400 }}
             navigationState={{ index, routes }}
             renderScene={renderScene}
             onIndexChange={setIndex}
