@@ -82,25 +82,25 @@ const ViewProfile = () => {
             <View style={styles.imageContainer}>
                 <ScrollView horizontal pagingEnabled>
                     {PROFILES.img.map((image) => (
-                    <TouchableOpacity
-                        key={image.id}
-                        onPress={() => setSelectedImageIndex(image.id - 1)}
-                        activeOpacity={0.8}>
-                        <Image
-                            source={{ uri: image.url }}
-                            style={[
-                                styles.image,
-                                {
-                                    height: '100%',
-                                    width: 450,
-                                },
-                                    selectedImageIndex === image.id - 1 && {
-                                    borderWidth: 2,
-                                    borderColor: 'purple',
-                                },
-                        ]}
-                        />
-                    </TouchableOpacity>
+                      <TouchableOpacity
+                          key={image.id}
+                          onPress={() => setSelectedImageIndex(image.id - 1)}
+                          activeOpacity={0.8}>
+                          <Image
+                              source={{ uri: image.url }}
+                              style={[
+                                  styles.image,
+                                  {
+                                      height: '100%',
+                                      width: 450,
+                                  },
+                                      selectedImageIndex === image.id - 1 && {
+                                      borderWidth: 2,
+                                      borderColor: 'purple',
+                                  },
+                          ]}
+                          />
+                      </TouchableOpacity>
                     ))}
                 </ScrollView>
             </View>
