@@ -20,6 +20,7 @@ import SettingPhoneNumber from '../screens/SettingPhoneNumber';
 import VerifyCreatedPhone from '../screens/VerifyCreatedPhone';
 import VerifyOTP from '../screens/VerifyOTP';
 import VerifyResetPhone from '../screens/VerifyResetPhone';
+import ViewProfile from '../screens/ViewProfile';
 
 const screens = [
     {
@@ -235,6 +236,16 @@ const screens = [
     {
         name: 'FinishSignUp',
         component: FinishSignUp,
+        tabIconName: 'account-circle-outline',
+        tabIconSize: 30,
+        tabIconColor: '#faa0a0',
+        activeColor: '#ee4b2b',
+        isHideTabItem: true,
+        isHideNavigationTab: true,
+    },
+    {
+        name: 'ViewProfile',
+        component: ViewProfile,
         tabIconName: 'account-circle-outline',
         tabIconSize: 30,
         tabIconColor: '#faa0a0',
