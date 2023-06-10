@@ -9,18 +9,13 @@ import {
     Image,
 } from 'react-native';
 import { TabView, SceneMap } from 'react-native-tab-view';
-import EditProfileScreen from './EditProfile';
+import EditProfile from './EditProfile';
+import ReviewProfile from './ReviewProfile';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-const SecondRoute = () => (
-    <View style={styles.frame}>
-        <Text>Hello</Text>
-    </View>
-);
-
 const renderScene = SceneMap({
-    first: EditProfileScreen,
-    second: SecondRoute,
+    first: EditProfile,
+    second: ReviewProfile,
 });
 
 const renderTabBar = (props) => (

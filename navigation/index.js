@@ -3,6 +3,8 @@ import Chat from '../screens/Chat';
 import Discover from '../screens/Discover';
 import Favorites from '../screens/Favorites';
 import Home from '../screens/Home';
+import ViewProfile from '../screens/ViewProfile';
+import ReviewProfile from '../screens/ReviewProfile';
 import Matched from '../screens/Matched';
 import MatchChat from '../screens/MatchChat';
 import ProfileDetail from '../screens/ProfileDetail';
@@ -83,6 +85,26 @@ const screens = [
         activeColor: '#ee4b2b',
         isHideTabItem: false,
         isHideNavigationTab: false,
+    },
+    {
+        name: 'ViewProfile',
+        component: ViewProfile,
+        tabIconName: 'home-outline',
+        tabIconSize: 30,
+        tabIconColor: '#faa0a0',
+        activeColor: '#ee4b2b',
+        isHideTabItem: true,
+        isHideNavigationTab: true,
+    },
+    {
+        name: 'ReviewProfile',
+        component: ReviewProfile,
+        tabIconName: 'home-outline',
+        tabIconSize: 30,
+        tabIconColor: '#faa0a0',
+        activeColor: '#ee4b2b',
+        isHideTabItem: true,
+        isHideNavigationTab: true,
     },
     {
         name: 'Profile',

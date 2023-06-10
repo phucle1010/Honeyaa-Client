@@ -1,23 +1,34 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import axios from 'axios';
+import { useIsFocused } from '@react-navigation/native';
 
 const SignUp = (props) => {
+    const isFocusedScreen = useIsFocused();
     const { navigation } = props;
     const [showRePassword, setShowRePassword] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [phone, setPhone] = useState('');
     const [pass, setPass] = useState('');
     const [repass, setRePass] = useState('');
-    const API_URI = 'http://192.168.1.13:8080';
+    const API_URI = 'http://192.168.1.186:8080';
 
     const handleShowRePassword = () => {
         setShowRePassword(!showRePassword);
     };
     const handleShowPassword = () => {
-        setShowPassword(!showRePassword);
+        setShowPassword(!showPassword);
     };
+
+    useEffect(() => {
+        if (!isFocusedScreen) {
+            setPhone('');
+            setPass('');
+            setRePass('');
+        }
+    }, [isFocusedScreen]);
+
     const handleSignIn = () => {
         switch (true) {
             case phone === '' || pass === '' || repass === '':
@@ -34,7 +45,11 @@ const SignUp = (props) => {
                 break;
             default:
                 axios
-                    .get(`${API_URI}/api/user/signup/phone?phonenumber=${phone}`)
+                    .get(`${API_URI}/api/user/signup/phone`, {
+                        params: {
+                            phonenumber: phone,
+                        },
+                    })
                     .then((res) => {
                         navigation.navigate('SettingPhoneNumber', { phone: phone, pass: pass });
                     })
@@ -63,7 +78,7 @@ const SignUp = (props) => {
                 <Text style={styles.title}>Register</Text>
                 <TextInput
                     style={styles.input}
-                    placeholder="Phone"
+                    placeholder="Phone Number"
                     maxLength={10}
                     keyboardType="numeric"
                     value={phone}

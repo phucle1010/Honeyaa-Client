@@ -9,7 +9,7 @@ const SettingPhoneNumber = (props) => {
         navigation.goBack();
     };
     const handleConfirmPhoneNB = () => {
-        navigation.navigate('VerifyPhone', { phone: phone, pass: pass });
+        navigation.navigate('VerifyCreatedPhone', { phone: phone, pass: pass });
     };
     return (
         <View style={styles.container}>
