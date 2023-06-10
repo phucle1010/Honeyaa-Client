@@ -11,8 +11,11 @@ import ProfileDetail from '../screens/ProfileDetail';
 import SignIn from '../screens/SignIn';
 import Profile from '../screens/Profile';
 import EditProfile from '../screens/EditProfile';
+import SettingProfile from '../screens/SettingProfile';
 import SignUp from '../screens/SignUp';
 import FinishSignUp from '../screens/FinishSignUp';
+import AnswerQuestion from '../screens/AnswerQuestion';
+import Tendency from '../screens/Tendency';
 import RestoreAccount from '../screens/RestoreAccount';
 import SettingAddPhoto from '../screens/SettingAddPhoto';
 import SettingBirth from '../screens/SettingBirth';
@@ -147,6 +150,16 @@ const screens = [
         isHideNavigationTab: true,
     },
     {
+        name: 'SettingProfile',
+        component: SettingProfile,
+        tabIconName: 'account-circle-outline',
+        tabIconSize: 30,
+        tabIconColor: '#faa0a0',
+        activeColor: '#ee4b2b',
+        isHideTabItem: true,
+        isHideNavigationTab: false,
+    },
+    {
         name: 'SignUp',
         component: SignUp,
         tabIconName: 'account-circle-outline',
@@ -279,6 +292,26 @@ const screens = [
     {
         name: 'FinishSignUp',
         component: FinishSignUp,
+        tabIconName: 'account-circle-outline',
+        tabIconSize: 30,
+        tabIconColor: '#faa0a0',
+        activeColor: '#ee4b2b',
+        isHideTabItem: true,
+        isHideNavigationTab: true,
+    },
+    {
+        name: 'AnswerQuestion',
+        component: AnswerQuestion,
+        tabIconName: 'account-circle-outline',
+        tabIconSize: 30,
+        tabIconColor: '#faa0a0',
+        activeColor: '#ee4b2b',
+        isHideTabItem: true,
+        isHideNavigationTab: true,
+    },
+    {
+        name: 'Tendency',
+        component: Tendency,
         tabIconName: 'account-circle-outline',
         tabIconSize: 30,
         tabIconColor: '#faa0a0',
