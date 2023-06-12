@@ -6,7 +6,7 @@ const SettingName = (props) => {
     const { navigation, route } = props;
     const [err, setErr] = useState('');
     // const { phone, pass } = route.params;
-    const phone = '0368341595';
+    const phone = '0363243719';
     const pass = '123456';
     const [name, setName] = useState('');
 

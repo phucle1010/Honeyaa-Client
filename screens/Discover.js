@@ -4,8 +4,8 @@ import { SafeAreaView, Text, View, Image, TouchableOpacity, StyleSheet } from 'r
 const Discover = () => {
     return (
         <SafeAreaView style={styles.container}>
-            <View style={[{ justifyContent: 'center', alignItems: 'center' }]}>
-                <Image source={require('../assets/img/HoneyaaLogo.png')} style={styles.logo} />
+            <View style={[{ justifyContent: 'center', alignItems: 'center', marginTop: 70 }]}>
+                {/* <Image source={require('../assets/img/HoneyaaLogo.png')} style={styles.logo} /> */}
             </View>
             <Text style={[styles.txt, { marginTop: -20 }]}>Discover quickly with the same tendency</Text>
             <View style={{ flexDirection: 'row' }}>

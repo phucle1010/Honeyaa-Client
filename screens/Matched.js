@@ -1,19 +1,19 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, Dimensions, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 
-const Matched = ({ navigation }) => {
+const Matched = ({ navigation, route }) => {
+    const { person_img, target_img } = route.params;
+
     return (
         <View style={styles.container}>
             <Image source={require('../assets/img/HoneyaaLogo.png')} style={styles.logo} Ư />
             <View style={styles.matchedInfo}>
                 <Text style={styles.heading}>Matched Successfully</Text>
                 <View style={styles.couple}>
-                    <Image
-                        source={require('../assets/img/boy-anime.jpg')}
-                        style={{ ...styles.womanObject, ...styles.manObject }}
-                    />
-                    <Image source={require('../assets/img/anime-girl.jpg')} style={styles.womanObject} />
+                    <Image source={{ uri: person_img }} style={{ ...styles.womanObject, ...styles.manObject }} />
+                    <Image source={{ uri: target_img }} style={styles.womanObject} />
                 </View>
+
                 <View style={styles.sendMsg}>
                     <TextInput style={styles.msgContent} placeholder="Send message now..." />
                     <TouchableOpacity onPress={() => navigation.navigate('MatchChat')}>

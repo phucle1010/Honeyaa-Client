@@ -7,10 +7,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import AwesomeExtraIcon from 'react-native-vector-icons/FontAwesome';
 
 import Loading from '../components/Loading';
+import { useIsFocused } from '@react-navigation/native';
 
 const API_URL = 'http://192.168.1.186:8080';
 
 const Account = ({ navigation }) => {
+    const isFocusedScreen = useIsFocused();
     const user = useSelector((state) => state.user);
     const [avatar, setAvatar] = useState(null);
     const [loaded, setLoaded] = useState(false);
@@ -34,8 +36,13 @@ const Account = ({ navigation }) => {
     };
 
     useEffect(() => {
-        getUserAvatar();
-    }, []);
+        if (isFocusedScreen) {
+            getUserAvatar();
+        } else {
+            setAvatar(null);
+            setLoaded(false);
+        }
+    }, [isFocusedScreen]);
 
     const currentYearsOld = (date) => {
         const currentDate = new Date();

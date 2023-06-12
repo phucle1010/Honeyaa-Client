@@ -217,12 +217,6 @@ const EditProfileScreen = (props) => {
             });
     };
 
-    // useEffect(() => {
-    //     if (isOpen) {
-    //         getProfileData();
-    //     }
-    // }, [isOpen]);
-
     const handleGetInterestList = () => {
         axios
             .get(`${API_URL}/api/user/interest`)

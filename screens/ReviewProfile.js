@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { View, Text, TouchableOpacity, SafeAreaView, ScrollView, StyleSheet, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import AwesomeExtraIcon from 'react-native-vector-icons/FontAwesome';
+import { useIsFocused } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
+
+import Loading from '../components/Loading';
 
 const PROFILES = {
     id: 1,
@@ -51,69 +56,88 @@ const PROFILES = {
 };
 
 const ReviewProfile = () => {
+    const currentUser = useSelector((state) => state.user);
+    const isFocusedScreen = useIsFocused();
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+    const [photos, setPhotos] = useState([]);
+    const [loaded, setLoaded] = useState(false);
+    const API_URL = 'http://192.168.1.186:8080';
+
+    console.log(photos);
+
+    const getImageListOfUser = async () => {
+        await axios
+            .get(`${API_URL}/api/user/profile/img/reviews`, {
+                params: {
+                    person_id: currentUser.id,
+                },
+            })
+            .then((res) => {
+                if (res.data.statusCode === 400) {
+                    Alert.alert('Error', err.toString());
+                } else {
+                    setPhotos(res.data.responseData);
+                    setLoaded(true);
+                }
+            })
+            .catch((err) => Alert.alert('Error', err.toString()));
+    };
+
+    useEffect(() => {
+        if (isFocusedScreen) {
+            getImageListOfUser();
+        } else {
+            setPhotos([]);
+        }
+    }, []);
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.goback}>
-                <Icon name="arrow-left" style={{ color: '#8B7ED7' }} size={24} />
-            </TouchableOpacity>
-            <View style={styles.containerHead}>
-                <Image source={require('../assets/img/HoneyaaLogo.png')} style={styles.logo} />
-            </View>
-            <View style={styles.tab}>
-                <TouchableOpacity style={styles.tabBtn}>
-                    <Text style={[styles.tabName, { borderRightWidth: 0.5, borderRightColor: '#B2B2B2' }]}>
-                        Edit profile
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.tabBtn}>
-                    <Text style={[styles.tabName, { borderLeftWidth: 0.5, borderLeftColor: '#B2B2B2' }]}>
-                        Review profile
-                    </Text>
-                </TouchableOpacity>
-            </View>
-            <View style={styles.imageContainer}>
-                <ScrollView horizontal pagingEnabled>
-                    {PROFILES.img.map((image) => (
-                        <TouchableOpacity
-                            key={image.id}
-                            onPress={() => setSelectedImageIndex(image.id - 1)}
-                            activeOpacity={0.8}
-                        >
-                            <Image
-                                source={{ uri: image.url }}
-                                style={[
-                                    styles.image,
-                                    {
-                                        height: '100%',
-                                        width: 450,
-                                    },
-                                    selectedImageIndex === image.id - 1 &&
-                                        {
-                                            // borderWidth: 2,
-                                            // borderColor: 'purple',
-                                        },
-                                ]}
-                            />
-                        </TouchableOpacity>
-                    ))}
-                </ScrollView>
-                <View style={styles.profileDesc}>
-                    <Text style={styles.nameUser}>{PROFILES.name}</Text>
-                    <Text style={styles.age}>{PROFILES.age}</Text>
-                    <View
-                        style={{
-                            marginLeft: 10,
-                            padding: 4,
-                            borderRadius: 50,
-                            backgroundColor: '#fff',
-                        }}
-                    >
-                        <AwesomeExtraIcon name="check" size={18} color="#0096FF" />
-                    </View>
+            {loaded ? (
+                <View style={styles.imageContainer}>
+                    <ScrollView horizontal pagingEnabled>
+                        {photos.map((image) => (
+                            <TouchableOpacity
+                                key={image.id}
+                                onPress={() => setSelectedImageIndex(image.id - 1)}
+                                activeOpacity={0.8}
+                                style={{
+                                    height: '80%',
+                                    width: 450,
+                                }}
+                            >
+                                <Image
+                                    source={{ uri: image.image }}
+                                    style={[
+                                        styles.image,
+                                        selectedImageIndex === image.id - 1 &&
+                                            {
+                                                // borderWidth: 2,
+                                                // borderColor: 'purple',
+                                            },
+                                    ]}
+                                />
+                                <View style={styles.profileDesc}>
+                                    <Text style={styles.nameUser}>{currentUser.full_name}</Text>
+                                    <Text style={styles.age}>{PROFILES.age}</Text>
+                                    <View
+                                        style={{
+                                            marginLeft: 10,
+                                            padding: 4,
+                                            borderRadius: 50,
+                                            backgroundColor: '#fff',
+                                        }}
+                                    >
+                                        <AwesomeExtraIcon name="check" size={18} color="#0096FF" />
+                                    </View>
+                                </View>
+                            </TouchableOpacity>
+                        ))}
+                    </ScrollView>
                 </View>
-            </View>
+            ) : (
+                <Loading />
+            )}
         </View>
     );
 };
@@ -171,6 +195,7 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
     },
     image: {
+        marginTop: 15,
         width: '100%',
         height: '100%',
         resizeMode: 'cover',
@@ -185,6 +210,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: 'rgba(103, 103, 103, 0.6)',
+        // backgroundColor: 'red',
         zIndex: 1,
     },
     nameUser: {

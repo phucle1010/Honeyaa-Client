@@ -8,100 +8,10 @@ import AwesomeIcon from 'react-native-vector-icons/FontAwesome5';
 import AwesomeExtraIcon from 'react-native-vector-icons/FontAwesome';
 import OctIcon from 'react-native-vector-icons/Octicons';
 import { useSelector, useDispatch } from 'react-redux';
+import { useIsFocused } from '@react-navigation/native';
 
 import { setUser, removeUserFromApp } from '../reducers/user';
 import Loading from '../components/Loading';
-
-const PROFILES = [
-    {
-        id: 1,
-        name: 'Thần Báo',
-        age: 20,
-        status: 'Hoạt động gần đây',
-        distance: 1,
-        gender: 'Nữ',
-        img: [
-            {
-                id: 1,
-                url: 'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/297be08c-1ddb-4b84-be0c-01f60d984bdc/dflvygw-248d6628-a2bb-4978-84b4-c0a2db3e674b.jpg/v1/fill/w_730,h_1095,q_70,strp/beautiful_anime_kawaii_cute_classmate_girl_by_sianworld_dflvygw-pre.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTUzNiIsInBhdGgiOiJcL2ZcLzI5N2JlMDhjLTFkZGItNGI4NC1iZTBjLTAxZjYwZDk4NGJkY1wvZGZsdnlndy0yNDhkNjYyOC1hMmJiLTQ5NzgtODRiNC1jMGEyZGIzZTY3NGIuanBnIiwid2lkdGgiOiI8PTEwMjQifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.hPOU0KOYKq6h5z0uTRwxiGCna0dRTnnmw0M7JJgi1X4',
-            },
-            {
-                id: 2,
-                url: 'https://s3.bukalapak.com/img/8106122415/large/IMG_20181230_WA0156_scaled.jpg.webp',
-            },
-            {
-                id: 3,
-                url: 'https://w0.peakpx.com/wallpaper/432/513/HD-wallpaper-anime-girl-cool-nice-refrishin.jpg',
-            },
-        ],
-        hobbies: [
-            {
-                id: 1,
-                name: 'Du lịch',
-            },
-            {
-                id: 1,
-                name: 'Nghe nhạc',
-            },
-            {
-                id: 1,
-                name: 'Ăn uống',
-            },
-            {
-                id: 1,
-                name: 'Đọc sách',
-            },
-        ],
-        introduction: 'Ly cà phê của em hơi đắng. Có vẻ thiếu vị ngọt từ anh!!!',
-        socialContact: {
-            facebook: 'annoy1010',
-            instagram: 'Annoy',
-        },
-        approachObject: 'Cần tìm người yêu',
-    },
-    {
-        id: 1,
-        name: 'Thần Báo',
-        age: 20,
-        status: 'Hoạt động gần đây',
-        distance: 1,
-        gender: 'Nữ',
-        img: [
-            {
-                id: 1,
-                url: 'https://a-static.besthdwallpaper.com/cute-anime-girl-with-her-big-eyes-wallpaper-640x1136-104648_163.jpg',
-            },
-            {
-                id: 2,
-                url: 'https://iphoneswallpapers.com/wp-content/uploads/2023/02/Anime-Cute-Girl-iPhone-Wallpaper-HD.jpg',
-            },
-        ],
-        hobbies: [
-            {
-                id: 1,
-                name: 'Du lịch',
-            },
-            {
-                id: 1,
-                name: 'Nghe nhạc',
-            },
-            {
-                id: 1,
-                name: 'Ăn uống',
-            },
-            {
-                id: 1,
-                name: 'Đọc sách',
-            },
-        ],
-        introduction: 'Ly cà phê của em hơi đắng. Có vẻ thiếu vị ngọt từ anh!!!',
-        socialContact: {
-            facebook: 'annoy1010',
-            instagram: 'Annoy',
-        },
-        approachObject: 'Cần tìm người yêu',
-    },
-];
 
 const LIKE = 1;
 const DISLIKE = 2;
@@ -156,7 +66,7 @@ const InteractNotice = ({ ...props }) => {
 
 const Home = ({ navigation, route }) => {
     const user = useSelector((state) => state.user);
-    const successfulLogin = route.params?.successfulLogin;
+    const isFocusedScreen = useIsFocused();
 
     const dispatch = useDispatch();
     const sliderItemWidth = 100; /// userProfile.img.length;
@@ -199,31 +109,34 @@ const Home = ({ navigation, route }) => {
         }
     };
 
-    successfulLogin && handleGetUser();
-
     useEffect(() => {
-        handleGetUser();
-    }, []);
+        if (isFocusedScreen) {
+            handleGetUser();
+        } else {
+            setLoadedProfiles(false);
+            setSelectedImageIndex(0);
+            setUserProfile({});
+        }
+    }, [isFocusedScreen]);
 
     const getUserProfile = async () => {
-        const token = JSON.parse(await AsyncStorage.getItem('user_token'));
-        const response = await axios.get(`${API_URL}/api/user/potential_love`, { params: { token } });
-        return response.data;
-    };
-
-    const fetchUserProfile = async () => {
-        try {
-            const data = await getUserProfile();
-            setUserProfile(data);
-            setLoadedProfiles(true);
-        } catch (error) {
-            console.log(error);
-        }
+        await AsyncStorage.getItem('user_token').then((token) => {
+            axios
+                .get(`${API_URL}/api/user/potential_love`, {
+                    params: {
+                        userInfo: user,
+                    },
+                })
+                .then((response) => {
+                    setUserProfile(response.data);
+                    setLoadedProfiles(true);
+                });
+        });
     };
 
     useEffect(() => {
         if (user?.id && !loadedProfiles) {
-            fetchUserProfile();
+            getUserProfile();
         }
     }, [user]);
 
@@ -266,8 +179,17 @@ const Home = ({ navigation, route }) => {
                 })
                 .then(async (res) => {
                     if (res.data.statusCode === 200) {
-                        showInteractMessage(type, res.data.responseData); /// Hiển thị thanh trượt xuống thông báo tương tác vừa thực hiện
-                        await fetchUserProfile();
+                        if (res.data.is_matched) {
+                            // navigate tới màn hình matched
+                            await getUserProfile();
+                            await navigation.navigate('Matched', {
+                                person_img: user.img[0].image,
+                                target_img: userProfile.img[0].image,
+                            });
+                        } else {
+                            showInteractMessage(type, res.data.responseData); /// Hiển thị thanh trượt xuống thông báo tương tác vừa thực hiện
+                            await getUserProfile();
+                        }
                     } else {
                         Alert.alert('Fail', res.data.responseData);
                     }
@@ -299,143 +221,152 @@ const Home = ({ navigation, route }) => {
                             <AwesomeIcon name="sliders-h" size={20} style={styles.optionIcon} />
                         </View>
                     </View>
-                    <View style={styles.profile}>
-                        <View style={styles.slider}>
-                            {(userProfile.img.length > 0 ? userProfile.img : PROFILES[0].img).map((profile, index) => (
-                                <TouchableOpacity
-                                    key={index}
-                                    style={{
-                                        ...styles.sliderItem,
-                                        backgroundColor:
-                                            index !== selectedImageIndex
-                                                ? 'rgba(103, 103, 103, 0.3)'
-                                                : 'rgba(255, 255, 255, 0.8)',
-                                        width: `${sliderItemWidth}%`,
-                                    }}
-                                    onPress={() => setSelectedImageIndex(index)}
-                                />
-                            ))}
-                        </View>
-                        {
-                            <Image
-                                source={{
-                                    uri: PROFILES[0].img[selectedImageIndex].url,
-                                }}
-                                style={styles.profileImage}
-                            />
-                        }
-                        <View style={styles.profileInfo}>
-                            <View style={styles.profileDesc}>
-                                {/* Họ tên */}
-                                <Text
-                                    style={{
-                                        ...styles.profileDetailItem,
-                                        fontWeight: '700',
-                                        letterSpacing: 1,
-                                        fontFamily: 'Poppins',
-                                    }}
-                                >
-                                    {userProfile.name && userProfile.name.length > 14
-                                        ? userProfile.name.substring(0, 11) + '...'
-                                        : userProfile.name}
-                                </Text>
-                                {/* Ngày sinh */}
-                                <Text style={{ ...styles.profileDetailItem, fontSize: 26 }}>
-                                    {currentYearsOld(userProfile.dob)}
-                                </Text>
-                                <View
-                                    style={{
-                                        width: 26,
-                                        height: 26,
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        backgroundColor: '#fff',
-                                        borderRadius: 50,
-                                        elevation: 4,
-                                    }}
-                                >
-                                    <AwesomeExtraIcon name="check" size={18} color="#0096FF" />
+                    {loadedProfiles &&
+                        (Object.keys(userProfile).length > 0 ? (
+                            <View style={styles.profile}>
+                                <View style={styles.slider}>
+                                    {userProfile?.img.length > 0 &&
+                                        userProfile?.img.map((profile, index) => (
+                                            <TouchableOpacity
+                                                key={index}
+                                                style={{
+                                                    ...styles.sliderItem,
+                                                    backgroundColor:
+                                                        index !== selectedImageIndex
+                                                            ? 'rgba(103, 103, 103, 0.3)'
+                                                            : 'rgba(255, 255, 255, 0.8)',
+                                                    width: `${100 / userProfile?.img.length}%`,
+                                                }}
+                                                onPress={() => setSelectedImageIndex(index)}
+                                            />
+                                        ))}
+                                </View>
+                                {
+                                    <Image
+                                        source={{
+                                            uri: userProfile?.img[selectedImageIndex].image,
+                                        }}
+                                        style={styles.profileImage}
+                                    />
+                                }
+                                <View style={styles.profileInfo}>
+                                    <View style={styles.profileDesc}>
+                                        {/* Họ tên */}
+                                        <Text
+                                            style={{
+                                                ...styles.profileDetailItem,
+                                                fontWeight: '700',
+                                                letterSpacing: 1,
+                                                fontFamily: 'Poppins',
+                                            }}
+                                        >
+                                            {userProfile.name && userProfile.name.length > 14
+                                                ? userProfile.name.substring(0, 11) + '...'
+                                                : userProfile.name}
+                                        </Text>
+                                        {/* Ngày sinh */}
+                                        <Text style={{ ...styles.profileDetailItem, fontSize: 26 }}>
+                                            {currentYearsOld(userProfile.dob)}
+                                        </Text>
+                                        <View
+                                            style={{
+                                                width: 26,
+                                                height: 26,
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                backgroundColor: '#fff',
+                                                borderRadius: 50,
+                                                elevation: 4,
+                                            }}
+                                        >
+                                            <AwesomeExtraIcon name="check" size={18} color="#0096FF" />
+                                        </View>
+                                    </View>
+                                    <View style={styles.profileDesc}>
+                                        <Text
+                                            style={{
+                                                ...styles.profileDetailItem,
+                                                marginTop: 10,
+                                                marginBottom: 4,
+                                                paddingHorizontal: 10,
+                                                paddingVertical: 4,
+                                                fontSize: 16,
+                                                color: '#fff',
+                                                fontWeight: '400',
+                                                backgroundColor: '#0BDA51',
+                                                borderRadius: 20,
+                                            }}
+                                        >
+                                            {userProfile.status}
+                                        </Text>
+                                    </View>
+                                    <View style={styles.profileDesc}>
+                                        <Text
+                                            style={{
+                                                ...styles.profileDetailItem,
+                                                fontSize: 18,
+                                                color: '#fff',
+                                                fontWeight: '500',
+                                            }}
+                                        >{`Cách xa ${userProfile.distance}km`}</Text>
+                                        <Icon
+                                            name="location-sharp"
+                                            style={{
+                                                ...styles.profileDetailItem,
+                                                fontSize: 18,
+                                                color: '#ffff',
+                                                marginLeft: 0,
+                                            }}
+                                        />
+                                    </View>
+                                    <TouchableOpacity
+                                        style={{
+                                            marginLeft: 'auto',
+                                            width: 25,
+                                            height: 25,
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            backgroundColor: '#EF8484',
+                                            borderRadius: 50,
+                                            elevation: 4,
+                                        }}
+                                        onClick={() => console.log('Click view detail')}
+                                    >
+                                        <Icon name="arrow-down" size={20} color="#ffff" onPress={() => {}} />
+                                    </TouchableOpacity>
+                                </View>
+
+                                <View style={styles.profileOptions}>
+                                    <TouchableOpacity
+                                        style={{ ...styles.profileOptionItem, borderColor: '#ffbf00' }}
+                                        onPress={handleRedoProfile}
+                                    >
+                                        <AwesomeIcon name="redo" size={24} color="#ffbf00" />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={{ ...styles.profileOptionItem, borderColor: '#fa5f55' }}
+                                        onPress={() => handlePostInteract(DISLIKE)}
+                                    >
+                                        <AwesomeExtraIcon name="close" size={30} color="#fa5f55" />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={{ ...styles.profileOptionItem, borderColor: '#40b5ad' }}
+                                        onPress={() => handlePostInteract(LIKE)}
+                                    >
+                                        <AwesomeExtraIcon name="heart" size={24} color="#40b5ad" />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={{ ...styles.profileOptionItem, borderColor: '#00bfff' }}
+                                        onPress={() => handlePostInteract(SUPER_LIKE)}
+                                    >
+                                        <AwesomeExtraIcon name="star" size={24} color="#00bfff" />
+                                    </TouchableOpacity>
                                 </View>
                             </View>
-                            <View style={styles.profileDesc}>
-                                <Text
-                                    style={{
-                                        ...styles.profileDetailItem,
-                                        marginTop: 10,
-                                        marginBottom: 4,
-                                        paddingHorizontal: 10,
-                                        paddingVertical: 4,
-                                        fontSize: 16,
-                                        color: '#fff',
-                                        fontWeight: '400',
-                                        backgroundColor: '#0BDA51',
-                                        borderRadius: 20,
-                                    }}
-                                >
-                                    {userProfile.status}
-                                </Text>
-                            </View>
-                            <View style={styles.profileDesc}>
-                                <Text
-                                    style={{
-                                        ...styles.profileDetailItem,
-                                        fontSize: 18,
-                                        color: '#fff',
-                                        fontWeight: '500',
-                                    }}
-                                >{`Cách xa ${userProfile.distance}km`}</Text>
-                                <Icon
-                                    name="location-sharp"
-                                    style={{
-                                        ...styles.profileDetailItem,
-                                        fontSize: 18,
-                                        color: '#ffff',
-                                        marginLeft: 0,
-                                    }}
-                                />
-                            </View>
-                            <TouchableOpacity
-                                style={{
-                                    marginLeft: 'auto',
-                                    width: 25,
-                                    height: 25,
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    backgroundColor: '#fff',
-                                    borderRadius: 50,
-                                    elevation: 4,
-                                }}
-                            >
-                                <Icon name="arrow-down" size={15} color="#767676" onPress={() => {}} />
-                            </TouchableOpacity>
-                        </View>
-                        <View style={styles.profileOptions}>
-                            <TouchableOpacity
-                                style={{ ...styles.profileOptionItem, borderColor: '#ffbf00' }}
-                                onPress={handleRedoProfile}
-                            >
-                                <AwesomeIcon name="redo" size={24} color="#ffbf00" />
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={{ ...styles.profileOptionItem, borderColor: '#fa5f55' }}
-                                onPress={() => handlePostInteract(DISLIKE)}
-                            >
-                                <AwesomeExtraIcon name="close" size={30} color="#fa5f55" />
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={{ ...styles.profileOptionItem, borderColor: '#40b5ad' }}
-                                onPress={() => handlePostInteract(LIKE)}
-                            >
-                                <AwesomeExtraIcon name="heart" size={24} color="#40b5ad" />
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={{ ...styles.profileOptionItem, borderColor: '#00bfff' }}
-                                onPress={() => handlePostInteract(SUPER_LIKE)}
-                            >
-                                <AwesomeExtraIcon name="star" size={24} color="#00bfff" />
-                            </TouchableOpacity>
-                        </View>
-                    </View>
+                        ) : (
+                            <Text>Bạn đã xem hết Profile có sẵn</Text>
+                        ))}
+
                     {interactMessageConfig.message && (
                         <InteractNotice
                             interactMessageConfig={interactMessageConfig}
@@ -519,7 +450,7 @@ const styles = StyleSheet.create({
     },
     profileDesc: {
         flexDirection: 'row',
-        alignItems: 'baseline',
+        alignItems: 'center',
     },
     profileDetailItem: {
         marginRight: 10,
