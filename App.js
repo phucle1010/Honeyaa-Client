@@ -15,6 +15,8 @@ import SettingDateObject from './screens/SettingDateObject';
 import SettingInterest from './screens/SettingInterest';
 import FinishSignUp from './screens/FinishSignUp';
 import SignUp from './screens/SignUp';
+import MatchChat from './screens/MatchChat';
+import Chat from './screens/Chat';
 const Stack = createNativeStackNavigator();
 
 const App = () => {
@@ -35,6 +37,8 @@ const App = () => {
         <Stack.Screen name="SettingDateObject" component={SettingDateObject}/>
         <Stack.Screen name="SettingInterest" component={SettingInterest}/>
         <Stack.Screen name="FinishSignUp" component={FinishSignUp}/>
+        <Stack.Screen name="Chat" component={Chat} options={{ unmountOnBlur: true }}/>
+        <Stack.Screen name="MatchChat" component={MatchChat} options={{ unmountOnBlur: true }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

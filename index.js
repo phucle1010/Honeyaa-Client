@@ -19,5 +19,6 @@ import SettingInterest from './screens/SettingInterest';
 import FinishSignUp from './screens/FinishSignUp';
 import SignUp from './screens/SignUp';
 import ProfileScreen from './screens/ProfileScreen';
-
+import Chat from './screens/Chat';
+import MatchChat from './screens/MatchChat';
 AppRegistry.registerComponent(appName, () => App);

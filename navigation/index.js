@@ -4,7 +4,7 @@ import Discover from '../screens/Discover';
 import Favorites from '../screens/Favorites';
 import Home from '../screens/Home';
 import ProfileDetail from '../screens/ProfileDetail';
-
+import MatchChat from '../screens/MatchChat';
 const screens = [
     {
         name: 'Home',
@@ -34,8 +34,8 @@ const screens = [
         isHideTab: false,
     },
     {
-        name: 'Chat',
-        component: Chat,
+        name: 'MatchChat',
+        component: MatchChat,
         tabIconName: 'chat-outline',
         tabIconSize: 30,
         tabIconColor: '#faa0a0',
