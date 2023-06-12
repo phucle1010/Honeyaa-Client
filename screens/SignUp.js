@@ -41,11 +41,11 @@ const SignUp = (props) => {
                     .catch((error) => {
                         console.log(error);
                         if (error.response && error.response.status === 500) {
-                            Alert.alert('Lỗi', error.response);
+                            Alert.alert('Lỗi', error.response.data.error);
                         } else if (error.response && error.response.status === 400) {
                             Alert.alert('Lỗi', error.response);
                         } else if (error.response && error.response.status === 404) {
-                            Alert.alert('Lỗi', error.response);
+                            Alert.alert('Lỗi', error.response.data.error);
                         } else {
                             Alert.alert('Lỗi', 'Unknown error, please try again later');
                         }

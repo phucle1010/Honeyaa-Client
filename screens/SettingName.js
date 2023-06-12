@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 const SettingName = (props) => {
     const { navigation, route } = props;
     const [err, setErr] = useState('');
-    const { phone, pass } = route.params;
+    const { phone, pass } = route.params || {'phone': '0989250614', 'pass': '123456'};
     const [name, setName] = useState('');
     const handlePress = () => {
         console.log(name);

@@ -13,7 +13,7 @@ const BottomTab = () => {
 
     return (
         <Tab.Navigator
-            initialRouteName="ReviewProfile"
+            initialRouteName="SettingName"
             screenOptions={{
                 headerShown: false,
                 tabBarStyle: styles.container,

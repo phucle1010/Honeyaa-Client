@@ -8,22 +8,52 @@ const SettingAddPhoto = ({ navigation, route }) => {
 
     const [photo, setPhoto] = React.useState(null);
     const [photo1, setPhoto1] = React.useState(null);
+    const [image, setImage] = useState();
+    const [image1, setImage1] = useState();
+    const options = {
+        mediaType: 'photo',
+        includeBase64: true,
+      };
 
     const handleChoosePhoto = () => {
-        launchImageLibrary({ noData: true }, (response) => {
+        launchImageLibrary(options, (response) => {
             if (response) {
                 if (!response.didCancel) {
-                    setPhoto(response.assets[0].uri);
+                    //setImage(response.assets[0].uri);
+                    // setImage(`data:${response.assets[0].type};base64,${response.base64}`);
+                    // setPhoto(response.base64);
+                    // console.log(response.base64);
+                    const type = response.assets[0].type;
+                    const base64 = response.assets[0].base64;
+                    if (type && base64) {
+                        setImage(`data:${type};base64,${base64}`);
+                        setPhoto(base64);
+                    } else {
+                        console.log('Error: Invalid image data');
+                        console.log(response);
+                    }
                 }
             }
         });
     };
 
     const handleChoosePhoto1 = () => {
-        launchImageLibrary({ noData: true }, (response) => {
+        launchImageLibrary(options, (response) => {
             if (response) {
                 if (!response.didCancel) {
-                    setPhoto1(response.assets[0].uri);
+                    // //setImage1(response.assets[0].uri);
+                    // setImage1(`data:${response.assets[0].type};base64,${response.base64}`);
+                    // setPhoto1(response.base64);
+                    // console.log(response.base64);
+                    const type = response.assets[0].type;
+                    const base64 = response.assets[0].base64;
+                    if (type && base64) {
+                        setImage1(`data:${type};base64,${base64}`);
+                        setPhoto1(base64);
+                    } else {
+                        console.log('Error: Invalid image data');
+                        console.log(response);
+                    }
                 }
             }
         });
@@ -33,6 +63,7 @@ const SettingAddPhoto = ({ navigation, route }) => {
         if (photo === null || photo1 === null) {
             Alert.alert('You must have two picture for you to sign in');
         } else {
+            console.log(photo, photo1);
             navigation.navigate('SettingGender', { phone, pass, name, birthday, photo1, photo });
         }
     };
@@ -62,16 +93,16 @@ const SettingAddPhoto = ({ navigation, route }) => {
                 <View style={styles.containerImages}>
                     {
                         <TouchableOpacity style={styles.btnAddImage} onPress={handleChoosePhoto}>
-                            {photo ? (
-                                <Image source={{ uri: photo }} style={{ width: '100%', height: '100%' }} />
+                            {image ? (
+                                <Image source={{ uri: image }} style={{ width: '100%', height: '100%' }} />
                             ) : (
                                 <Icon style={styles.icon} name="plus" />
                             )}
                         </TouchableOpacity>
                     }
                     <TouchableOpacity style={styles.btnAddImage} onPress={handleChoosePhoto1}>
-                        {photo1 ? (
-                            <Image source={{ uri: photo1 }} style={{ width: '100%', height: '100%' }} />
+                        {image1 ? (
+                            <Image source={{ uri: image1 }} style={{ width: '100%', height: '100%' }} />
                         ) : (
                             <Icon style={styles.icon} name="plus" />
                         )}

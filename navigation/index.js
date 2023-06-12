@@ -24,6 +24,7 @@ import VerifyOTP from '../screens/VerifyOTP';
 import VerifyResetPhone from '../screens/VerifyResetPhone';
 import ViewProfile from '../screens/ViewProfile';
 import ReviewProfile from '../screens/ReviewProfile';
+import VerifyPhone from '../screens/VerifyPhone';
 
 const screens = [
     {
@@ -279,6 +280,16 @@ const screens = [
     {
         name: 'ReviewProfile',
         component: ReviewProfile,
+        tabIconName: 'account-circle-outline',
+        tabIconSize: 30,
+        tabIconColor: '#faa0a0',
+        activeColor: '#ee4b2b',
+        isHideTabItem: true,
+        isHideNavigationTab: true,
+    },
+    {
+        name: 'VerifyPhone',
+        component: VerifyPhone,
         tabIconName: 'account-circle-outline',
         tabIconSize: 30,
         tabIconColor: '#faa0a0',
