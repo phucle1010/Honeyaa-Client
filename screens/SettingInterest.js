@@ -1,50 +1,38 @@
 import axios from 'axios';
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, SafeAreaView, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, SafeAreaView, StyleSheet, ScrollView, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-const API_URI = 'http://192.168.1.13:8080';
-
-const createFormData = (photo, body = {}) => {
-    const data = new FormData();
-
-    data.append('photo', {
-        name: photo.fileName,
-        type: photo.type,
-        uri: Platform.OS === 'ios' ? photo.uri.replace('file://', '') : photo.uri,
-    });
-
-    Object.keys(body).forEach((key) => {
-        data.append(key, body[key]);
-    });
-
-    return data;
-};
+const API_URI = 'http://192.168.1.186:8080';
 
 const SettingInterest = ({ navigation, route }) => {
     const [selectedInterests, setSelectedInterests] = useState([]);
     const { phone, pass, name, birthday, photo, photo1, gender, obgender } = route.params;
+    const [interests, setInterests] = useState([]);
+
+    const loadInterests = async () => {
+        await axios
+            .get(`${API_URI}/api/user/interest`)
+            .then((res) => setInterests(res.data))
+            .catch((err) => console(err));
+    };
+
+    useEffect(() => {
+        loadInterests();
+    }, []);
+
+    const toggleInterest = (interestId) => {
+        if (selectedInterests.includes(interestId)) {
+            setSelectedInterests(selectedInterests.filter((id) => id !== interestId));
+        } else {
+            setSelectedInterests([...selectedInterests, interestId]);
+        }
+    };
 
     const handleGoBack = () => {
         navigation.goBack();
     };
 
-    const selectInterest = (interest) => {
-        const index = selectedInterests.indexOf(interest);
-        if (index === -1) {
-            setSelectedInterests([...selectedInterests, interest]);
-        } else {
-            const newInterests = [...selectedInterests];
-            newInterests.splice(index, 1);
-            setSelectedInterests(newInterests);
-        }
-    };
-
-    const isInterestSelected = (interest) => {
-        return selectedInterests.includes(interest);
-    };
-
     const handleFinish = () => {
-        console.log({ phone, pass, name, birthday, photo, photo1, gender, obgender, interests: selectedInterests });
         axios
             .post(`${API_URI}/api/user/signup`, {
                 phone,
@@ -57,8 +45,12 @@ const SettingInterest = ({ navigation, route }) => {
                 obgender,
                 interests: selectedInterests,
             })
-            .then((res) => console.log('Sign up successful'))
-            .catch((err) => console.log(err));
+            .then((res) => {
+                if (res.status === 200) {
+                    navigation.navigate('FinishSignUp', route);
+                }
+            })
+            .catch((err) => Alert.alert(err));
     };
 
     return (
@@ -80,48 +72,27 @@ const SettingInterest = ({ navigation, route }) => {
                     Step 6 of 6
                 </Text>
             </View>
-            <View style={{ flex: 1, justifyContent: 'center' }}>
+            <View style={{ flex: 3, justifyContent: 'center' }}>
                 <Text style={styles.title}>Your interests?</Text>
-                <View style={styles.listInterest}>
-                    <TouchableOpacity
-                        style={[styles.itemInterest, isInterestSelected('Travel') && styles.selectedInterest]}
-                        onPress={() => selectInterest('Travel')}
-                    >
-                        <Text>Travel</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[styles.itemInterest, isInterestSelected('Sing') && styles.selectedInterest]}
-                        onPress={() => selectInterest('Sing')}
-                    >
-                        <Text>Sing</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[styles.itemInterest, isInterestSelected('Art') && styles.selectedInterest]}
-                        onPress={() => selectInterest('Art')}
-                    >
-                        <Text>Art</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[styles.itemInterest, isInterestSelected('Cook') && styles.selectedInterest]}
-                        onPress={() => selectInterest('Cook')}
-                    >
-                        <Text>Cook</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[styles.itemInterest, isInterestSelected('Eat') && styles.selectedInterest]}
-                        onPress={() => selectInterest('Eat')}
-                    >
-                        <Text>Eat</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[styles.itemInterest, isInterestSelected('Music') && styles.selectedInterest]}
-                        onPress={() => selectInterest('Music')}
-                    >
-                        <Text>Music</Text>
-                    </TouchableOpacity>
-                </View>
+                <ScrollView>
+                    <View style={styles.listInterest}>
+                        {interests.length > 0 &&
+                            interests.map((item) => (
+                                <TouchableOpacity
+                                    key={item.id}
+                                    onPress={() => toggleInterest(item.id)}
+                                    style={[
+                                        styles.itemInterest,
+                                        selectedInterests.includes(item.id) && styles.selectedInterest,
+                                    ]}
+                                >
+                                    <Text>{item.name}</Text>
+                                </TouchableOpacity>
+                            ))}
+                    </View>
+                </ScrollView>
             </View>
-            <View style={{ flex: 1, justifyContent: 'center' }}>
+            <View style={{ flex: 2, justifyContent: 'center' }}>
                 <TouchableOpacity style={styles.btn} onPress={() => handleFinish()}>
                     <Text style={{ color: '#FFFFFF' }}>Finish</Text>
                 </TouchableOpacity>
@@ -151,7 +122,8 @@ const styles = StyleSheet.create({
     },
     itemInterest: {
         height: 46,
-        paddingHorizontal: 30,
+        alignSelf: 'flex-start',
+        paddingHorizontal: 10,
         borderWidth: 1,
         alignItems: 'center',
         justifyContent: 'center',

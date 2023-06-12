@@ -8,8 +8,34 @@ const SettingAddPhoto = ({ navigation, route }) => {
 
     const [photo, setPhoto] = React.useState(null);
     const [photo1, setPhoto1] = React.useState(null);
+    const [image, setImage] = useState();
+    const [image1, setImage1] = useState();
+    const options = {
+        mediaType: 'photo',
+        includeBase64: true,
+    };
 
     const handleChoosePhoto = () => {
+        // launchImageLibrary(options, (response) => {
+        //     if (response) {
+        //         if (!response.didCancel) {
+        //             //setImage(response.assets[0].uri);
+        //             // setImage(`data:${response.assets[0].type};base64,${response.base64}`);
+        //             // setPhoto(response.base64);
+        //             // console.log(response.base64);
+        //             const type = response.assets[0].type;
+        //             const base64 = response.assets[0].base64;
+        //             if (type && base64) {
+        //                 setImage(`data:${type};base64,${base64}`);
+        //                 setPhoto(base64);
+        //             } else {
+        //                 console.log('Error: Invalid image data');
+        //                 console.log(response);
+        //             }
+        //         }
+        //     }
+        // });
+
         launchImageLibrary({ noData: true }, (response) => {
             if (response) {
                 if (!response.didCancel) {
@@ -20,19 +46,48 @@ const SettingAddPhoto = ({ navigation, route }) => {
     };
 
     const handleChoosePhoto1 = () => {
+        // launchImageLibrary(options, (response) => {
+        //     if (response) {
+        //         if (!response.didCancel) {
+        //             // //setImage1(response.assets[0].uri);
+        //             // setImage1(`data:${response.assets[0].type};base64,${response.base64}`);
+        //             // setPhoto1(response.base64);
+        //             // console.log(response.base64);
+        //             const type = response.assets[0].type;
+        //             const base64 = response.assets[0].base64;
+        //             if (type && base64) {
+        //                 setImage1(`data:${type};base64,${base64}`);
+        //                 setPhoto1(base64);
+        //             } else {
+        //                 console.log('Error: Invalid image data');
+        //                 console.log(response);
+        //             }
+        //         }
+        //     }
+        // });
+
         launchImageLibrary({ noData: true }, (response) => {
             if (response) {
                 if (!response.didCancel) {
-                    setPhoto1(response.assets(0).uri);
+                    setPhoto1(response.assets[0].uri);
                 }
             }
         });
     };
 
-    const handleContinue = async () => {
+    const handleContinue = () => {
         if (photo === null || photo1 === null) {
             Alert.alert('You must have two picture for you to sign in');
         } else {
+            // const data = {
+            //     phone,
+            //     pass,
+            //     name,
+            //     birthday,
+            //     photo,
+            //     photo1,
+            // };
+            // console.log(data);
             navigation.navigate('SettingGender', { phone, pass, name, birthday, photo1, photo });
         }
     };
@@ -88,6 +143,7 @@ const SettingAddPhoto = ({ navigation, route }) => {
                         backgroundColor: '#503EBF',
                         marginTop: 56,
                     }}
+                    onPress={handleContinue}
                 >
                     <Text style={{ color: '#FFFFFF', fontSize: 18 }} onPress={handleContinue}>
                         Continue
@@ -145,6 +201,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         margin: 10,
+        overflow: 'hidden',
     },
     icon: {
         fontSize: 50,

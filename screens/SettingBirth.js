@@ -8,14 +8,18 @@ const SettingBirth = ({ navigation, route }) => {
     const [birthday, setBirthDay] = useState(new Date());
     const [openDatePicker, setOpenDatePicker] = useState(false);
 
-    const handlePress = useCallback(() => {
-        navigation.navigate('SettingAddPhotos', {
+    // const handlePress = useCallback(() => {
+
+    // }, [navigation, phone, pass, name, birthday]);
+
+    const handlePress = () => {
+        navigation.navigate('SettingAddPhoto', {
             phone,
             pass,
             name,
             birthday: birthday.toISOString().substring(0, 10),
         });
-    }, [navigation, phone, pass, name, birthday]);
+    };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -102,10 +106,9 @@ const SettingBirth = ({ navigation, route }) => {
                         backgroundColor: '#503EBF',
                         marginTop: 56,
                     }}
+                    onPress={handlePress}
                 >
-                    <Text style={{ color: '#FFFFFF', fontSize: 18 }} onPress={handlePress}>
-                        Continue
-                    </Text>
+                    <Text style={{ color: '#FFFFFF', fontSize: 18 }}>Continue</Text>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>
