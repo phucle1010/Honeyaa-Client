@@ -6,7 +6,7 @@ const VerifyPhoneNumber = (props) => {
     const [message, setMessage] = useState('')
     const [phone, setPhone] = useState('')
     const { navigation } = props
-    const API_URL = 'http://192.168.0.104:8080';
+    const API_URL = 'http://192.168.0.134:8080';
     let lastRequestTime = null;
     const MIN_REQUEST_INTERVAL = 10000; 
     const sendOtp = () => {

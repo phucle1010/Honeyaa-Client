@@ -17,12 +17,15 @@ import FinishSignUp from './screens/FinishSignUp';
 import SignUp from './screens/SignUp';
 import MatchChat from './screens/MatchChat';
 import Chat from './screens/Chat';
+import Tendency from './screens/Tendency';
+// import SettingProfile from './screens/SettingProfile';
+// import AnswerQuestion from './screens/AnswerQuestion';
 const Stack = createNativeStackNavigator();
 
 const App = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='BottomTab' screenOptions={{headerShown:false}}>
+      <Stack.Navigator initialRouteName='Tendency' screenOptions={{headerShown:false}}>
         <Stack.Screen name="SignUp" component={SignUp}/>
         <Stack.Screen name="RestoreAccount" component={RestoreAccount} />
         <Stack.Screen name="VerifyOTP" component={VerifyOTP} />
@@ -37,8 +40,9 @@ const App = () => {
         <Stack.Screen name="SettingDateObject" component={SettingDateObject}/>
         <Stack.Screen name="SettingInterest" component={SettingInterest}/>
         <Stack.Screen name="FinishSignUp" component={FinishSignUp}/>
-        <Stack.Screen name="Chat" component={Chat} options={{ unmountOnBlur: true }}/>
-        <Stack.Screen name="MatchChat" component={MatchChat} options={{ unmountOnBlur: true }}/>
+        <Stack.Screen name="Chat" component={Chat}/>
+        <Stack.Screen name="MatchChat" component={MatchChat}/>
+        {/* <Stack.Screen name="Tendency" component={Tendency}/> */}
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -8,7 +8,7 @@ import {
   StyleSheet,
 } from "react-native";
 import Icon from 'react-native-vector-icons/FontAwesome5';
-const API_URI = 'http://192.168.1.13:8080';
+const API_URI = 'http://192.168.0.134:8080';
 
 
 const createFormData = (photo, body = {}) => {

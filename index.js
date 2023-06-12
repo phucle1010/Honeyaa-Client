@@ -21,4 +21,9 @@ import SignUp from './screens/SignUp';
 import ProfileScreen from './screens/ProfileScreen';
 import Chat from './screens/Chat';
 import MatchChat from './screens/MatchChat';
+import SettingProfile from './screens/SettingProfile';
+import Discover from './screens/Discover';
+import Tendency from './screens/Tendency';
+import AnswerQuestion from './screens/AnswerQuestion'
+
 AppRegistry.registerComponent(appName, () => App);

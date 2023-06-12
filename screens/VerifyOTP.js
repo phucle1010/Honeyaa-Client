@@ -13,7 +13,7 @@ const VerifyOTP = (props) => {
     const [input3, setInput3] = useState('');
     const [input4, setInput4] = useState('');
     const [message, setMessage] = useState('');
-    const API_URL = 'http://192.168.0.104:8080';
+    const API_URL = 'http://192.168.0.134:8080';
     useEffect(()=>{
         setOtp(input1.concat(input2,input3,input4))
     },[input1,input2,input3,input4])

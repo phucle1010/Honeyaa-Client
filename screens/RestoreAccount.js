@@ -20,7 +20,7 @@ const RestoreAccount = (props) => {
             setMessage('Please complete all information')
             return;
         }
-        axios.put(`http://192.168.0.104:8080/user/${route.params.phone}/pass`, { pass: password })
+        axios.put(`http://192.168.0.134:8080/user/${route.params.phone}/pass`, { pass: password })
             .then(response => {
                 setModalVisible(true)
                 setPassword('')
