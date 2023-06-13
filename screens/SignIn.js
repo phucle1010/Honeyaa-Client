@@ -25,6 +25,8 @@ import {
 } from 'react-native-fbsdk-next';
 import { useSelector } from 'react-redux';
 import { setUser } from '../reducers/user';
+import DeviceInfo from 'react-native-device-info';
+import { useIsFocused } from '@react-navigation/native';
 
 const API_URL = 'http://192.168.1.186:8080';
 
@@ -33,8 +35,10 @@ const SignIn = ({ navigation }) => {
         phone: '',
         pass: '',
     };
+    const isFocusedScreen = useIsFocused();
     const [userInput, setUserInput] = useState(initUserInput);
     const [successLogin, setSuccessLogin] = useState(false);
+    const [deviceId, setDeviceId] = useState(null);
 
     useEffect(() => {
         if (successLogin) {
@@ -44,9 +48,20 @@ const SignIn = ({ navigation }) => {
         }
     }, [successLogin]);
 
+    useEffect(() => {
+        if (isFocusedScreen) {
+            DeviceInfo.getUniqueId().then((device_id) => setDeviceId(device_id));
+        } else {
+            setDeviceId(null);
+        }
+    }, [isFocusedScreen]);
+
     const handleLogin = async () => {
         await axios
-            .post(`${API_URL}/api/user/login`, userInput)
+            .post(`${API_URL}/api/user/login`, {
+                ...userInput,
+                device_id: deviceId,
+            })
             .then((res) => {
                 if (res.data.statusCode === 400) {
                     Alert.alert('Warning', res.data.responseData);
@@ -70,11 +85,11 @@ const SignIn = ({ navigation }) => {
         } catch (error) {
             console.log({ error });
             if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-                alert('Cancel');
+                Alert.alert('Cancel');
             } else if (error.code === statusCodes.IN_PROGRESS) {
-                alert('Signin in progress');
+                Alert.alert('Signin in progress');
             } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-                alert('PLAY_SERVICES_NOT_AVAILABLE');
+                Alert.alert('PLAY_SERVICES_NOT_AVAILABLE');
             } else {
             }
         }

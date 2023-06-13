@@ -1,183 +1,164 @@
-import React from 'react';
-import {
-    SafeAreaView,
-    View,
-    Text,
-    TextInput,
-    Image,
-    StyleSheet,
-    TouchableOpacity,
-    Dimensions,
-    ScrollView,
-} from 'react-native';
+import React, { useState, useCallback, useEffect } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import { View, Text, TouchableOpacity, SafeAreaView, StyleSheet, Image, TextInput, FlatList } from 'react-native';
+import axios from 'axios';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { useSelector } from 'react-redux';
 
-const img = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-const chats = [1];
-const full_name = 'Nguyễn Quỳnh Hương Giang Vũ';
-const chat_content = 'Hi, chào bạn. Rất vui vì được làm quen với bạn';
+const MatchChat = (props) => {
+    // lấy id của currentUser trong redux
+    const currentUser = useSelector((state) => state.user);
+    const { navigation } = props;
+    const [data, setData] = useState([]);
+    const [search, setSearch] = useState('');
+    const API_URL = 'http://192.168.1.186:8080/api/user';
 
-const MatchChat = ({ navigation }) => {
+    let searchData;
+    if (data.length > 0) {
+        searchData = data.filter((item) => item.full_name.toLowerCase().includes(search.toLowerCase()));
+    }
+    useFocusEffect(
+        useCallback(() => {
+            const getData = () => {
+                axios
+                    .get(`${API_URL}/matchchat/${currentUser.id}`)
+                    .then((response) => {
+                        setData(response.data);
+                    })
+                    .catch((error) => {
+                        console.log('lỗi:', error);
+                    });
+            };
+            getData();
+        }, [currentUser]),
+    );
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView showsVerticalScrollIndicator={false}>
-                <View style={styles.searchContainer}>
-                    <TouchableOpacity style={{ paddingLeft: 15 }}>
-                        <Icon name="search-outline" size={25} color="#b2b2b2" />
-                    </TouchableOpacity>
-                    <TextInput style={styles.searchInput} placeholder="Search here" />
-                </View>
-                <View
-                    style={{
-                        marginTop: 30,
-                        height: 90,
-                    }}
-                >
-                    <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                        {img.map((item, index) => (
-                            <View
-                                key={index}
-                                style={{
-                                    ...styles.avatar,
-                                    marginLeft: (Dimensions.get('window').width - 346) / 2,
-                                }}
-                            >
-                                <Image
-                                    source={require('../assets/img/boy-anime.jpg')}
-                                    style={{
-                                        width: '90%',
-                                        height: '90%',
-                                        borderRadius: 50,
-                                    }}
-                                />
-                            </View>
-                        ))}
-                    </ScrollView>
-                </View>
-                <Text
-                    style={{
-                        marginLeft: (Dimensions.get('window').width - 346) / 2,
-                        paddingBottom: 10,
-                        color: '#FF6868',
-                        fontFamily: 'Overpass',
-                        fontStyle: 'normal',
-                        fontWeight: 500,
-                        fontSize: 18,
-                    }}
-                >
-                    Messages
-                </Text>
-                <View
-                    style={{
-                        paddingBottom: 80,
-                        paddingHorizontal: (Dimensions.get('window').width - 346) / 2,
-                    }}
-                >
-                    {chats.map((item, index) => (
+            <View style={styles.searchInputContainer}>
+                <Icon name="search-outline" style={styles.IconSearch} size={24} />
+                <TextInput
+                    onChangeText={(text) => setSearch(text)}
+                    style={styles.searchInput}
+                    placeholder="Search hear ..."
+                    placeholderTextColor={'#B2B2B2'}
+                />
+            </View>
+            <View>
+                <FlatList
+                    data={data}
+                    renderItem={({ item }) => (
                         <TouchableOpacity
-                            key={index}
-                            style={styles.objectInChatList}
-                            onPress={() => navigation.navigate('Chat')}
+                            onPress={() =>
+                                navigation.navigate('Chat', {
+                                    target_id: item.target_id,
+                                    chat_id: item.chat_id,
+                                    image: item.image,
+                                    name: item.full_name,
+                                    image: item.image.split(',')[0],
+                                })
+                            }
+                            style={{
+                                width: 70,
+                                height: 70,
+                                borderRadius: 70,
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                borderWidth: 2,
+                                borderColor: '#EF8484',
+                            }}
                         >
-                            <View
+                            <Image
                                 style={{
                                     ...styles.avatar,
+                                    width: 60,
+                                    height: 60,
+                                    borderRadius: 60,
+                                    marginRight: 0,
                                 }}
-                            >
-                                <Image
-                                    source={require('../assets/img/boy-anime.jpg')}
-                                    style={{
-                                        width: '90%',
-                                        height: '90%',
-                                        borderRadius: 50,
-                                    }}
-                                />
-                            </View>
-                            <View style={styles.chatContentItem}>
-                                <Text style={styles.fullName}>
-                                    {full_name && full_name.length > 18
-                                        ? full_name.substring(0, 18) + '...'
-                                        : full_name}
-                                </Text>
-                                <Text style={styles.content}>
-                                    {chat_content && chat_content.length > 35
-                                        ? chat_content.substring(0, 32) + '...'
-                                        : chat_content}
-                                </Text>
-                            </View>
+                                resizeMode="cover"
+                                source={{ uri: item.image.split(',')[0] }}
+                            />
                         </TouchableOpacity>
-                    ))}
-                </View>
-            </ScrollView>
+                    )}
+                    keyExtractor={(item) => item.target_id}
+                    horizontal
+                />
+            </View>
+            {/* <View style={{ borderBottomWidth: 0.5, marginTop: 12, borderColor: '#B2B2B2' }} /> */}
+            <Text style={{ marginTop: 30, color: '#C258E7', fontWeight: 'bold', fontSize: 16 }}>Message</Text>
+            <FlatList
+                showsVerticalScrollIndicator={false}
+                data={searchData}
+                renderItem={({ item }) => (
+                    <TouchableOpacity
+                        onPress={() =>
+                            navigation.navigate('Chat', {
+                                target_id: item.target_id,
+                                image: item.image,
+                                chat_id: item.chat_id,
+                                name: item.full_name,
+                                currentUser: currentUser,
+                                image: item.image.split(',')[0],
+                            })
+                        }
+                        style={styles.targetContainer}
+                    >
+                        <Image style={styles.avatar} resizeMode="cover" source={{ uri: item.image.split(',')[0] }} />
+                        <View>
+                            <Text style={{ fontWeight: 'bold' }}>{item.full_name}</Text>
+                            <Text>{item.content}</Text>
+                        </View>
+                    </TouchableOpacity>
+                )}
+                keyExtractor={(item) => item.target_id}
+            />
         </SafeAreaView>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        width: '100%',
-        height: '100%',
-        backgroundColor: '#fff',
+        flex: 1,
+        paddingHorizontal: 22,
+        backgroundColor: '#FFFFFF',
+        paddingBottom: 10,
     },
-    searchContainer: {
-        width: 346,
-        height: 45,
-        marginTop: 30,
-        marginLeft: (Dimensions.get('window').width - 346) / 2,
+    searchInputContainer: {
+        marginTop: 56,
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#fafafa',
-        borderRadius: 50,
-        elevation: 10,
-        shadowColor: '#7c7c7c',
-        overflow: 'hidden',
+        marginBottom: 30,
     },
     searchInput: {
+        borderRadius: 100,
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.25,
+        shadowRadius: 2,
+        elevation: 5,
+        height: 44,
+        backgroundColor: '#fff',
         flex: 1,
-        paddingLeft: 10,
-        paddingRight: 18,
-        fontStyle: 'italic',
-        fontSize: 16,
-        color: '#b2b2b2',
+        paddingLeft: 40,
+    },
+    IconSearch: {
+        color: '#B2B2B2',
+        position: 'absolute',
+        zIndex: 1,
+        left: 10,
     },
     avatar: {
-        width: 75,
-        height: 75,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderColor: '#b2b2b2',
-        borderWidth: 1,
-        borderRadius: 50,
-        overflow: 'hidden',
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        marginRight: 15,
     },
-    objectInChatList: {
-        marginVertical: 15,
-        paddingBottom: 10,
+    targetContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        borderBottomWidth: 1,
-        borderBottomColor: '#C8C8C8',
-    },
-    chatContentItem: {
-        marginLeft: 15,
-        flexDirection: 'column',
-    },
-    fullName: {
-        marginBottom: 15,
-        fontFamily: 'Overpass',
-        fontStyle: 'normal',
-        fontWeight: 'bold',
-        fontSize: 18,
-        color: '#575757',
-        // backgroundColor: 'red',
-    },
-    content: {
-        fontFamily: 'Overpass',
-        fontStyle: 'normal',
-        fontWeight: 300,
-        fontSize: 16,
-        color: '#575757',
-        // backgroundColor: 'green',
+        paddingVertical: 13,
+        borderBottomWidth: 0.5,
+        borderColor: '#B2B2B2',
     },
 });
 

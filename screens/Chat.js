@@ -1,203 +1,128 @@
-import React from 'react';
-import {
-    SafeAreaView,
-    View,
-    Text,
-    TextInput,
-    Image,
-    StyleSheet,
-    TouchableOpacity,
-    Dimensions,
-    ScrollView,
-} from 'react-native';
+import React, { useState, useCallback, useEffect } from 'react';
+import { GiftedChat } from 'react-native-gifted-chat';
+import { View, Text, TouchableOpacity, SafeAreaView, StyleSheet, Image, Dimensions } from 'react-native';
+import axios from 'axios';
 import Icon from 'react-native-vector-icons/Ionicons';
-import OctIcon from 'react-native-vector-icons/Octicons';
+import moment from 'moment';
+import { io } from 'socket.io-client';
+import { useSelector } from 'react-redux';
+import { useIsFocused } from '@react-navigation/native';
 
-const full_name = 'Nguyễn Quỳnh Hương Giang Vũ';
+const Chat = ({ navigation, route }) => {
+    // lấy id của currentUser trong redux
+    const isFocusedScreen = useIsFocused();
+    const currentUser = useSelector((state) => state.user);
+    const [messages, setMessages] = useState([]);
+    const API_URL = 'http://192.168.1.186:8080/api/user';
+    const socket = io('http://192.168.1.186:8080', { jsonp: false });
+    useEffect(() => {
+        if (isFocusedScreen) {
+            axios
+                .get(`${API_URL}/chat/${currentUser.id}/${route.params.target_id}`)
+                .then((response) => {
+                    setMessages(
+                        response.data.map((chat) => ({
+                            _id: chat.chat_id,
+                            text: chat.content,
+                            createdAt: chat.sent_time,
+                            user: {
+                                _id: chat.sender_id,
+                                avatar: route.params.image,
+                            },
+                        })),
+                    );
+                })
+                .catch((error) => {
+                    console.log('lỗi:', error);
+                });
+        } else {
+            setMessages([]);
+        }
+    }, [isFocusedScreen]);
 
-const chats = [
-    {
-        content: 'Hi, cho mình làm quen nhé ^^',
-        is_me: false,
-    },
-    {
-        content: 'Hi, rất vui khi được làm quen với bạn !!!',
-        is_me: true,
-    },
-    {
-        content: 'Hi, cho mình làm quen nhé ^^',
-        is_me: false,
-    },
-    {
-        content: 'Hi, rất vui khi được làm quen với bạn !!!',
-        is_me: true,
-    },
-    {
-        content: 'Hi, cho mình làm quen nhé ^^',
-        is_me: false,
-    },
-    {
-        content: 'Hi, rất vui khi được làm quen với bạn !!!',
-        is_me: true,
-    },
-    {
-        content: 'Hi, cho mình làm quen nhé ^^',
-        is_me: false,
-    },
-    {
-        content: 'Hi, rất vui khi được làm quen với bạn !!!',
-        is_me: true,
-    },
-    {
-        content: 'Hi, cho mình làm quen nhé ^^',
-        is_me: false,
-    },
-    {
-        content: 'Hi, rất vui khi được làm quen với bạn !!!',
-        is_me: true,
-    },
-];
+    const onSend = useCallback((messages = []) => {
+        socket.emit('message', messages);
+        axios
+            .post(`${API_URL}/message/post`, {
+                chatId: route.params.chat_id,
+                personId: messages[0].user._id,
+                content: messages[0].text,
+                sentTime: moment(messages[0].createdAt).format('YYYY-MM-DD HH:mm:ss'),
+            })
+            .then((response) => {
+                console.log(response.status);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, []);
 
-const Chat = ({ navigation }) => {
+    useEffect(() => {
+        const handleServerData = (data) => {
+            setMessages((previousMessages) =>
+                GiftedChat.append(previousMessages, {
+                    _id: data[0]._id,
+                    text: data[0].text,
+                    createdAt: data[0].createdAt,
+                    user: {
+                        _id: data[0].user._id,
+                        avatar: route.params.image,
+                    },
+                }),
+            );
+        };
+        socket.on('server sent data', handleServerData);
+        return () => {
+            socket.off('server sent data', handleServerData);
+        };
+    }, []);
+
     return (
         <SafeAreaView style={styles.container}>
-            <View
-                style={{
-                    position: 'absolute',
-                    paddingTop: 20,
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    width: Dimensions.get('window').width,
-                    height: 130,
-                    paddingHorizontal: 24,
-                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                    zIndex: 100,
-                }}
-            >
-                <TouchableOpacity onPress={() => navigation.navigate('MatchChat')}>
-                    <Icon name="arrow-back-circle-outline" size={25} color="#8B7ED7" />
+            <View style={{ position: 'absolute', top: 33, left: 22 }}>
+                <TouchableOpacity onPress={() => navigation.navigate('MatchChat')} style={styles.btnGoBack}>
+                    <Icon name="arrow-back-outline" style={{ color: '#8B7ED7' }} size={15} />
                 </TouchableOpacity>
-                <View style={styles.headingInfo}>
-                    <View style={styles.objectInChatList} onPress={() => navigation.navigate('Chat')}>
-                        <View
-                            style={{
-                                ...styles.avatar,
-                            }}
-                        >
-                            <Image
-                                source={require('../assets/img/boy-anime.jpg')}
-                                style={{
-                                    width: '90%',
-                                    height: '90%',
-                                    borderRadius: 50,
-                                }}
-                            />
-                        </View>
-                        <View style={styles.chatContentItem}>
-                            <Text style={styles.fullName}>
-                                {full_name && full_name.length > 12 ? full_name.substring(0, 13) + '...' : full_name}
-                            </Text>
-                            <View
-                                style={{
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                }}
-                            >
-                                <OctIcon
-                                    name="dot-fill"
-                                    size={20}
-                                    style={{
-                                        marginRight: 5,
-                                    }}
-                                    color="#32CD32"
-                                />
-                                <Text style={styles.status}>Online</Text>
-                            </View>
-                        </View>
-                    </View>
-                    <View style={styles.communicationOptions}>
-                        <TouchableOpacity
-                            style={{
-                                alignSelf: 'center',
-                                marginRight: 10,
-                            }}
-                        >
-                            <Icon name="call-outline" size={30} color="#848484" />
-                        </TouchableOpacity>
-                        <TouchableOpacity>
-                            <Icon name="videocam-outline" size={38} color="#848484" />
-                        </TouchableOpacity>
+            </View>
+            <View
+                style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 80 }}
+            >
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Image
+                        style={{ width: 50, height: 50, borderRadius: 25, marginRight: 10 }}
+                        resizeMode="cover"
+                        source={{ uri: route.params.image }}
+                    />
+                    <View>
+                        <Text style={{ color: '#333', fontSize: 16, fontWeight: 'bold' }}>{route.params.name}</Text>
+                        <Text>Online</Text>
                     </View>
                 </View>
-            </View>
-            <ScrollView showsVerticalScrollIndicator={false}>
-                <View
-                    style={{
-                        ...styles.chatItem,
-                        height: 120,
-                    }}
-                />
-                {chats.map((chat, index) => (
-                    <View
-                        key={index}
-                        style={{
-                            ...styles.chatItem,
-                            alignSelf: chat.is_me ? 'flex-end' : 'flex-start',
-                            borderBottomLeftRadius: chat.is_me ? 15 : 0,
-                            borderBottomRightRadius: chat.is_me ? 0 : 15,
-                            backgroundColor: chat.is_me ? '#503EBF' : '#F0F0F0',
-                        }}
-                    >
-                        <Text
-                            style={{
-                                fontFamily: 'Overpass',
-                                fontStyle: 'normal',
-                                fontWeight: 300,
-                                fontSize: 14,
-                                color: chat.is_me ? '#ffffff' : '#505050',
-                            }}
-                        >
-                            {chat.content}
-                        </Text>
-                    </View>
-                ))}
-                <View
-                    style={{
-                        ...styles.chatItem,
-                        height: 80,
-                    }}
-                />
-            </ScrollView>
-            <View style={styles.chatTools}>
-                <View style={styles.msgContainer}>
-                    <TextInput style={styles.msgInput} placeholder="Search here" />
-                    <TouchableOpacity style={{ paddingRight: 10 }}>
-                        <Icon name="mic-outline" size={30} color="#b2b2b2" />
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <TouchableOpacity style={{ padding: 10 }}>
+                        <Icon name="call-outline" size={27} color="#333" />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{ padding: 10 }}>
+                        <Icon name="videocam-outline" size={27} color="#333" />
                     </TouchableOpacity>
                 </View>
-                <TouchableOpacity
-                    style={{
-                        marginLeft: 15,
-                        width: 50,
-                        height: 50,
-                        borderRadius: 50,
-                        backgroundColor: '#ffffff',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}
-                    onPress={() => navigation.navigate('Matched')}
-                >
-                    <Image
-                        source={require('../assets/img/send-in-chat.png')}
-                        style={{
-                            width: '60%',
-                            height: '60%',
-                        }}
-                    />
-                </TouchableOpacity>
             </View>
+            <View style={{ borderWidth: 0.5, borderColor: '#333', marginTop: 10 }} />
+            <GiftedChat
+                messages={messages}
+                showAvatarForEveryMessage={false}
+                showUserAvatar={false}
+                onSend={(messages) => onSend(messages)}
+                user={{
+                    _id: currentUser.id,
+                }}
+                textInputStyle={{
+                    backgroundColor: '#fff',
+                    borderRadius: 20,
+                    borderWidth: 0.5,
+                    paddingHorizontal: 15,
+                }}
+            />
         </SafeAreaView>
     );
 };

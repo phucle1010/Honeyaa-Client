@@ -5,9 +5,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setUser } from '../reducers/user';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AwesomeExtraIcon from 'react-native-vector-icons/FontAwesome';
+import DeviceInfo from 'react-native-device-info';
+import { useIsFocused } from '@react-navigation/native';
 
 import Loading from '../components/Loading';
-import { useIsFocused } from '@react-navigation/native';
 
 const API_URL = 'http://192.168.1.186:8080';
 
@@ -16,6 +17,7 @@ const Account = ({ navigation }) => {
     const user = useSelector((state) => state.user);
     const [avatar, setAvatar] = useState(null);
     const [loaded, setLoaded] = useState(false);
+    const [deviceId, setDeviceId] = useState(null);
 
     const dispatch = useDispatch();
 
@@ -38,6 +40,7 @@ const Account = ({ navigation }) => {
     useEffect(() => {
         if (isFocusedScreen) {
             getUserAvatar();
+            DeviceInfo.getUniqueId().then((device_id) => setDeviceId(device_id));
         } else {
             setAvatar(null);
             setLoaded(false);
@@ -61,6 +64,7 @@ const Account = ({ navigation }) => {
         await axios
             .post(`${API_URL}/api/user/signout`, {
                 token,
+                device_id: deviceId,
             })
             .then((res) => {
                 if (res.data.statusCode === 200) {

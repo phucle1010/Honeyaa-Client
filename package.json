@@ -27,11 +27,14 @@
         "firebase": "^9.21.0",
         "formik": "^2.2.9",
         "jwt-decode": "^3.1.2",
+        "moment": "^2.29.4",
         "react": "18.2.0",
         "react-native": "0.71.8",
         "react-native-date-picker": "^4.2.13",
+        "react-native-device-info": "^10.6.0",
         "react-native-fbsdk-next": "^11.2.1",
         "react-native-gesture-handler": "^2.10.1",
+        "react-native-gifted-chat": "^2.3.0",
         "react-native-image-picker": "^5.4.0",
         "react-native-linear-gradient": "^2.6.2",
         "react-native-pager-view": "^6.2.0",
@@ -42,6 +45,7 @@
         "react-native-tab-view": "^3.5.1",
         "react-native-vector-icons": "^9.2.0",
         "react-redux": "^8.0.5",
+        "socket.io-client": "^4.6.2",
         "yup": "^1.1.1"
     },
     "devDependencies": {

@@ -6,11 +6,11 @@ import { SafeAreaView, Text, View, StyleSheet, Image, Alert, TouchableOpacity, A
 import Icon from 'react-native-vector-icons/Ionicons';
 import AwesomeIcon from 'react-native-vector-icons/FontAwesome5';
 import AwesomeExtraIcon from 'react-native-vector-icons/FontAwesome';
-import OctIcon from 'react-native-vector-icons/Octicons';
 import { useSelector, useDispatch } from 'react-redux';
 import { useIsFocused } from '@react-navigation/native';
+import { setUser } from '../reducers/user';
+import DeviceInfo from 'react-native-device-info';
 
-import { setUser, removeUserFromApp } from '../reducers/user';
 import Loading from '../components/Loading';
 
 const LIKE = 1;
@@ -69,7 +69,7 @@ const Home = ({ navigation, route }) => {
     const isFocusedScreen = useIsFocused();
 
     const dispatch = useDispatch();
-    const sliderItemWidth = 100; /// userProfile.img.length;
+    const [deviceId, setDeviceId] = useState(null);
     const [loadedProfiles, setLoadedProfiles] = useState(false);
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
     const [loaded, setLoaded] = useState(false);
@@ -82,11 +82,18 @@ const Home = ({ navigation, route }) => {
 
     const storeUserData = async (token) => {
         await axios
-            .get(`${API_URL}/api/user/data`, { params: { token } })
+            .get(`${API_URL}/api/user/data`, {
+                params: {
+                    token,
+                    device_id: deviceId,
+                },
+            })
             .then((res) => {
                 if (res.data.statusCode === 200) {
                     dispatch(setUser(res.data.responseData[0]));
                     setLoaded(true);
+                } else {
+                    navigation.navigate('Login');
                 }
             })
             .catch((err) => Alert.alert('Error', err.toString()));
@@ -111,13 +118,22 @@ const Home = ({ navigation, route }) => {
 
     useEffect(() => {
         if (isFocusedScreen) {
-            handleGetUser();
+            DeviceInfo.getUniqueId().then((device_id) => {
+                setDeviceId(device_id);
+            });
         } else {
             setLoadedProfiles(false);
             setSelectedImageIndex(0);
             setUserProfile({});
+            setDeviceId(null);
         }
     }, [isFocusedScreen]);
+
+    useEffect(() => {
+        if (deviceId) {
+            handleGetUser();
+        }
+    }, [deviceId]);
 
     const getUserProfile = async () => {
         await AsyncStorage.getItem('user_token').then((token) => {
@@ -209,6 +225,10 @@ const Home = ({ navigation, route }) => {
         }
         return yearsOld;
     };
+
+    if (Object.keys(userProfile).length > 0) {
+        console.log(userProfile.name, '\n', userProfile.img[0].image);
+    }
 
     return (
         <SafeAreaView>
