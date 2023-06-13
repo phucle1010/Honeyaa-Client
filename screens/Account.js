@@ -60,10 +60,9 @@ const Account = ({ navigation }) => {
     };
 
     const handleLogout = async () => {
-        const token = '';
         await axios
             .post(`${API_URL}/api/user/signout`, {
-                token,
+                phone: user.phone,
                 device_id: deviceId,
             })
             .then((res) => {
