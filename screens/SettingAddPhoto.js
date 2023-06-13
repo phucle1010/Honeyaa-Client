@@ -12,7 +12,7 @@ const SettingAddPhoto = ({ navigation, route }) => {
     const [image1, setImage1] = useState();
     const options = {
         mediaType: 'photo',
-        includeBase64: true,
+        //includeBase64: true,
       };
 
     const handleChoosePhoto = () => {
@@ -23,15 +23,16 @@ const SettingAddPhoto = ({ navigation, route }) => {
                     // setImage(`data:${response.assets[0].type};base64,${response.base64}`);
                     // setPhoto(response.base64);
                     // console.log(response.base64);
-                    const type = response.assets[0].type;
-                    const base64 = response.assets[0].base64;
-                    if (type && base64) {
-                        setImage(`data:${type};base64,${base64}`);
-                        setPhoto(base64);
-                    } else {
-                        console.log('Error: Invalid image data');
-                        console.log(response);
-                    }
+                    // const type = response.assets[0].type;
+                    // const base64 = response.assets[0].base64;
+                    // if (type && base64) {
+                    //     setImage(`data:${type};base64,${base64}`);
+                    //     setPhoto(base64);
+                    // } else {
+                    //     console.log('Error: Invalid image data');
+                    //     console.log(response);
+                    // }
+                    setPhoto(response.assets[0].uri);
                 }
             }
         });
@@ -45,15 +46,16 @@ const SettingAddPhoto = ({ navigation, route }) => {
                     // setImage1(`data:${response.assets[0].type};base64,${response.base64}`);
                     // setPhoto1(response.base64);
                     // console.log(response.base64);
-                    const type = response.assets[0].type;
-                    const base64 = response.assets[0].base64;
-                    if (type && base64) {
-                        setImage1(`data:${type};base64,${base64}`);
-                        setPhoto1(base64);
-                    } else {
-                        console.log('Error: Invalid image data');
-                        console.log(response);
-                    }
+                    // const type = response.assets[0].type;
+                    // const base64 = response.assets[0].base64;
+                    // if (type && base64) {
+                    //     setImage1(`data:${type};base64,${base64}`);
+                    //     setPhoto1(base64);
+                    // } else {
+                    //     console.log('Error: Invalid image data');
+                    //     console.log(response);
+                    // }
+                    setPhoto1(response.assets[0].uri);
                 }
             }
         });
@@ -93,16 +95,16 @@ const SettingAddPhoto = ({ navigation, route }) => {
                 <View style={styles.containerImages}>
                     {
                         <TouchableOpacity style={styles.btnAddImage} onPress={handleChoosePhoto}>
-                            {image ? (
-                                <Image source={{ uri: image }} style={{ width: '100%', height: '100%' }} />
+                            {photo ? (
+                                <Image source={{ uri: photo }} style={{ width: '100%', height: '100%' }} />
                             ) : (
                                 <Icon style={styles.icon} name="plus" />
                             )}
                         </TouchableOpacity>
                     }
                     <TouchableOpacity style={styles.btnAddImage} onPress={handleChoosePhoto1}>
-                        {image1 ? (
-                            <Image source={{ uri: image1 }} style={{ width: '100%', height: '100%' }} />
+                        {photo1 ? (
+                            <Image source={{ uri: photo1 }} style={{ width: '100%', height: '100%' }} />
                         ) : (
                             <Icon style={styles.icon} name="plus" />
                         )}

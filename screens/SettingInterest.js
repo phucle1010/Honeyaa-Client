@@ -61,24 +61,46 @@ const SettingInterest = ({ navigation, route }) => {
         return selectedInterests.includes(interest);
     };
 
-    const handleFinish = () => {
-        console.log({ phone, pass, name, birthday, photo, photo1, gender, obgender, interests: selectedInterests });
-        const formData = new FormData();
-        formData.append('photo', photo);
-        formData.append('photo1', photo1);
-        formData.append('phone', phone);
-        formData.append('pass', pass);
-        formData.append('name', name);
-        formData.append('gender', gender);
-        formData.append('obgender', obgender);
-        formData.append('birthday', birthday);
-        formData.append('interests', selectedInterests);
-        axios
-            .post(`${API_URI}/api/user/signup`, formData)
-            .then((res) => {console.log('Sign up successful'); navigation.navigate('FinishSignUp', route)})
-            .catch((err) => console.log(err));
-    };
+    // const handleFinish = () => {
+    //     console.log({ phone, pass, name, birthday, photo, photo1, gender, obgender, interests: selectedInterests });
+    //     const formData = new FormData();
+    //     formData.append('photo', photo);
+    //     formData.append('photo1', photo1);
+    //     formData.append('phone', phone);
+    //     formData.append('pass', pass);
+    //     formData.append('name', name);
+    //     formData.append('gender', gender);
+    //     formData.append('obgender', obgender);
+    //     formData.append('birthday', birthday);
+    //     formData.append('interests', selectedInterests);
+    //     console.log(formData);
+    //     axios
+    //         .post(`${API_URI}/api/user/signup`, formData)
+    //         .then((res) => {console.log('Sign up successful'); navigation.navigate('FinishSignUp', route)})
+    //         .catch((err) => console.log(err));
+    // };
 
+    const handleFinish = () => {
+        axios
+            .post(`${API_URI}/api/user/signup`, {
+                phone,
+                pass,
+                name,
+                birthday,
+                photo,
+                photo1,
+                gender,
+                obgender,
+                interests: selectedInterests,
+            })
+            .then((res) => {
+                if (res.status === 200) {
+                    navigation.navigate('FinishSignUp', route);
+                }
+            })
+            .catch((err) => Alert.alert(err));
+    };
+    
     return (
         <SafeAreaView style={styles.container}>
             <View style={{ flex: 1, flexDirection: 'row' }}>

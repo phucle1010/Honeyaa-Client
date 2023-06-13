@@ -8,6 +8,7 @@ import AwesomeIcon from 'react-native-vector-icons/FontAwesome5';
 import AwesomeExtraIcon from 'react-native-vector-icons/FontAwesome';
 import OctIcon from 'react-native-vector-icons/Octicons';
 import { useSelector, useDispatch } from 'react-redux';
+import Notification from '../components/Notification';
 
 import { setUser, removeUserFromApp } from '../reducers/user';
 import Loading from '../components/Loading';
@@ -168,7 +169,8 @@ const Home = ({ navigation, route }) => {
         color: '',
     });
     const [userProfile, setUserProfile] = useState({});
-    const API_URL = 'http://192.168.1.186:8080';
+    const [showNotification, setShowNotification] = useState(false);
+    const API_URL = 'http://192.168.1.13:8080';
 
     const storeUserData = async (token) => {
         await axios
@@ -295,13 +297,16 @@ const Home = ({ navigation, route }) => {
                     <View style={styles.header}>
                         <Image source={require('../assets/img/HoneyaaLogo.png')} style={styles.logo} />
                         <View style={styles.options}>
-                            <Icon name="ios-notifications-outline" size={20} style={styles.optionIcon} />
+                            <TouchableOpacity onPress={() => setShowNotification(!showNotification)}>
+                                <Icon name="ios-notifications-outline" size={20} style={styles.optionIcon} />
+                            </TouchableOpacity>
                             <AwesomeIcon name="sliders-h" size={20} style={styles.optionIcon} />
                         </View>
                     </View>
                     <View style={styles.profile}>
+                        {showNotification && <Notification />}
                         <View style={styles.slider}>
-                            {(userProfile.img.length > 0 ? userProfile.img : PROFILES[0].img).map((profile, index) => (
+                            {(userProfile.img?.length > 0 ? userProfile.img : PROFILES[0].img).map((profile, index) => (
                                 <TouchableOpacity
                                     key={index}
                                     style={{
