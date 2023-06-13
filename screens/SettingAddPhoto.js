@@ -16,78 +16,45 @@ const SettingAddPhoto = ({ navigation, route }) => {
     };
 
     const handleChoosePhoto = () => {
-        // launchImageLibrary(options, (response) => {
-        //     if (response) {
-        //         if (!response.didCancel) {
-        //             //setImage(response.assets[0].uri);
-        //             // setImage(`data:${response.assets[0].type};base64,${response.base64}`);
-        //             // setPhoto(response.base64);
-        //             // console.log(response.base64);
-        //             const type = response.assets[0].type;
-        //             const base64 = response.assets[0].base64;
-        //             if (type && base64) {
-        //                 setImage(`data:${type};base64,${base64}`);
-        //                 setPhoto(base64);
-        //             } else {
-        //                 console.log('Error: Invalid image data');
-        //                 console.log(response);
-        //             }
-        //         }
-        //     }
-        // });
-
-        launchImageLibrary({ noData: true }, (response) => {
-            if (response) {
-                if (!response.didCancel) {
-                    setPhoto(response.assets[0].uri);
+        launchImageLibrary(
+            {
+                noData: true,
+                includeBase64: true,
+            },
+            (response) => {
+                if (response) {
+                    if (!response.didCancel) {
+                        const type = response.assets[0].type;
+                        const base64 = response.assets[0].base64;
+                        setPhoto(`data:${type};base64,${base64}`);
+                    }
                 }
-            }
-        });
+            },
+        );
     };
 
     const handleChoosePhoto1 = () => {
-        // launchImageLibrary(options, (response) => {
-        //     if (response) {
-        //         if (!response.didCancel) {
-        //             // //setImage1(response.assets[0].uri);
-        //             // setImage1(`data:${response.assets[0].type};base64,${response.base64}`);
-        //             // setPhoto1(response.base64);
-        //             // console.log(response.base64);
-        //             const type = response.assets[0].type;
-        //             const base64 = response.assets[0].base64;
-        //             if (type && base64) {
-        //                 setImage1(`data:${type};base64,${base64}`);
-        //                 setPhoto1(base64);
-        //             } else {
-        //                 console.log('Error: Invalid image data');
-        //                 console.log(response);
-        //             }
-        //         }
-        //     }
-        // });
-
-        launchImageLibrary({ noData: true }, (response) => {
-            if (response) {
-                if (!response.didCancel) {
-                    setPhoto1(response.assets[0].uri);
+        launchImageLibrary(
+            {
+                noData: true,
+                includeBase64: true,
+            },
+            (response) => {
+                if (response) {
+                    if (!response.didCancel) {
+                        const type = response.assets[0].type;
+                        const base64 = response.assets[0].base64;
+                        setPhoto1(`data:${type};base64,${base64}`);
+                    }
                 }
-            }
-        });
+            },
+        );
     };
 
     const handleContinue = () => {
         if (photo === null || photo1 === null) {
             Alert.alert('You must have two picture for you to sign in');
         } else {
-            // const data = {
-            //     phone,
-            //     pass,
-            //     name,
-            //     birthday,
-            //     photo,
-            //     photo1,
-            // };
-            // console.log(data);
             navigation.navigate('SettingGender', { phone, pass, name, birthday, photo1, photo });
         }
     };

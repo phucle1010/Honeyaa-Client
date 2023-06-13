@@ -35,6 +35,7 @@ import {
 
 const { width, height } = Dimensions.get('window');
 import Loading from '../components/Loading';
+import { useIsFocused } from '@react-navigation/native';
 
 const API_URL = 'http://192.168.1.186:8080';
 
@@ -56,21 +57,29 @@ const ImageFrameItem = ({ ...props }) => {
         }
     }, [choseClicked]);
 
-    const handleChoosePhoto = () => {
+    const handleChoosePhoto = async () => {
         if (photoData.image === '') {
-            launchImageLibrary({ noData: true }, (response) => {
-                if (response) {
-                    if (!response.didCancel) {
-                        setPhotoData((prev) => {
-                            return {
-                                ...prev,
-                                image: response.assets[0].uri,
-                            };
-                        });
-                        setChoseClicked(true);
+            launchImageLibrary(
+                {
+                    noData: true,
+                    includeBase64: true,
+                },
+                (response) => {
+                    if (response) {
+                        if (!response.didCancel) {
+                            const type = response.assets[0].type;
+                            const base64 = response.assets[0].base64;
+                            setPhotoData((prev) => {
+                                return {
+                                    ...prev,
+                                    image: `data:${type};base64,${base64}`,
+                                };
+                            });
+                            setChoseClicked(true);
+                        }
                     }
-                }
-            });
+                },
+            );
         }
     };
 
@@ -127,6 +136,7 @@ const ImageFrameItem = ({ ...props }) => {
 
 const EditProfileScreen = (props) => {
     const currentUser = useSelector((state) => state.user);
+    const isFocusedScreen = useIsFocused();
     const [photos, setPhotos] = useState([]);
     const [isOpen, setIsOpen] = useState(false);
     const [loaded, setLoaded] = useState(false);
@@ -187,11 +197,16 @@ const EditProfileScreen = (props) => {
     };
 
     useEffect(() => {
-        getImageListOfUser();
-        getProfileData();
-        getMyInterestData();
-        setLoaded(true);
-    }, []);
+        if (isFocusedScreen) {
+            getImageListOfUser();
+            getProfileData();
+            getMyInterestData();
+            setLoaded(true);
+        } else {
+            setPhotos([]);
+            setFavoriteItems([]);
+        }
+    }, [isFocusedScreen]);
 
     const getProfileData = async () => {
         await axios

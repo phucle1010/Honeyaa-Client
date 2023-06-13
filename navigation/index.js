@@ -7,6 +7,7 @@ import ViewProfile from '../screens/ViewProfile';
 import ReviewProfile from '../screens/ReviewProfile';
 import Matched from '../screens/Matched';
 import MatchChat from '../screens/MatchChat';
+import VideoCall from '../screens/VideoCall';
 import ProfileDetail from '../screens/ProfileDetail';
 import SignIn from '../screens/SignIn';
 import Profile from '../screens/Profile';
@@ -78,6 +79,16 @@ const screens = [
         activeColor: '#ee4b2b',
         isHideTabItem: false,
         isHideNavigationTab: false,
+    },
+    {
+        name: 'VideoCall',
+        component: VideoCall,
+        tabIconName: 'chat-outline',
+        tabIconSize: 30,
+        tabIconColor: '#faa0a0',
+        activeColor: '#ee4b2b',
+        isHideTabItem: true,
+        isHideNavigationTab: true,
     },
     {
         name: 'Account',

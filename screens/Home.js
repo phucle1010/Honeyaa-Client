@@ -136,18 +136,17 @@ const Home = ({ navigation, route }) => {
     }, [deviceId]);
 
     const getUserProfile = async () => {
-        await AsyncStorage.getItem('user_token').then((token) => {
-            axios
-                .get(`${API_URL}/api/user/potential_love`, {
-                    params: {
-                        userInfo: user,
-                    },
-                })
-                .then((response) => {
-                    setUserProfile(response.data);
-                    setLoadedProfiles(true);
-                });
-        });
+        await axios
+            .get(`${API_URL}/api/user/potential_love`, {
+                params: {
+                    id: user.id,
+                    sex_oriented: user.sex_oriented,
+                },
+            })
+            .then((response) => {
+                setUserProfile(response.data);
+                setLoadedProfiles(true);
+            });
     };
 
     useEffect(() => {
@@ -226,10 +225,6 @@ const Home = ({ navigation, route }) => {
         return yearsOld;
     };
 
-    if (Object.keys(userProfile).length > 0) {
-        console.log(userProfile.name, '\n', userProfile.img[0].image);
-    }
-
     return (
         <SafeAreaView>
             {loaded ? (
@@ -271,7 +266,6 @@ const Home = ({ navigation, route }) => {
                                 }
                                 <View style={styles.profileInfo}>
                                     <View style={styles.profileDesc}>
-                                        {/* Họ tên */}
                                         <Text
                                             style={{
                                                 ...styles.profileDetailItem,
@@ -284,7 +278,6 @@ const Home = ({ navigation, route }) => {
                                                 ? userProfile.name.substring(0, 11) + '...'
                                                 : userProfile.name}
                                         </Text>
-                                        {/* Ngày sinh */}
                                         <Text style={{ ...styles.profileDetailItem, fontSize: 26 }}>
                                             {currentYearsOld(userProfile.dob)}
                                         </Text>

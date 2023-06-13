@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 import { useIsFocused } from '@react-navigation/native';
 
 const Chat = ({ navigation, route }) => {
-    // lấy id của currentUser trong redux
+    const params = route.params;
     const isFocusedScreen = useIsFocused();
     const currentUser = useSelector((state) => state.user);
     const [messages, setMessages] = useState([]);
@@ -102,7 +102,14 @@ const Chat = ({ navigation, route }) => {
                     <TouchableOpacity style={{ padding: 10 }}>
                         <Icon name="call-outline" size={27} color="#333" />
                     </TouchableOpacity>
-                    <TouchableOpacity style={{ padding: 10 }}>
+                    <TouchableOpacity
+                        style={{ padding: 10 }}
+                        onPress={() =>
+                            navigation.navigate('VideoCall', {
+                                ...params,
+                            })
+                        }
+                    >
                         <Icon name="videocam-outline" size={27} color="#333" />
                     </TouchableOpacity>
                 </View>

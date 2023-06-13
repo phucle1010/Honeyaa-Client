@@ -17,6 +17,7 @@ const MatchChat = (props) => {
     if (data.length > 0) {
         searchData = data.filter((item) => item.full_name.toLowerCase().includes(search.toLowerCase()));
     }
+
     useFocusEffect(
         useCallback(() => {
             const getData = () => {
@@ -76,7 +77,7 @@ const MatchChat = (props) => {
                                     marginRight: 0,
                                 }}
                                 resizeMode="cover"
-                                source={{ uri: item.image.split(',')[0] }}
+                                source={{ uri: item.image }}
                             />
                         </TouchableOpacity>
                     )}
