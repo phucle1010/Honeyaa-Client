@@ -31,16 +31,6 @@ import VerifyResetPhone from '../screens/VerifyResetPhone';
 
 const screens = [
     {
-        name: 'Login',
-        component: SignIn,
-        tabIconName: 'account-circle-outline',
-        tabIconSize: 30,
-        tabIconColor: '#faa0a0',
-        activeColor: '#ee4b2b',
-        isHideTabItem: true,
-        isHideNavigationTab: true,
-    },
-    {
         name: 'Home',
         component: Home,
         tabIconName: 'home-outline',
@@ -49,6 +39,16 @@ const screens = [
         activeColor: '#ee4b2b',
         isHideTabItem: false,
         isHideNavigationTab: false,
+    },
+    {
+        name: 'Login',
+        component: SignIn,
+        tabIconName: 'account-circle-outline',
+        tabIconSize: 30,
+        tabIconColor: '#faa0a0',
+        activeColor: '#ee4b2b',
+        isHideTabItem: true,
+        isHideNavigationTab: true,
     },
     {
         name: 'Discover',

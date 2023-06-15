@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { GiftedChat } from 'react-native-gifted-chat';
-import { View, Text, TouchableOpacity, SafeAreaView, StyleSheet, Image, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, SafeAreaView, StyleSheet, Image, Dimensions, Alert } from 'react-native';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/Ionicons';
 import moment from 'moment';
@@ -8,33 +8,103 @@ import { io } from 'socket.io-client';
 import { useSelector } from 'react-redux';
 import { useIsFocused } from '@react-navigation/native';
 
-const Chat = ({ navigation, route }) => {
+import * as ZIM from 'zego-zim-react-native';
+import * as ZPNs from 'zego-zpns-react-native';
+import ZegoUIKitPrebuiltCallService, {
+    ZegoSendCallInvitationButton,
+    ONE_ON_ONE_VIDEO_CALL_CONFIG,
+    ONE_ON_ONE_VOICE_CALL_CONFIG,
+    GROUP_VOICE_CALL_CONFIG,
+    GROUP_VIDEO_CALL_CONFIG,
+    ZegoInvitationType,
+    ZegoMenuBarButtonName,
+} from '@zegocloud/zego-uikit-prebuilt-call-rn';
+
+const Chat = (props) => {
+    const { navigation, route } = props;
     const params = route.params;
     const isFocusedScreen = useIsFocused();
     const currentUser = useSelector((state) => state.user);
     const [messages, setMessages] = useState([]);
+    const [initedCall, setInitedCall] = useState(false);
     const API_URL = 'http://192.168.1.186:8080/api/user';
     const socket = io('http://192.168.1.186:8080', { jsonp: false });
+
+    const initCall = () => {
+        ZegoUIKitPrebuiltCallService.init(
+            652126903,
+            '190849d49a227db415d6aa35625639a7bdd867ca738a0e6a458bd8acba1f0c6c',
+            `${currentUser.id}`,
+            currentUser.full_name,
+            [ZIM],
+            [ZPNs],
+            {
+                requireConfig: (data) => {
+                    const callConfig =
+                        data.invitees.length > 1
+                            ? ZegoInvitationType.videoCall === data.type
+                                ? GROUP_VIDEO_CALL_CONFIG
+                                : GROUP_VOICE_CALL_CONFIG
+                            : ZegoInvitationType.videoCall === data.type
+                            ? ONE_ON_ONE_VIDEO_CALL_CONFIG
+                            : ONE_ON_ONE_VOICE_CALL_CONFIG;
+
+                    return {
+                        ...callConfig,
+                        durationConfig: {
+                            isVisible: true,
+                            onDurationUpdate: (duration) => {
+                                if (duration === 10 * 60) {
+                                    ZegoUIKitPrebuiltCallService.hangUp();
+                                }
+                            },
+                        },
+
+                        onHangUp: () => {
+                            ZegoUIKitPrebuiltCallService.uninit().then(() => Alert.alert('Hang Up'));
+                        },
+                        onOnlySelfInRoom: () => {
+                            ZegoUIKitPrebuiltCallService.uninit().then(() => Alert.alert('Hang Up'));
+                        },
+                    };
+                },
+                notifyWhenAppRunningInBackgroundOrQuit: true,
+                isIOSSandboxEnvironment: true,
+                androidNotificationConfig: {
+                    channelID: 'ZegoUIKit',
+                    channelName: 'ZegoUIKit',
+                },
+            },
+        ).then(() => {
+            setInitedCall(true);
+        });
+    };
+
+    const getMessages = async () => {
+        await axios
+            .get(`${API_URL}/chat/${currentUser.id}/${route.params.target_id}`)
+            .then((response) => {
+                setMessages(
+                    response.data.map((chat) => ({
+                        _id: chat.chat_id,
+                        text: chat.content,
+                        createdAt: chat.sent_time,
+                        user: {
+                            _id: chat.sender_id,
+                            avatar: route.params.image,
+                        },
+                    })),
+                );
+            })
+            .catch((error) => {
+                console.log('lỗi:', error);
+            });
+    };
+
     useEffect(() => {
         if (isFocusedScreen) {
-            axios
-                .get(`${API_URL}/chat/${currentUser.id}/${route.params.target_id}`)
-                .then((response) => {
-                    setMessages(
-                        response.data.map((chat) => ({
-                            _id: chat.chat_id,
-                            text: chat.content,
-                            createdAt: chat.sent_time,
-                            user: {
-                                _id: chat.sender_id,
-                                avatar: route.params.image,
-                            },
-                        })),
-                    );
-                })
-                .catch((error) => {
-                    console.log('lỗi:', error);
-                });
+            getMessages();
+            initCall();
         } else {
             setMessages([]);
         }
@@ -80,7 +150,7 @@ const Chat = ({ navigation, route }) => {
     return (
         <SafeAreaView style={styles.container}>
             <View style={{ position: 'absolute', top: 33, left: 22 }}>
-                <TouchableOpacity onPress={() => navigation.navigate('MatchChat')} style={styles.btnGoBack}>
+                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.btnGoBack}>
                     <Icon name="arrow-back-outline" style={{ color: '#8B7ED7' }} size={15} />
                 </TouchableOpacity>
             </View>
@@ -99,10 +169,10 @@ const Chat = ({ navigation, route }) => {
                     </View>
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <TouchableOpacity style={{ padding: 10 }}>
+                    {/* <TouchableOpacity style={{ padding: 10 }}>
                         <Icon name="call-outline" size={27} color="#333" />
-                    </TouchableOpacity>
-                    <TouchableOpacity
+                    </TouchableOpacity> */}
+                    {/* <TouchableOpacity
                         style={{ padding: 10 }}
                         onPress={() =>
                             navigation.navigate('VideoCall', {
@@ -111,7 +181,22 @@ const Chat = ({ navigation, route }) => {
                         }
                     >
                         <Icon name="videocam-outline" size={27} color="#333" />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
+                    {initedCall && (
+                        <React.Fragment>
+                            <View style={{ marginRight: 10 }}>
+                                <ZegoSendCallInvitationButton
+                                    invitees={[{ userID: `${params.target_id}`, userName: params.full_name }]}
+                                    isVideoCall={false}
+                                />
+                            </View>
+                            <ZegoSendCallInvitationButton
+                                invitees={[{ userID: `${params.target_id}`, userName: params.full_name }]}
+                                isVideoCall={true}
+                                chatData={params}
+                            />
+                        </React.Fragment>
+                    )}
                 </View>
             </View>
             <View style={{ borderWidth: 0.5, borderColor: '#333', marginTop: 10 }} />

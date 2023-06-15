@@ -40,7 +40,7 @@ const MatchChat = (props) => {
                 <TextInput
                     onChangeText={(text) => setSearch(text)}
                     style={styles.searchInput}
-                    placeholder="Search hear ..."
+                    placeholder="Search here ..."
                     placeholderTextColor={'#B2B2B2'}
                 />
             </View>
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
     },
     searchInputContainer: {
-        marginTop: 56,
+        marginTop: 20,
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 30,

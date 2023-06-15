@@ -63,8 +63,6 @@ const ReviewProfile = () => {
     const [loaded, setLoaded] = useState(false);
     const API_URL = 'http://192.168.1.186:8080';
 
-    console.log(photos);
-
     const getImageListOfUser = async () => {
         await axios
             .get(`${API_URL}/api/user/profile/img/reviews`, {

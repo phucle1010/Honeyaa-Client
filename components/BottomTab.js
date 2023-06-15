@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {
+    ZegoUIKitPrebuiltCallInCallScreen,
+    ZegoUIKitPrebuiltCallWaitingScreen,
+} from '@zegocloud/zego-uikit-prebuilt-call-rn';
 
 import screens from '../navigation';
 
@@ -78,6 +82,16 @@ const BottomTab = () => {
                 }
                 return ScreenComponent;
             })}
+            <Tab.Screen
+                options={{ headerShown: false, tabBarItemStyle: { display: 'none' }, tabBarStyle: { display: 'none' } }}
+                name="ZegoUIKitPrebuiltCallWaitingScreen"
+                component={ZegoUIKitPrebuiltCallWaitingScreen}
+            />
+            <Tab.Screen
+                options={{ headerShown: false, tabBarItemStyle: { display: 'none' }, tabBarStyle: { display: 'none' } }}
+                name="ZegoUIKitPrebuiltCallInCallScreen"
+                component={ZegoUIKitPrebuiltCallInCallScreen}
+            />
         </Tab.Navigator>
     );
 };
