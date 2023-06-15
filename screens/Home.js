@@ -144,7 +144,7 @@ const Home = ({ navigation, route }) => {
                 },
             })
             .then((response) => {
-                setUserProfile(response.data);
+                setUserProfile(response.data.responseData);
                 setLoadedProfiles(true);
             });
     };
@@ -224,6 +224,8 @@ const Home = ({ navigation, route }) => {
         }
         return yearsOld;
     };
+
+    console.log(userProfile);
 
     return (
         <SafeAreaView>
@@ -377,7 +379,39 @@ const Home = ({ navigation, route }) => {
                                 </View>
                             </View>
                         ) : (
-                            <Text>Bạn đã xem hết Profile có sẵn</Text>
+                            <View
+                                style={{
+                                    height: '100%',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    paddingBottom: 100,
+                                }}
+                            >
+                                <View
+                                    style={{
+                                        width: 200,
+                                        height: 200,
+                                        borderRadius: 200,
+                                        borderWidth: 2,
+                                        borderColor: '#EF9797',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                    }}
+                                >
+                                    <Image
+                                        source={{ uri: user.img[0].image }}
+                                        style={{
+                                            width: '96%',
+                                            height: '96%',
+                                            borderRadius: 200,
+                                            borderWidth: 1,
+                                        }}
+                                    />
+                                </View>
+                                <Text style={{ marginTop: 20, fontSize: 18, fontWeight: 400 }}>
+                                    Bạn đã xem hết Profile có sẵn
+                                </Text>
+                            </View>
                         ))}
 
                     {interactMessageConfig.message && (
