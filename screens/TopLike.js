@@ -22,7 +22,7 @@ export default function TopLike() {
         <View style={styles.container}>
             <FlatList
                 data={data}
-                renderItem={({ item }) => <TopLikeItem name={item.full_name} uri={item.image.split(',')[0]} />}
+                renderItem={({ item }) => <TopLikeItem name={item.full_name} uri={item.image} />}
                 keyExtractor={(item) => item.target_id}
                 numColumns={2}
             />

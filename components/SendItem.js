@@ -1,13 +1,11 @@
-import { StyleSheet, Text, View, Dimensions, Image } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity } from 'react-native';
 import React from 'react';
-import Icon from 'react-native-vector-icons/Ionicons';
-import AwesomeIcon from 'react-native-vector-icons/FontAwesome5';
-import AwesomeExtraIcon from 'react-native-vector-icons/FontAwesome';
 import OctIcon from 'react-native-vector-icons/Octicons';
 const { width, height } = Dimensions.get('window');
 
 const SentItem = (props) => {
-    const { name, uri } = props;
+    const { name, uri, onPress, isResponsed } = props;
+
     return (
         <View style={styles.container}>
             <Image
@@ -17,12 +15,16 @@ const SentItem = (props) => {
             />
             <View style={styles.content}>
                 <View>
-                    <Text style={[styles.text, { fontWeight: 'bold' }]}>{name}</Text>
-                    <Text style={[styles.text, { color: '#FF8E3C' }]}>còn lại 10 giờ</Text>
+                    <Text style={[styles.text, { fontWeight: 'bold' }]}>
+                        {name.length > 14 ? name.substring(0, 11) + ' ...' : name}
+                    </Text>
                 </View>
-                <View style={styles.iconStarContainer}>
-                    <OctIcon name="x" style={styles.iconStar} />
-                </View>
+
+                {isResponsed !== 1 && (
+                    <TouchableOpacity onPress={onPress} style={styles.iconStarContainer}>
+                        <OctIcon name="x" style={styles.iconStar} />
+                    </TouchableOpacity>
+                )}
             </View>
         </View>
     );
@@ -32,24 +34,28 @@ export default SentItem;
 
 const styles = StyleSheet.create({
     container: {
+        borderWidth: 1,
         width: (width - 66) / 2,
         height: (width - 66) / 2,
         borderRadius: 25,
         margin: 11,
+        overflow: 'hidden',
     },
     content: {
+        bottom: 42,
+        zIndex: 1,
+        paddingHorizontal: 9,
+        // paddingVertical: 6,
+        height: 42,
         width: '100%',
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        position: 'absolute',
-        zIndex: 1,
-        paddingHorizontal: 9,
-        bottom: 9,
+        backgroundColor: 'rgba(103, 103, 103, 0.6)',
     },
     iconStarContainer: {
-        width: 36,
-        height: 36,
+        width: 30,
+        height: 30,
         borderWidth: 2,
         borderColor: '#FD6161',
         borderRadius: 18,
@@ -64,6 +70,6 @@ const styles = StyleSheet.create({
     },
     text: {
         color: '#FFFFFF',
-        fontSize: 12,
+        fontSize: 18,
     },
 });

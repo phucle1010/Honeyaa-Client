@@ -1,16 +1,6 @@
 import * as React from 'react';
-import {
-    Text,
-    View,
-    useWindowDimensions,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
-    StyleSheet,
-    Image,
-} from 'react-native';
+import { Text, View, useWindowDimensions, TouchableWithoutFeedback, StyleSheet, Image } from 'react-native';
 import { TabView, SceneMap } from 'react-native-tab-view';
-import EditProfileScreen from './EditProfile';
-import Icon from 'react-native-vector-icons/Ionicons';
 import TopLike from './TopLike';
 import Xlikes from './XLikes';
 import Sent from './Sent';
@@ -59,9 +49,9 @@ const Favorites = () => {
 
     const [index, setIndex] = React.useState(0);
     const [routes] = React.useState([
-        { key: 'first', title: 'X likes' },
+        { key: 'first', title: 'X Likes' },
         { key: 'second', title: 'Sent' },
-        { key: 'thirst', title: 'TOP like' },
+        { key: 'thirst', title: 'TOP Like' },
     ]);
 
     return (

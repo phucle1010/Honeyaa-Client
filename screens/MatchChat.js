@@ -55,7 +55,6 @@ const MatchChat = (props) => {
                                     chat_id: item.chat_id,
                                     image: item.image,
                                     name: item.full_name,
-                                    image: item.image.split(',')[0],
                                 })
                             }
                             style={{
@@ -85,7 +84,6 @@ const MatchChat = (props) => {
                     horizontal
                 />
             </View>
-            {/* <View style={{ borderBottomWidth: 0.5, marginTop: 12, borderColor: '#B2B2B2' }} /> */}
             <Text style={{ marginTop: 30, color: '#C258E7', fontWeight: 'bold', fontSize: 16 }}>Message</Text>
             <FlatList
                 showsVerticalScrollIndicator={false}
@@ -99,12 +97,11 @@ const MatchChat = (props) => {
                                 chat_id: item.chat_id,
                                 name: item.full_name,
                                 currentUser: currentUser,
-                                image: item.image.split(',')[0],
                             })
                         }
                         style={styles.targetContainer}
                     >
-                        <Image style={styles.avatar} resizeMode="cover" source={{ uri: item.image.split(',')[0] }} />
+                        <Image style={styles.avatar} resizeMode="cover" source={{ uri: item.image }} />
                         <View>
                             <Text style={{ fontWeight: 'bold' }}>{item.full_name}</Text>
                             <Text>{item.content}</Text>

@@ -334,17 +334,17 @@ const Home = ({ navigation, route }) => {
                                     <TouchableOpacity
                                         style={{
                                             marginLeft: 'auto',
+                                            marginBottom: 10,
                                             width: 25,
                                             height: 25,
                                             justifyContent: 'center',
                                             alignItems: 'center',
                                             backgroundColor: '#EF8484',
-                                            borderRadius: 50,
-                                            elevation: 4,
+                                            borderRadius: 20,
                                         }}
-                                        onClick={() => console.log('Click view detail')}
+                                        onPress={() => Alert.alert('Click view detail')}
                                     >
-                                        <Icon name="arrow-down" size={20} color="#ffff" onPress={() => {}} />
+                                        <Icon name="arrow-up" size={18} color="#ffff" />
                                     </TouchableOpacity>
                                 </View>
 

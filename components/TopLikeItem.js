@@ -1,9 +1,12 @@
 import { StyleSheet, Text, View, Dimensions, Image } from 'react-native';
 import React from 'react';
 import AwesomeIcon from 'react-native-vector-icons/FontAwesome5';
+import SimpleIcon from 'react-native-vector-icons/AntDesign';
 const { width } = Dimensions.get('window');
+
 const TopLikeItem = (props) => {
     const { name, uri } = props;
+
     return (
         <View style={styles.container}>
             <Image
@@ -16,11 +19,10 @@ const TopLikeItem = (props) => {
                     <Text style={[styles.text, { fontWeight: 'bold' }]}>
                         {name.length > 14 ? name.substring(0, 11) + ' ...' : name}
                     </Text>
-                    {/* <Text style={[styles.text, { color: '#FF8E3C' }]}>còn lại 10 giờ</Text> */}
                 </View>
             </View>
             <View style={styles.iconStarContainer}>
-                <AwesomeIcon name="star" style={styles.iconStar} />
+                <SimpleIcon name="star" style={styles.iconStar} size={26} color="#00bfff" />
             </View>
         </View>
     );
@@ -38,7 +40,6 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
     },
     content: {
-        // position: 'absolute',
         bottom: 43,
         zIndex: 1,
         paddingHorizontal: 9,
@@ -60,6 +61,7 @@ const styles = StyleSheet.create({
         borderRadius: 18,
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: '#ffffff',
     },
     iconStar: {
         color: '#63EF82',

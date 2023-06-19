@@ -3,13 +3,15 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import SentItem from '../components/SendItem';
 import API_URL from '../services/apiRoute';
+import { useSelector } from 'react-redux';
 
 export default function Sent() {
+    const currentUser = useSelector((state) => state.user);
     const [data, setData] = useState([]);
 
     useEffect(() => {
         axios
-            .get(`${API_URL}/api/user/toplike`)
+            .get(`${API_URL}/api/user/sent/${currentUser.id}`)
             .then((response) => {
                 setData(response.data);
             })
@@ -18,11 +20,31 @@ export default function Sent() {
             });
     }, []);
 
+    const handleDeleteSent = (likeId) => {
+        axios
+            .delete(`${API_URL}/sent/delete/${likeId}`)
+            .then((response) => {
+                const newData = data.filter((item) => item.likeId !== likeId);
+                setData(newData);
+                console.log('delete successfully');
+            })
+            .catch((error) => {
+                console.log('lỗi:', error);
+            });
+    };
+
     return (
         <View style={styles.container}>
             <FlatList
                 data={data}
-                renderItem={({ item }) => <SentItem name={item.full_name} uri={item.image.split(',')[0]} />}
+                renderItem={({ item }) => (
+                    <SentItem
+                        onPress={() => handleDeleteSent(item.likeId)}
+                        name={item.full_name}
+                        uri={item.image}
+                        isResponsed={item.is_responsed.data[0]}
+                    />
+                )}
                 keyExtractor={(item) => item.target_id}
                 numColumns={2}
             />
