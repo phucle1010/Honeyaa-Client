@@ -68,7 +68,6 @@ const InteractNotice = ({ ...props }) => {
 const Home = ({ navigation, route }) => {
     const user = useSelector((state) => state.user);
     const isFocusedScreen = useIsFocused();
-    console.log(user);
     const dispatch = useDispatch();
     const [deviceId, setDeviceId] = useState(null);
     const [loadedProfiles, setLoadedProfiles] = useState(false);

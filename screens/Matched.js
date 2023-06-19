@@ -1,14 +1,27 @@
-import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput, Animated } from 'react-native';
 
 const Matched = ({ navigation, route }) => {
     const { person_img, target_img } = route.params;
+    const scale = useRef(new Animated.Value(0)).current;
+
+    useEffect(() => {
+        Animated.sequence([
+            Animated.timing(scale, {
+                duration: 2000,
+                toValue: 1,
+                useNativeDriver: false,
+            }),
+        ]).start();
+    }, []);
 
     return (
         <View style={styles.container}>
             <Image source={require('../assets/img/HoneyaaLogo.png')} style={styles.logo} Ư />
             <View style={styles.matchedInfo}>
-                <Text style={styles.heading}>Matched Successfully</Text>
+                <Animated.View style={{ transform: [{ scale }] }}>
+                    <Text style={styles.heading}>Matched Successfully</Text>
+                </Animated.View>
                 <View style={styles.couple}>
                     <Image source={{ uri: person_img }} style={{ ...styles.womanObject, ...styles.manObject }} />
                     <Image source={{ uri: target_img }} style={styles.womanObject} />

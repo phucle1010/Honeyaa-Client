@@ -27,8 +27,7 @@ import { useSelector } from 'react-redux';
 import { setUser } from '../reducers/user';
 import DeviceInfo from 'react-native-device-info';
 import { useIsFocused } from '@react-navigation/native';
-
-const API_URL = 'http://192.168.1.186:8080';
+import API_URL from '../services/apiRoute';
 
 const SignIn = ({ navigation }) => {
     const initUserInput = {
