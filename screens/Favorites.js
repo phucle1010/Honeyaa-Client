@@ -6,16 +6,6 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import TopLike from './TopLike';
 import Xlikes from './Xlikes';
 import Sent from './Sent';
-const FirstRoute = () => (
-    <View style={styles.frame} >
-      <Text>Hello</Text>
-    </View>
-  );
-  const SecondRoute = () => (
-    <View style={styles.frame} >
-      <Text>Hello</Text>
-    </View>
-  );
 
   const renderScene = SceneMap({
     first: Xlikes,

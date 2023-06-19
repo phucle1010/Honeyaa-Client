@@ -1,38 +1,78 @@
-import { View, Text, StyleSheet, FlatList,TouchableOpacity } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import XlikesItem from '../components/XlikesItem';
+import { useSelector } from 'react-redux';
 
-export default function Xlikes() {
-    const [data, setData] = useState([])
-    const API_URL = 'http://192.168.0.134:8080/api/user';
+export default function Xlikes(props) {
+    const { navigation } = props
+    const [dataUser, setDataUser] = useState([]);
+    const API_URL = 'http://192.168.0.102:8080';
+    const currentUser = useSelector((state) => state.user);
     useEffect(() => {
-        axios.get(`${API_URL}/toplike`)
-            .then(response => {
-                setData(response.data)
+        axios
+            .get(`${API_URL}/api/user/xlike/${currentUser.id}`)
+            .then((response) => {
+                setDataUser(response.data);
             })
-            .catch(error => {
+            .catch((error) => {
                 console.log('lỗi:', error);
             });
-    }, [])
+    }, []);
 
-  return (
-    <View style = {styles.container}>
-        <FlatList
-        data={data}
-        renderItem={({item})=><XlikesItem name = {item.full_name} uri = {item.image.split(',')[0]}/>}
-        keyExtractor={item => item.target_id}
-        numColumns={2}
-        />
-      
-    </View>
-  )
+    const handlePostInteract = async (props) => {
+        const { item, type } = props
+        setTimeout(() => {
+            axios
+                .post(`${API_URL}/api/match/interact`, {
+                    person_id: currentUser.id,
+                    target_id: item.person_id,
+                    interact_type: type,
+                })
+                .then(async (res) => {
+                    if (res.data.statusCode === 200) {
+                        console.log(res.data)
+                        if (res.data.is_matched) {
+                            // navigate tới màn hình matched
+                            const newData = dataUser.filter(user => user.likeId !== item.likeId);
+                            setDataUser(newData);
+                            await navigation.navigate('Matched', {
+                                person_img: currentUser.img[0].image,
+                                target_img: item.image,
+                            });
+                        } else {
+                            const newData = dataUser.filter(user => user.likeId !== item.likeId);
+                            setDataUser(newData);
+                        }
+                    } else {
+                        Alert.alert('Fail', res.data.responseData);
+                    }
+                })
+                .catch((err) => Alert.alert('Fail', err.toString()));
+        }, 200);
+    };
+
+    return (
+        <View style={styles.container}>
+            <FlatList
+                data={dataUser}
+                renderItem={({ item }) =>
+                    <XlikesItem
+                        onPressLike={() => handlePostInteract({ item, type: 1 })}
+                        onPressX={() => handlePostInteract({ item, type: 2 })}
+                        name={item.full_name}
+                        uri={item.image} />}
+                keyExtractor={(item) => item.target_id}
+                numColumns={2}
+            />
+        </View>
+    );
 }
 const styles = StyleSheet.create({
-    container:{
-        flex:1,
-        backgroundColor:'#FFFFFF',
-        paddingLeft:11,
-        paddingBottom:90
-    }
-})
+    container: {
+        flex: 1,
+        backgroundColor: '#FFFFFF',
+        paddingLeft: 11,
+        paddingBottom: 90,
+    },
+});
