@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import AwesomeExtraIcon from 'react-native-vector-icons/FontAwesome';
 import { useIsFocused } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
+import API_URL from '../services/apiRoute';
 
 import Loading from '../components/Loading';
 
@@ -61,7 +62,6 @@ const ReviewProfile = () => {
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
     const [photos, setPhotos] = useState([]);
     const [loaded, setLoaded] = useState(false);
-    const API_URL = 'http://192.168.1.186:8080';
 
     const getImageListOfUser = async () => {
         await axios

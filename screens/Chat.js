@@ -7,6 +7,7 @@ import moment from 'moment';
 import { io } from 'socket.io-client';
 import { useSelector } from 'react-redux';
 import { useIsFocused } from '@react-navigation/native';
+import API_URL from '../services/apiRoute';
 
 import * as ZIM from 'zego-zim-react-native';
 import * as ZPNs from 'zego-zpns-react-native';
@@ -27,8 +28,7 @@ const Chat = (props) => {
     const currentUser = useSelector((state) => state.user);
     const [messages, setMessages] = useState([]);
     const [initedCall, setInitedCall] = useState(false);
-    const API_URL = 'http://192.168.1.186:8080/api/user';
-    const socket = io('http://192.168.1.186:8080', { jsonp: false });
+    const socket = io(API_URL, { jsonp: false });
 
     const initCall = () => {
         ZegoUIKitPrebuiltCallService.init(
@@ -82,7 +82,7 @@ const Chat = (props) => {
 
     const getMessages = async () => {
         await axios
-            .get(`${API_URL}/chat/${currentUser.id}/${route.params.target_id}`)
+            .get(`${API_URL}/api/user/chat/${currentUser.id}/${route.params.target_id}`)
             .then((response) => {
                 setMessages(
                     response.data.map((chat) => ({
@@ -113,7 +113,7 @@ const Chat = (props) => {
     const onSend = useCallback((messages = []) => {
         socket.emit('message', messages);
         axios
-            .post(`${API_URL}/message/post`, {
+            .post(`${API_URL}/api/user/message/post`, {
                 chatId: route.params.chat_id,
                 personId: messages[0].user._id,
                 content: messages[0].text,

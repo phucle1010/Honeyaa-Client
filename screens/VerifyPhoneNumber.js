@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
 import axios from 'axios';
+import API_URL from '../services/apiRoute';
 
 const VerifyPhoneNumber = (props) => {
     const [message, setMessage] = useState('');
     const [phone, setPhone] = useState('');
     const { navigation } = props;
-    const API_URL = 'http://192.168.1.186:8080';
     let lastRequestTime = null;
     const MIN_REQUEST_INTERVAL = 10000;
     const sendOtp = () => {
@@ -17,7 +17,7 @@ const VerifyPhoneNumber = (props) => {
             return;
         }
         axios
-            .get(`${API_URL}/verifyPhone?phonenumber=${phone}`)
+            .get(`${API_URL}/api/user/verifyPhone?phonenumber=${phone}`)
             .then((response) => {
                 setMessage('');
                 navigation.navigate('VerifyOTP', { phone: phone });

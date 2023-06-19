@@ -4,6 +4,7 @@ import { View, Text, TouchableOpacity, SafeAreaView, StyleSheet, Image, TextInpu
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useSelector } from 'react-redux';
+import API_URL from '../services/apiRoute';
 
 const MatchChat = (props) => {
     // lấy id của currentUser trong redux
@@ -11,7 +12,6 @@ const MatchChat = (props) => {
     const { navigation } = props;
     const [data, setData] = useState([]);
     const [search, setSearch] = useState('');
-    const API_URL = 'http://192.168.1.186:8080/api/user';
 
     let searchData;
     if (data.length > 0) {
@@ -22,7 +22,7 @@ const MatchChat = (props) => {
         useCallback(() => {
             const getData = () => {
                 axios
-                    .get(`${API_URL}/matchchat/${currentUser.id}`)
+                    .get(`${API_URL}/api/user/matchchat/${currentUser.id}`)
                     .then((response) => {
                         setData(response.data);
                     })

@@ -7,10 +7,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import AwesomeExtraIcon from 'react-native-vector-icons/FontAwesome';
 import DeviceInfo from 'react-native-device-info';
 import { useIsFocused } from '@react-navigation/native';
+import API_URL from '../services/apiRoute';
 
 import Loading from '../components/Loading';
-
-const API_URL = 'http://192.168.1.186:8080';
 
 const Account = ({ navigation }) => {
     const isFocusedScreen = useIsFocused();

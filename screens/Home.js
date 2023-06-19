@@ -10,6 +10,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useIsFocused } from '@react-navigation/native';
 import { setUser } from '../reducers/user';
 import DeviceInfo from 'react-native-device-info';
+import API_URL from '../services/apiRoute';
 
 import Loading from '../components/Loading';
 
@@ -67,7 +68,7 @@ const InteractNotice = ({ ...props }) => {
 const Home = ({ navigation, route }) => {
     const user = useSelector((state) => state.user);
     const isFocusedScreen = useIsFocused();
-
+    console.log(user);
     const dispatch = useDispatch();
     const [deviceId, setDeviceId] = useState(null);
     const [loadedProfiles, setLoadedProfiles] = useState(false);
@@ -78,7 +79,6 @@ const Home = ({ navigation, route }) => {
         color: '',
     });
     const [userProfile, setUserProfile] = useState({});
-    const API_URL = 'http://192.168.1.186:8080';
 
     const storeUserData = async (token) => {
         await axios
@@ -224,8 +224,6 @@ const Home = ({ navigation, route }) => {
         }
         return yearsOld;
     };
-
-    console.log(userProfile);
 
     return (
         <SafeAreaView>

@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import { text } from '@fortawesome/fontawesome-svg-core';
 import axios from 'axios';
+import API_URL from '../services/apiRoute';
 
 const VerifyCreatedPhone = (props) => {
     const { navigation, route } = props;
@@ -16,7 +16,7 @@ const VerifyCreatedPhone = (props) => {
     const [input3, setInput3] = useState('');
     const [input4, setInput4] = useState('');
     const [message, setMessage] = useState('');
-    const API_URL = 'http://192.168.1.186:8080';
+
     useEffect(() => {
         setOtp(input1.concat(input2, input3, input4));
     }, [input1, input2, input3, input4]);

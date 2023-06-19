@@ -3,6 +3,7 @@ import { View, StyleSheet, Text, TextInput, TouchableOpacity, Image, Alert } fro
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import axios from 'axios';
 import { useIsFocused } from '@react-navigation/native';
+import API_URI from '../services/apiRoute';
 
 const SignUp = (props) => {
     const isFocusedScreen = useIsFocused();
@@ -12,7 +13,6 @@ const SignUp = (props) => {
     const [phone, setPhone] = useState('');
     const [pass, setPass] = useState('');
     const [repass, setRePass] = useState('');
-    const API_URI = 'http://192.168.1.186:8080';
 
     const handleShowRePassword = () => {
         setShowRePassword(!showRePassword);

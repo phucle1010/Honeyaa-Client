@@ -36,8 +36,7 @@ import {
 const { width, height } = Dimensions.get('window');
 import Loading from '../components/Loading';
 import { useIsFocused } from '@react-navigation/native';
-
-const API_URL = 'http://192.168.1.186:8080';
+import API_URL from '../services/apiRoute';
 
 const ImageFrameItem = ({ ...props }) => {
     const indexOfImage = props.item.index;

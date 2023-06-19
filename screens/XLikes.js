@@ -2,14 +2,14 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import XLikesItem from '../components/XLikesItem';
+import API_URL from '../services/apiRoute';
 
 export default function Xlikes() {
     const [data, setData] = useState([]);
-    const API_URL = 'http://192.168.1.186:8080/api/user';
 
     useEffect(() => {
         axios
-            .get(`${API_URL}/toplike`)
+            .get(`${API_URL}/api/user/toplike`)
             .then((response) => {
                 setData(response.data);
             })
