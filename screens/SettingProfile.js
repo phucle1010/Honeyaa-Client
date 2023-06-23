@@ -1,27 +1,49 @@
-import React, { useState } from 'react';
-import {
-    SafeAreaView,
-    View,
-    Image,
-    Text,
-    StyleSheet,
-    TouchableOpacity,
-    Switch,
-    ScrollView,
-    Dimensions,
-} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
+import { SafeAreaView, View, Image, Text, StyleSheet, TouchableOpacity, Switch } from 'react-native';
 import AwesomeExtraIcon from 'react-native-vector-icons/FontAwesome';
 import Slider from '@react-native-community/slider';
+import API_URL from '../services/apiRoute';
+//import AwesomeExtraIcon from 'react-native-vector-icons/FontAwesome';
 
 const SettingProfile = ({ navigation, route }) => {
-    const [sliderAgeValue, setSliderAgeValue] = useState(18);
-    const [sliderDistanceValue, setSliderDistanceValue] = useState(1);
-    const [active, setActive] = useState(false);
-    const toggleActive = (value) => {
-        //onValueChange of the switch this function will be called
-        setActive(value);
-        //state changes according to switch
-        //which will result in re-render the text
+    const currentUser = useSelector((state) => state.user);
+    const [state, setState] = useState({
+        age: currentUser.age,
+        distance: currentUser.distance,
+        active_status: currentUser.active_status,
+    });
+
+    useEffect(() => {
+        console.log(state.age);
+        console.log(state.distance);
+        console.log(state.active_status);
+        updateDatabase();
+    }, [state.age, state.distance, state.active_status]);
+    const handleAgeChange = (newAge) => {
+        setState((prevState) => ({ ...prevState, age: newAge }));
+    };
+
+    const handleDistanceChange = (newDistance) => {
+        setState((prevState) => ({ ...prevState, distance: newDistance }));
+    };
+
+    const handleActiveStatusChange = (newActiveStatus) => {
+        setState((prevState) => ({ ...prevState, active_status: newActiveStatus }));
+    };
+
+    const updateDatabase = () => {
+        axios
+            .put(`${API_URL}/api/user/setprofile/${currentUser.id}`, {
+                age: state.age,
+                distance: state.distance,
+                active_status: state.active_status,
+            })
+            .then((response) => {})
+            .catch((error) => {
+                console.log(error);
+            });
     };
     return (
         <SafeAreaView style={styles.container}>
@@ -35,64 +57,60 @@ const SettingProfile = ({ navigation, route }) => {
 
                 <Text style={styles.txtHeader}>Setting Profile</Text>
             </View>
-            <ScrollView
-                style={{
-                    height: '100%',
-                    marginBottom: 82,
-                }}
-                showsVerticalScrollIndicator={false}
-            >
-                <View style={styles.wrapItem}>
-                    <View style={{ flexDirection: 'row', marginBottom: 8 }}>
-                        <Text style={styles.txtWrap}>Age:</Text>
-                        <Text style={styles.txtWrap}>{sliderAgeValue}</Text>
-                    </View>
+            <View style={styles.wrapItem}>
+                <View style={{ flexDirection: 'row', marginBottom: 8 }}>
+                    <Text style={styles.txtWrap}>Age:</Text>
+                    <Text style={styles.txtWrap}> {state.age}</Text>
+                </View>
 
-                    <Slider
-                        maximumValue={100}
-                        minimumValue={0}
-                        minimumTrackTintColor="#307ecc"
-                        maximumTrackTintColor="#000000"
-                        step={1}
-                        value={sliderAgeValue}
-                        onValueChange={(sliderAgeValue) => setSliderAgeValue(sliderAgeValue)}
-                    />
+                <Slider
+                    maximumValue={100}
+                    minimumValue={0}
+                    minimumTrackTintColor="#307ecc"
+                    maximumTrackTintColor="#000000"
+                    step={1}
+                    value={state.age}
+                    onValueChange={handleAgeChange}
+                />
+            </View>
+            <View style={styles.wrapItem}>
+                <View style={{ flexDirection: 'row', marginBottom: 8 }}>
+                    <Text style={styles.txtWrap}>Distance:</Text>
+                    <Text style={styles.txtWrap}>{state.distance}</Text>
+                    <Text style={styles.txtWrap}>km</Text>
                 </View>
-                <View style={styles.wrapItem}>
-                    <View style={{ flexDirection: 'row', marginBottom: 8 }}>
-                        <Text style={styles.txtWrap}>Distance:</Text>
-                        <Text style={styles.txtWrap}>{sliderDistanceValue}</Text>
-                        <Text style={styles.txtWrap}>km</Text>
-                    </View>
 
-                    <Slider
-                        maximumValue={100}
-                        minimumValue={0}
-                        minimumTrackTintColor="#307ecc"
-                        maximumTrackTintColor="#000000"
-                        step={1}
-                        value={sliderDistanceValue}
-                        onValueChange={(sliderDistanceValue) => setSliderDistanceValue(sliderDistanceValue)}
+                <Slider
+                    maximumValue={100}
+                    minimumValue={0}
+                    minimumTrackTintColor="#307ecc"
+                    maximumTrackTintColor="#000000"
+                    step={1}
+                    value={state.distance}
+                    onValueChange={handleDistanceChange}
+                />
+            </View>
+            <View style={styles.wrapItem}>
+                <View style={{ flexDirection: 'row', marginBottom: 8, alignItems: 'center' }}>
+                    <Text style={[styles.txtWrap, { marginTop: 20 }]}>Active Status</Text>
+                    <Text style={[styles.txtWrap, { marginTop: 20, marginLeft: 60 }]}>ON</Text>
+                    <Switch
+                        style={{ marginTop: 30, marginLeft: 20 }}
+                        value={state.active_status}
+                        onValueChange={handleActiveStatusChange}
                     />
+                    <Text style={[styles.txtWrap, { marginTop: 20 }]}>OFF</Text>
                 </View>
-                <View style={styles.wrapItem}>
-                    <View style={{ flexDirection: 'row', marginBottom: 8, alignItems: 'center' }}>
-                        <Text style={[styles.txtWrap, { marginTop: 20 }]}>Active Status</Text>
-                        <Text style={[styles.txtWrap, { marginTop: 20, marginLeft: 60 }]}>ON</Text>
-                        <Switch style={{ marginTop: 30, marginLeft: 20 }} onValueChange={toggleActive} value={active} />
-                        <Text style={[styles.txtWrap, { marginTop: 20 }]}>OFF</Text>
-                    </View>
-                </View>
-                <View style={[styles.wrapItem, { height: 106 }]}>
-                    <Text style={[styles.txtWrap, { marginTop: 10 }]}>Password</Text>
-                    <TouchableOpacity style={styles.btn}>
-                        <Text style={styles.txtbtn}>Change</Text>
-                    </TouchableOpacity>
-                </View>
-                <TouchableOpacity style={[styles.btn, { backgroundColor: '#EF9797', marginHorizontal: 20 }]}>
-                    <Text style={styles.txtbtn}>Look Account</Text>
+            </View>
+            <View style={[styles.wrapItem, { height: 106 }]}>
+                <Text style={[styles.txtWrap, { marginTop: 10 }]}>Password</Text>
+                <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate('RestoreAccount')}>
+                    <Text style={styles.txtbtn}>Change</Text>
                 </TouchableOpacity>
-            </ScrollView>
+            </View>
+            <TouchableOpacity style={[styles.btn, { backgroundColor: '#EF9797' }]}>
+                <Text style={styles.txtbtn}>Lock Account</Text>
+            </TouchableOpacity>
         </SafeAreaView>
     );
 };
@@ -100,8 +118,8 @@ const SettingProfile = ({ navigation, route }) => {
 const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
-        height: '100%',
-        backgroundColor: '#ffff',
+        backgroundColor: '#fff',
+        flex: 1,
     },
     logo: {
         marginTop: -35,
@@ -139,8 +157,8 @@ const styles = StyleSheet.create({
     btn: {
         marginTop: 10,
         height: 40,
-        marginHorizontal: 10,
-        // maxWidth: 300,
+        width: 330,
+        marginHorizontal: 5,
         borderRadius: 25,
         backgroundColor: '#503EBF',
         alignContent: 'center',

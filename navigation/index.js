@@ -168,7 +168,7 @@ const screens = [
         tabIconColor: '#faa0a0',
         activeColor: '#ee4b2b',
         isHideTabItem: true,
-        isHideNavigationTab: false,
+        isHideNavigationTab: true,
     },
     {
         name: 'SignUp',
