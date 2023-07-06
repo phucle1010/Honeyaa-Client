@@ -50,6 +50,10 @@ const SignIn = ({ navigation }) => {
     useEffect(() => {
         if (isFocusedScreen) {
             DeviceInfo.getUniqueId().then((device_id) => setDeviceId(device_id));
+            GoogleSignin.configure({
+                webClientId: '655765789095-t1ujnfdhcvb9cjdbuijacvjrjeivddkt.apps.googleusercontent.com', // client ID of type WEB for your server (needed to verify user ID and offline access)
+                offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
+            });
         } else {
             setDeviceId(null);
         }
@@ -76,45 +80,83 @@ const SignIn = ({ navigation }) => {
             .catch((err) => Alert.alert('Error', err));
     };
 
-    const onGoogleSignin = async () => {
+    // const setupSocial = async () => {
+    //     try {
+    //         await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+    //         GoogleSignin.configure({
+    //             webClientId: '655765789095-t1ujnfdhcvb9cjdbuijacvjrjeivddkt.apps.googleusercontent.com',
+    //             //iosClientId: Config.IOS_CLIENT_ID,
+    //             offlineAccess: true,
+    //         });
+
+    //         const user = await GoogleSignin.currentUserAsync();
+    //         console.log('Saved google user', user);
+    //         // resetAuthSocial()
+    //     } catch (err) {
+    //         console.log('Something wrong with google play service!', { err });
+    //     }
+    // };
+
+    const _signIn = async () => {
         try {
             await GoogleSignin.hasPlayServices();
-            const userInfo = await GoogleSignin.signIn();
-            console.log({ userInfo });
+            const { accessToken, idToken } = await GoogleSignin.signIn();
+            console.log('access token: ', accessToken, 'id token: ', idToken);
         } catch (error) {
-            console.log({ error });
             if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-                Alert.alert('Cancel');
+                // user cancelled the login flow
+                console.log('Cancel');
             } else if (error.code === statusCodes.IN_PROGRESS) {
-                Alert.alert('Signin in progress');
+                console.log('Signin in progress');
+                // operation (f.e. sign in) is in progress already
             } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-                Alert.alert('PLAY_SERVICES_NOT_AVAILABLE');
+                console.log('PLAY_SERVICES_NOT_AVAILABLE');
+                // play services not available or outdated
             } else {
+                // some other error happened
             }
         }
     };
 
-    const onGoogleSignout = async () => {
-        try {
-            await GoogleSignin.revokeAccess();
-            await GoogleSignin.signOut();
-        } catch (error) {
-            console.error(error);
-        }
-    };
+    // const onGoogleSignin = async () => {
+    //     try {
+    //         await GoogleSignin.hasPlayServices();
+    //         const userInfo = await GoogleSignin.signIn();
+    //         console.log({ userInfo });
+    //     } catch (error) {
+    //         console.log({ error });
+    //         if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+    //             Alert.alert('Cancel');
+    //         } else if (error.code === statusCodes.IN_PROGRESS) {
+    //             Alert.alert('Signin in progress');
+    //         } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+    //             Alert.alert('PLAY_SERVICES_NOT_AVAILABLE');
+    //         } else {
+    //         }
+    //     }
+    // };
 
-    const onFacebookSignin = async () => {
-        const result = await LoginManager.logInWithPermissions(['public_profile', 'email']);
-        if (result.isCancelled) {
-            throw 'User cancelled the login process';
-        }
-        const data = await AccessToken.getCurrentAccessToken();
-        if (!data) {
-            throw 'Something went wrong obtaining access token';
-        }
-        const facebookCredential = auth.FacebookAuthProvider.credential(data.accessToken);
-        return auth().signInWithCredential(facebookCredential);
-    };
+    // const onGoogleSignout = async () => {
+    //     try {
+    //         await GoogleSignin.revokeAccess();
+    //         await GoogleSignin.signOut();
+    //     } catch (error) {
+    //         console.error(error);
+    //     }
+    // };
+
+    // const onFacebookSignin = async () => {
+    //     const result = await LoginManager.logInWithPermissions(['public_profile', 'email']);
+    //     if (result.isCancelled) {
+    //         throw 'User cancelled the login process';
+    //     }
+    //     const data = await AccessToken.getCurrentAccessToken();
+    //     if (!data) {
+    //         throw 'Something went wrong obtaining access token';
+    //     }
+    //     const facebookCredential = auth.FacebookAuthProvider.credential(data.accessToken);
+    //     return auth().signInWithCredential(facebookCredential);
+    // };
 
     function onAuthStateChanged(user) {
         // setUserInfo(user);
@@ -186,10 +228,10 @@ const SignIn = ({ navigation }) => {
                         <Text style={styles.txtline}> ──────── OR ──────── </Text>
                     </View>
                     <View>
-                        <TouchableOpacity style={styles.btnloginFb} onPress={onFacebookSignin}>
+                        <TouchableOpacity style={styles.btnloginFb} onPress={() => {}}>
                             <Text style={styles.txtFb}>Sign In with Facebook</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.btnloginGg} onPress={onGoogleSignin}>
+                        <TouchableOpacity style={styles.btnloginGg} onPress={_signIn}>
                             <Text style={styles.txtGg}>Sign In with Google</Text>
                         </TouchableOpacity>
                         {/* <GoogleSigninButton

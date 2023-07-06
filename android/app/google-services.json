@@ -1,38 +1,38 @@
 {
-    "project_info": {
-        "project_number": "655765789095",
-        "project_id": "datingapp-386403",
-        "storage_bucket": "datingapp-386403.appspot.com"
-    },
-    "client": [
-        {
-            "client_info": {
-                "mobilesdk_app_id": "1:655765789095:android:1caddeefc02e92f7af3e82",
-                "android_client_info": {
-                    "package_name": "com.datingapp"
-                }
-            },
-            "oauth_client": [
-                {
-                    "client_id": "655765789095-gdmmmm5o90t4nl9mlr99dt92g98imohq.apps.googleusercontent.com",
-                    "client_type": 1,
-                    "android_info": {
-                        "package_name": "com.datingapp",
-                        "certificate_hash": "129cd577ccf0f7e1db9af361765119ffd739a395"
-                    }
-                }
-            ],
-            "api_key": [
-                {
-                    "current_key": "AIzaSyC8JC-Mz1NZysnX6mi982K4__lY56w3V8s"
-                }
-            ],
-            "services": {
-                "appinvite_service": {
-                    "other_platform_oauth_client": []
-                }
-            }
+  "project_info": {
+    "project_number": "655765789095",
+    "project_id": "datingapp-386403",
+    "storage_bucket": "datingapp-386403.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:655765789095:android:1caddeefc02e92f7af3e82",
+        "android_client_info": {
+          "package_name": "com.datingapp"
         }
-    ],
-    "configuration_version": "1"
+      },
+      "oauth_client": [
+        {
+          "client_id": "655765789095-t1ujnfdhcvb9cjdbuijacvjrjeivddkt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.datingapp",
+            "certificate_hash": "f34fb1fd65e61f468fb9927cbb64e7ca9584148a"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8JC-Mz1NZysnX6mi982K4__lY56w3V8s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
 }
