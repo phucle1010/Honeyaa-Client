@@ -66,7 +66,7 @@ export default function ProfileScreen({ navigation }) {
     return (
         <React.Fragment>
             <TouchableOpacity style={styles.btnArrowBack} onPress={() => navigation.goBack()}>
-                <Icon name="arrow-back-circle-outline" size={24} style={styles.iconArrowBack} />
+                <Icon name="arrow-back-circle-outline" size={30} style={styles.iconArrowBack} />
             </TouchableOpacity>
             <TabView
                 style={{ backgroundColor: 'red', height: 400 }}
@@ -89,8 +89,8 @@ const styles = StyleSheet.create({
     },
     btnArrowBack: {
         position: 'absolute',
-        top: 23,
-        left: 12,
+        top: 10,
+        left: 10,
         padding: 10,
         zIndex: 1000,
     },

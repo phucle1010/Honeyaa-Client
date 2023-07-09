@@ -111,7 +111,7 @@ const Account = ({ navigation }) => {
                                 </TouchableOpacity>
                             </View>
 
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={() => navigation.navigate('SettingProfile')}>
                                 <View style={styles.btnSettings}>
                                     <Text style={styles.txtSettings}>Settings</Text>
                                 </View>

@@ -160,8 +160,8 @@ const Chat = (props) => {
     return (
         <SafeAreaView style={styles.container}>
             <View style={{ position: 'absolute', top: 10, left: 20 }}>
-                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.btnGoBack}>
-                    <Icon name="arrow-back-outline" style={{ color: '#8B7ED7' }} size={25} />
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <Icon name="arrow-back-circle-outline" size={30} style={styles.icon} />
                 </TouchableOpacity>
             </View>
             <View
@@ -239,6 +239,11 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         paddingHorizontal: 24,
         // paddingTop: 30,
+    },
+    icon: {
+        // marginLeft: -80,
+        // marginTop: 20,
+        color: '#8B7ED7',
     },
     headingInfo: {
         flexDirection: 'row',
