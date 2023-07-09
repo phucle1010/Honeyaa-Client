@@ -18,69 +18,45 @@ const BottomTab = () => {
     return (
         <Tab.Navigator
             initialRouteName="Home"
+            backBehavior="history"
             screenOptions={{
                 headerShown: false,
-                tabBarStyle: styles.container,
                 tabBarShowLabel: false,
+                tabBarIconStyle: {},
+                tabBarLabelStyle: {
+                    display: 'none',
+                },
+                tabBarInactiveTintColor: '#F3CFC6',
+                tabBarActiveTintColor: '#ee4b2b',
             }}
         >
             {screens.map((screen, index) => {
-                let ScreenComponent = null;
-                if (screen.isHideNavigationTab) {
-                    ScreenComponent = (
-                        <Tab.Screen
-                            key={index}
-                            name={screen.name}
-                            component={screen.component}
-                            options={{
-                                tabBarStyle: {
-                                    display: 'none',
-                                },
-                                tabBarIcon: () => (
-                                    <MaterialCommunityIcons
-                                        name={screen.tabIconName}
-                                        size={screen.tabIconSize}
-                                        color={index === selectedTabIndex ? screen.activeColor : screen.tabIconColor}
-                                    />
-                                ),
-                                tabBarItemStyle: {
-                                    display: screen.isHideTabItem === true ? 'none' : 'flex',
-                                },
-                            }}
-                            listeners={{
-                                focus: () => {
-                                    setSelectedTabIndex(index);
-                                },
-                            }}
-                        />
-                    );
-                } else {
-                    ScreenComponent = (
-                        <Tab.Screen
-                            key={index}
-                            name={screen.name}
-                            component={screen.component}
-                            options={{
-                                tabBarIcon: () => (
-                                    <MaterialCommunityIcons
-                                        name={screen.tabIconName}
-                                        size={screen.tabIconSize}
-                                        color={index === selectedTabIndex ? screen.activeColor : screen.tabIconColor}
-                                    />
-                                ),
-                                tabBarItemStyle: {
-                                    display: screen.isHideTabItem === true ? 'none' : 'flex',
-                                },
-                            }}
-                            listeners={{
-                                focus: () => {
-                                    setSelectedTabIndex(index);
-                                },
-                            }}
-                        />
-                    );
-                }
-                return ScreenComponent;
+                return (
+                    <Tab.Screen
+                        key={index}
+                        name={screen.name}
+                        component={screen.component}
+                        options={({ color, size, focused }) => ({
+                            tabBarHideOnKeyboard: true,
+                            tabBarStyle: {
+                                ...styles.container,
+                                height: screen.isHideNavigationTab ? 0 : 60,
+                                opacity: screen.isHideNavigationTab ? 0 : 1,
+                            },
+                            tabBarIcon: ({ color }) => (
+                                <MaterialCommunityIcons
+                                    name={screen.tabIconName}
+                                    size={screen.tabIconSize}
+                                    color={color}
+                                />
+                            ),
+                            tabBarItemStyle: {
+                                display: screen.isHideTabItem === true ? 'none' : 'flex',
+                                borderRadius: 10,
+                            },
+                        })}
+                    />
+                );
             })}
             <Tab.Screen
                 options={{ headerShown: false, tabBarItemStyle: { display: 'none' }, tabBarStyle: { display: 'none' } }}

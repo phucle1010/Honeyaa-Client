@@ -2575,10 +2575,10 @@
     "@typescript-eslint/types" "5.59.2"
     eslint-visitor-keys "^3.3.0"
 
-"@zegocloud/zego-uikit-prebuilt-call-rn@^4.1.2":
-  version "4.1.2"
-  resolved "https://registry.npmjs.org/@zegocloud/zego-uikit-prebuilt-call-rn/-/zego-uikit-prebuilt-call-rn-4.1.2.tgz"
-  integrity sha512-J65uZhQ2UsA3n2EKYljk/NambZhcSLzMcB/k74PRSMaSLZ24xelDIXNqHrL/oFbqrVxoFeTIlQwCQVLsINx/sQ==
+"@zegocloud/zego-uikit-prebuilt-call-rn@^4.1.4":
+  version "4.1.4"
+  resolved "https://registry.npmjs.org/@zegocloud/zego-uikit-prebuilt-call-rn/-/zego-uikit-prebuilt-call-rn-4.1.4.tgz"
+  integrity sha512-bGNnn7XQffUQMisNQhdOUd4JHJuGIlLDpWsX7b54UUvLPZm12ORJCdNY7etM7bSahlOX4PiMLSvjJdAm2M0ITA==
 
 "@zegocloud/zego-uikit-rn@^2.1.1", "@zegocloud/zego-uikit-rn@>=1.12.0":
   version "2.1.1"

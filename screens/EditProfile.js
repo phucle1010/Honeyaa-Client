@@ -1352,7 +1352,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'gray',
         alignItems: 'center',
         justifyContent: 'center',
-        paddingBottom: 30,
+        // paddingBottom: 30,
     },
 
     contentContainer: {

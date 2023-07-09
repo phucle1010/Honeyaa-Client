@@ -31,53 +31,63 @@ const Chat = (props) => {
     const socket = io(API_URL, { jsonp: false });
 
     const initCall = () => {
-        ZegoUIKitPrebuiltCallService.init(
-            652126903,
-            '190849d49a227db415d6aa35625639a7bdd867ca738a0e6a458bd8acba1f0c6c',
-            `${currentUser.id}`,
-            currentUser.full_name,
-            [ZIM],
-            [ZPNs],
-            {
-                requireConfig: (data) => {
-                    const callConfig =
-                        data.invitees.length > 1
-                            ? ZegoInvitationType.videoCall === data.type
-                                ? GROUP_VIDEO_CALL_CONFIG
-                                : GROUP_VOICE_CALL_CONFIG
-                            : ZegoInvitationType.videoCall === data.type
-                            ? ONE_ON_ONE_VIDEO_CALL_CONFIG
-                            : ONE_ON_ONE_VOICE_CALL_CONFIG;
+        if (!initedCall) {
+            ZegoUIKitPrebuiltCallService.init(
+                652126903,
+                '190849d49a227db415d6aa35625639a7bdd867ca738a0e6a458bd8acba1f0c6c',
+                `${currentUser.id}`,
+                currentUser.full_name,
+                [ZIM],
+                [ZPNs],
+                {
+                    ringtoneConfig: {
+                        incomingCallFileName: 'zego_incoming.mp3',
+                        outgoingCallFileName: 'zego_outgoing.mp3',
+                    },
+                    requireConfig: (data) => {
+                        const callConfig =
+                            data.invitees.length > 1
+                                ? ZegoInvitationType.videoCall === data.type
+                                    ? GROUP_VIDEO_CALL_CONFIG
+                                    : GROUP_VOICE_CALL_CONFIG
+                                : ZegoInvitationType.videoCall === data.type
+                                ? ONE_ON_ONE_VIDEO_CALL_CONFIG
+                                : ONE_ON_ONE_VOICE_CALL_CONFIG;
 
-                    return {
-                        ...callConfig,
-                        durationConfig: {
-                            isVisible: true,
-                            onDurationUpdate: (duration) => {
-                                if (duration === 10 * 60) {
-                                    ZegoUIKitPrebuiltCallService.hangUp();
-                                }
+                        return {
+                            ...callConfig,
+                            durationConfig: {
+                                isVisible: true,
+                                onDurationUpdate: (duration) => {
+                                    if (duration === 10 * 60) {
+                                        ZegoUIKitPrebuiltCallService.hangUp();
+                                    }
+                                },
                             },
-                        },
-
-                        onHangUp: () => {
-                            ZegoUIKitPrebuiltCallService.uninit().then(() => Alert.alert('Hang Up'));
-                        },
-                        onOnlySelfInRoom: () => {
-                            ZegoUIKitPrebuiltCallService.uninit().then(() => Alert.alert('Hang Up'));
-                        },
-                    };
+                            topMenuBarConfig: {
+                                buttons: [ZegoMenuBarButtonName.minimizingButton],
+                            },
+                            onWindowMinimized: () => {
+                                navigation.navigate('Chat', { ...params });
+                            },
+                            onWindowMaximized: () => {
+                                navigation.navigate('ZegoUIKitPrebuiltCallInCallScreen');
+                            },
+                        };
+                    },
+                    notifyWhenAppRunningInBackgroundOrQuit: true,
+                    isIOSSandboxEnvironment: true,
+                    androidNotificationConfig: {
+                        channelID: 'ZegoUIKit',
+                        channelName: 'ZegoUIKit',
+                    },
                 },
-                notifyWhenAppRunningInBackgroundOrQuit: true,
-                isIOSSandboxEnvironment: true,
-                androidNotificationConfig: {
-                    channelID: 'ZegoUIKit',
-                    channelName: 'ZegoUIKit',
-                },
-            },
-        ).then(() => {
-            setInitedCall(true);
-        });
+            )
+                .then(() => {
+                    setInitedCall(true);
+                })
+                .catch((err) => console.log(err));
+        }
     };
 
     const getMessages = async () => {
@@ -149,13 +159,13 @@ const Chat = (props) => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={{ position: 'absolute', top: 33, left: 22 }}>
+            <View style={{ position: 'absolute', top: 10, left: 20 }}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.btnGoBack}>
-                    <Icon name="arrow-back-outline" style={{ color: '#8B7ED7' }} size={15} />
+                    <Icon name="arrow-back-outline" style={{ color: '#8B7ED7' }} size={25} />
                 </TouchableOpacity>
             </View>
             <View
-                style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 80 }}
+                style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 55 }}
             >
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Image
@@ -171,8 +181,8 @@ const Chat = (props) => {
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     {/* <TouchableOpacity style={{ padding: 10 }}>
                         <Icon name="call-outline" size={27} color="#333" />
-                    </TouchableOpacity> */}
-                    {/* <TouchableOpacity
+                    </TouchableOpacity>
+                    <TouchableOpacity
                         style={{ padding: 10 }}
                         onPress={() =>
                             navigation.navigate('VideoCall', {
@@ -182,18 +192,22 @@ const Chat = (props) => {
                     >
                         <Icon name="videocam-outline" size={27} color="#333" />
                     </TouchableOpacity> */}
+
                     {initedCall && (
                         <React.Fragment>
                             <View style={{ marginRight: 10 }}>
                                 <ZegoSendCallInvitationButton
                                     invitees={[{ userID: `${params.target_id}`, userName: params.full_name }]}
                                     isVideoCall={false}
+                                    // chatData={params}
+                                    resourceID={'zego_data'}
                                 />
                             </View>
                             <ZegoSendCallInvitationButton
                                 invitees={[{ userID: `${params.target_id}`, userName: params.full_name }]}
                                 isVideoCall={true}
-                                chatData={params}
+                                // chatData={params}
+                                resourceID={'zego_data'}
                             />
                         </React.Fragment>
                     )}
