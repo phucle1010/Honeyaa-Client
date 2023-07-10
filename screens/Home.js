@@ -2,7 +2,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { SafeAreaView, Text, View, StyleSheet, Image, Alert, TouchableOpacity, Animated } from 'react-native';
+import {
+    SafeAreaView,
+    Text,
+    View,
+    StyleSheet,
+    Image,
+    Alert,
+    TouchableOpacity,
+    Animated,
+    Pressable,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import AwesomeIcon from 'react-native-vector-icons/FontAwesome5';
 import AwesomeExtraIcon from 'react-native-vector-icons/FontAwesome';
@@ -230,10 +240,33 @@ const Home = ({ navigation, route }) => {
                 <View style={styles.container}>
                     <View style={styles.header}>
                         <Image source={require('../assets/img/HoneyaaLogo.png')} style={styles.logo} />
-                        <View style={styles.options}>
-                            <Icon name="ios-notifications-outline" size={20} style={styles.optionIcon} />
-                            <AwesomeIcon name="sliders-h" size={20} style={styles.optionIcon} />
-                        </View>
+                        <Pressable style={styles.options} onPress={() => console.log('notice')}>
+                            <View
+                                style={{
+                                    position: 'absolute',
+                                    top: '-5%',
+                                    right: '-1%',
+                                    width: 15,
+                                    height: 15,
+                                    borderRadius: 10,
+                                    backgroundColor: '#ee4b2b',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    zIndex: 1,
+                                }}
+                            >
+                                <Text
+                                    style={{
+                                        color: '#fff',
+                                        fontSize: 10,
+                                    }}
+                                >
+                                    1
+                                </Text>
+                            </View>
+                            <Icon name="ios-notifications-outline" size={25} style={styles.optionIcon} />
+                            {/* <AwesomeIcon name="sliders-h" size={20} style={styles.optionIcon} /> */}
+                        </Pressable>
                     </View>
                     {loadedProfiles &&
                         (Object.keys(userProfile).length > 0 ? (
@@ -342,7 +375,7 @@ const Home = ({ navigation, route }) => {
                                             backgroundColor: '#EF8484',
                                             borderRadius: 20,
                                         }}
-                                        onPress={() => Alert.alert('Click view detail')}
+                                        onPress={() => navigation.navigate('ViewProfile', { userProfile })}
                                     >
                                         <Icon name="arrow-up" size={18} color="#ffff" />
                                     </TouchableOpacity>
@@ -451,6 +484,7 @@ const styles = StyleSheet.create({
     },
     optionIcon: {
         marginLeft: 15,
+        color: '#faa0a0',
     },
     profile: {
         marginHorizontal: 20,
