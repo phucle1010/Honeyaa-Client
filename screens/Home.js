@@ -20,8 +20,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useIsFocused } from '@react-navigation/native';
 import { setUser } from '../reducers/user';
 import DeviceInfo from 'react-native-device-info';
-import API_URL from '../services/apiRoute';
+import Swiper from 'react-native-swiper';
 
+import API_URL from '../services/apiRoute';
 import Loading from '../components/Loading';
 
 const LIKE = 1;
@@ -81,7 +82,6 @@ const Home = ({ navigation, route }) => {
     const dispatch = useDispatch();
     const [deviceId, setDeviceId] = useState(null);
     const [loadedProfiles, setLoadedProfiles] = useState(false);
-    const [selectedImageIndex, setSelectedImageIndex] = useState(0);
     const [loaded, setLoaded] = useState(false);
     const [interactMessageConfig, setInteractMessageConfig] = useState({
         message: '',
@@ -132,7 +132,6 @@ const Home = ({ navigation, route }) => {
             });
         } else {
             setLoadedProfiles(false);
-            setSelectedImageIndex(0);
             setUserProfile({});
             setDeviceId(null);
         }
@@ -234,6 +233,10 @@ const Home = ({ navigation, route }) => {
         return yearsOld;
     };
 
+    const onSwipe = (direction) => {
+        console.log('You swiped: ' + direction);
+    };
+
     return (
         <SafeAreaView>
             {loaded ? (
@@ -265,37 +268,27 @@ const Home = ({ navigation, route }) => {
                                 </Text>
                             </View>
                             <Icon name="ios-notifications-outline" size={25} style={styles.optionIcon} />
-                            {/* <AwesomeIcon name="sliders-h" size={20} style={styles.optionIcon} /> */}
                         </Pressable>
                     </View>
                     {loadedProfiles &&
                         (Object.keys(userProfile).length > 0 ? (
                             <View style={styles.profile}>
-                                <View style={styles.slider}>
+                                <Swiper
+                                    showsButtons={false}
+                                    dotStyle={{ display: 'none' }}
+                                    activeDotStyle={{ display: 'none' }}
+                                >
                                     {userProfile?.img.length > 0 &&
                                         userProfile?.img.map((profile, index) => (
-                                            <TouchableOpacity
+                                            <Image
                                                 key={index}
-                                                style={{
-                                                    ...styles.sliderItem,
-                                                    backgroundColor:
-                                                        index !== selectedImageIndex
-                                                            ? 'rgba(103, 103, 103, 0.3)'
-                                                            : 'rgba(255, 255, 255, 0.8)',
-                                                    width: `${100 / userProfile?.img.length}%`,
+                                                source={{
+                                                    uri: profile.image,
                                                 }}
-                                                onPress={() => setSelectedImageIndex(index)}
+                                                style={styles.profileImage}
                                             />
                                         ))}
-                                </View>
-                                {
-                                    <Image
-                                        source={{
-                                            uri: userProfile?.img[selectedImageIndex].image,
-                                        }}
-                                        style={styles.profileImage}
-                                    />
-                                }
+                                </Swiper>
                                 <View style={styles.profileInfo}>
                                     <View style={styles.profileDesc}>
                                         <Text
@@ -470,6 +463,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFFFF',
         flexDirection: 'row',
         alignItems: 'center',
+        zIndex: 1000,
     },
     logo: {
         marginLeft: -48,
@@ -491,24 +485,10 @@ const styles = StyleSheet.create({
         marginTop: 10,
         height: '75%',
         borderRadius: 10,
+        backgroundColor: '#fff',
+        overflow: 'hidden',
     },
-    slider: {
-        position: 'absolute',
-        bottom: '98%',
-        zIndex: 100,
-        height: 6,
-        left: 10,
-        right: 10,
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: 'rgba(103, 103, 103, 0.3)',
-        borderRadius: 13,
-    },
-    sliderItem: {
-        height: '100%',
-        backgroundColor: 'rgba(255, 255, 255, 0.8)',
-        borderRadius: 10,
-    },
+
     profileImage: {
         height: '100%',
         width: '100%',

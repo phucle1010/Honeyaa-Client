@@ -126,7 +126,7 @@ const SettingProfile = ({ navigation, route }) => {
     const [state, setState] = useState({
         age_oriented: currentUser?.age_oriented || 0,
         distance: currentUser?.distance || 0,
-        active_status: Boolean(currentUser?.active_status.data[0]),
+        active_status: Boolean(currentUser?.active_status?.data[0]),
     });
     const [showedChangePassword, setShowedChangePassword] = useState(false);
 
