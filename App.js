@@ -21,6 +21,7 @@ import Tendency from './screens/Tendency';
 import Matched from './screens/Matched';
 import Xlikes from './screens/Xlikes';
 import Favorites from './screens/Favorites';
+import ProfileScreen from './screens/ProfileScreen';
 // import SettingProfile from './screens/SettingProfile';
 // import AnswerQuestion from './screens/AnswerQuestion';
 const Stack = createNativeStackNavigator();
@@ -48,7 +49,7 @@ const App = () => {
         <Stack.Screen name="Favorites" component={Favorites}/>
         <Stack.Screen name="Xlikes" component={Xlikes}/>
         <Stack.Screen name="Matched" component={Matched}/>
-
+        <Stack.Screen name="ProfileScreen" component={ProfileScreen}/>
         {/* <Stack.Screen name="Tendency" component={Tendency}/> */}
       </Stack.Navigator>
     </NavigationContainer>

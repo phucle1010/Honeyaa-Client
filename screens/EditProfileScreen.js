@@ -4,7 +4,7 @@ import {
     BottomSheetModal,
     BottomSheetModalProvider, BottomSheetScrollView
 } from "@gorhom/bottom-sheet";
-import { View, FlatList, Modal, Image, ToastAndroid, ScrollView, Dimensions, StyleSheet, Text, TextInput, TouchableOpacity, ScrollViewComponent, Alert, Pressable, TouchableWithoutFeedback } from 'react-native'
+import { PermissionsAndroid, View, FlatList, Modal, Image, ToastAndroid, ScrollView, Dimensions, StyleSheet, Text, TextInput, TouchableOpacity, ScrollViewComponent, Alert, Pressable, TouchableWithoutFeedback } from 'react-native'
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/Ionicons';
 import AwesomeIcon from 'react-native-vector-icons/FontAwesome5';
@@ -15,9 +15,9 @@ import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { replace } from 'formik';
 import MyBasicItem from '../components/MyBasicItem';
 import { languageData, zodiacData, educationData, socialNetworkData, petData, musicData, physicalData } from '../src/constant/Data';
-import { useSelector } from 'react-redux';
-const { width, height } = Dimensions.get('window');
+import Geolocation from 'react-native-geolocation-service';
 
+const { width, height } = Dimensions.get('window');
 
 const ImageFrameItem = () => {
     return (
@@ -27,11 +27,10 @@ const ImageFrameItem = () => {
     )
 }
 const EditProfileScreen = (props) => {
-    const currentUser = useSelector((state) => state.user);
+    const currentUser = { id: 1 };
     const [isOpen, setIsOpen] = useState(false);
     const [data, setData] = useState([])
     const [listInterest, setListInterest] = useState([])
-    const [photo, setPhoto] = useState(null)
     const [zodiac, setZodiac] = useState('')
     const [education, setEducation] = useState('')
     const [language, setLanguage] = useState('')
@@ -44,20 +43,10 @@ const EditProfileScreen = (props) => {
     const [showModal, setShowModal] = useState(false)
     const [favoriteItems, setFavoriteItems] = useState([]);
     const favoriteName = favoriteItems.map(i => i.name)
-    const [province, setProvince] = useState([])
-    const [district, setDistrict] = useState([])
-    const [wards, setWards] = useState([])
     const [showModalAddress, setShowModalAddress] = useState(false);
     const [showModalSex, setShowModalSex] = useState(false);
     const [showModalSexOriented, setShowModalSexOriented] = useState(false);
     const [showModalRelationshipOriented, setShowModalRelationshipOriented] = useState(false);
-    const [provinceCode, setProvinceCode] = useState()
-    const [districtCode, setDistrictCode] = useState()
-    const [wardCode, setWardCode] = useState()
-    const [provinceName, setProvinceName] = useState('')
-    const [districtName, setDistrictName] = useState('')
-    const [wardName, setWardName] = useState('')
-    const [pickerFocused, setPickerFocused] = useState(false)
     const [address, setAdress] = useState('')
     const [sex, setSex] = useState('')
     const [sexOriented, setSexOriented] = useState('')
@@ -65,9 +54,45 @@ const EditProfileScreen = (props) => {
     const [relationshipOriented, setRelationshipOriented] = useState()
     const [relationshipOrientedId, setRelationshipOrientedId] = useState('')
     const [listRelationshipOriented, setListRelationshipOriented] = useState([])
-    const API_URL = 'http://192.168.0.134:8080/api/user';
-
-    const e = 1
+    const API_URL = 'http://192.168.0.104:8080/api/user';
+    
+    const handleGetLocation = async () => {
+        try {
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+            );
+            const granted1 = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            );
+            if (granted === PermissionsAndroid.RESULTS.GRANTED && granted1 === PermissionsAndroid.RESULTS.GRANTED) {
+                console.log('Quyền truy cập vị trí đã được cấp.');
+                Geolocation.getCurrentPosition(info => {
+                    const apiUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${info.coords.latitude},${info.coords.longitude}&key=AIzaSyDvWoAfSGthu6If2HfoUMrgBGOvj9cn-bQ`;
+                    fetch(apiUrl)
+                        .then((response) => response.json())
+                        .then((responseJson) => {
+                            if (responseJson.results.length > 0) {
+                                const address = responseJson.results[0].formatted_address;
+                                setAdress(address)
+                            }
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        })
+                },
+                    error => {
+                        console.log('Lỗi lấy vị trí:', error);
+                    },
+                    { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+                );
+            } else {
+                console.log('Quyền truy cập vị trí bị từ chối.');
+            }
+        } catch (err) {
+            console.warn(err);
+        }
+    };
+    
     useEffect(() => {
         axios.get(`${API_URL}/profile/${currentUser.id}`)
             .then(response => {
@@ -114,7 +139,7 @@ const EditProfileScreen = (props) => {
             setFavoriteItems(updatedFavorites);
         }
     };
- 
+
     useEffect(() => {
         axios.get(`${API_URL}/myInterest/${currentUser.id}`)
             .then(response => {
@@ -137,10 +162,6 @@ const EditProfileScreen = (props) => {
                 console.log(error.message);
             });
     };
-
-
-
-
     const handleUpdateMyBasic = () => {
         axios.put(`${API_URL}/myBasic/${data[0].my_basics_id}`, { zodiac, education, language, socialNetwork, physicalExercise, pet, music })
             .then(response => {
@@ -182,64 +203,6 @@ const EditProfileScreen = (props) => {
         }, 100);
 
     }
-
-    const getProvince = () => {
-        axios.get('https://provinces.open-api.vn/api/?depth=1')
-            .then(response => {
-                setProvince(response.data)
-            })
-            .catch(error => {
-                console.log('lỗi:', error);
-            });
-
-    }
-
-    const getDistrict = () => {
-        if (provinceCode) {
-            axios.get(`https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`)
-                .then(response => setDistrict(response.data.districts))
-                .catch(error => {
-                    console.log('lỗi:', error);
-                });
-        }
-    }
-    const getWard = () => {
-        if (districtCode) {
-            axios.get(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`)
-                .then(response => setWards(response.data.wards))
-                .catch(error => {
-                    console.log('lỗi:', error);
-                });
-        }
-    }
-    useEffect(() => {
-
-        if (provinceCode && districtCode && wardCode) {
-
-            const pvname = province.filter(item => item.code === provinceCode)
-            setProvinceName(pvname[0].name)
-            const dtname = district.filter(item => item.code === districtCode)
-            setDistrictName(dtname[0].name)
-            const wname = wards.filter(item => item.code === wardCode)
-            setWardName(wname[0].name)
-        }
-    }, [provinceCode, districtCode, wardCode])
-    useEffect(() => {
-        if (provinceName && districtName && wardName) {
-            setAdress(wardName + ', ' + districtName + ', ' + provinceName)
-        }
-    }, [wardName])
-
-
-    const handleSubmit = () => {
-        if (provinceCode && districtCode && wardCode) {
-            setShowModalAddress(false);
-            handleUpdateProfile()
-        }
-        else {
-            Alert.alert('Please complete all information')
-        }
-    }
     const handleGetRelationshipOriented = () => {
         axios.get(`${API_URL}/relationship_oriented`)
             .then(response => {
@@ -280,47 +243,47 @@ const EditProfileScreen = (props) => {
                                 </View>
 
                             </View>
-      
+
                             <View style={styles.profile}>
                                 <Text style={styles.titleText}>My basics</Text>
                                 <MyBasicItem
-                                    onPress={()=>handlePresentModal(0)}
+                                    onPress={() => handlePresentModal(0)}
                                     icon={'moon-outline'}
                                     name={'Zodiac'}
                                     value={zodiac ? zodiac : 'Add'}
                                 />
                                 <MyBasicItem
-                                    onPress={()=>handlePresentModal(200)}
+                                    onPress={() => handlePresentModal(200)}
                                     icon={'school-outline'}
                                     name={'Education'}
                                     value={education ? education : 'Add'}
                                 />
                                 <MyBasicItem
-                                    onPress={()=>handlePresentModal(400)}
+                                    onPress={() => handlePresentModal(400)}
                                     icon={'language-outline'}
                                     name={'Language'}
                                     value={language ? language : 'Add'}
                                 />
                                 <MyBasicItem
-                                    onPress={()=>handlePresentModal(600)}
+                                    onPress={() => handlePresentModal(600)}
                                     icon={'logo-facebook'}
                                     name={'Social Network'}
                                     value={socialNetwork ? socialNetwork : 'Add'}
                                 />
                                 <MyBasicItem
-                                    onPress={()=>handlePresentModal(800)}
+                                    onPress={() => handlePresentModal(800)}
                                     icon={'barbell-outline'}
                                     name={'Physical Exercise'}
                                     value={physicalExercise ? physicalExercise : 'Add'}
                                 />
                                 <MyBasicItem
-                                    onPress={()=>handlePresentModal(910)}
+                                    onPress={() => handlePresentModal(910)}
                                     icon={'paw-outline'}
                                     name={'Pet'}
                                     value={pet ? pet : 'Add'}
                                 />
                                 <MyBasicItem
-                                    onPress={()=>handlePresentModal(910)}
+                                    onPress={() => handlePresentModal(910)}
                                     icon={'musical-note-outline'}
                                     name={'Music'}
                                     value={music ? music : 'Add'}
@@ -542,83 +505,24 @@ const EditProfileScreen = (props) => {
                                 <View style={styles.modalView}>
                                     <TouchableOpacity
                                         onPress={() => setShowModalAddress(false)}
-                                        style={{ position: 'absolute', padding: 10, color: '#FF6868', top: 0, right: 0 }}
+                                        style={{ position: 'absolute', padding: 10, color: '#FF6868', top: 0, right: 0, zIndex: 1 }}
                                     >
                                         <Icon name="close-outline" size={30} style={{ color: '#FF6868' }} />
                                     </TouchableOpacity>
 
-                                    <View style={{ color: '#333', width: '100%' }}>
-
-                                        <Text style={{ fontSize: 15, color: '#000000', marginVertical: 2 }}>Select province:</Text>
-                                        <View style={{ borderBottomWidth: 0.5 }} />
-                                        <Picker
-                                            dropdownIconColor={'#FF6868'}
-                                            dropdownIconRippleColor={'#FF6868'}
-                                            prompt='--Select province--'
-                                            placeholder='--Select province--'
-                                            placeholderStyle={{
-                                                color: "grey",
-                                            }}
-                                            style={{ color: '#333', backgroundColor: '#EEEEEE' }}
-                                            onFocus={getProvince}
-                                            onBlur={() => setPickerFocused(false)}
-                                            selectedValue={provinceCode}
-                                            onValueChange={i => {
-                                                setProvinceCode(i);
-                                                setDistrict([])
-                                                setWards([])
-                                                setDistrictCode(null),
-                                                    setWardCode(null)
-                                            }
-                                            } >
-                                            {province.map(item => <Picker.Item style={{ backgroundColor: '#FFFFFF', color: '#000000' }} label={province.length > 0 ? item.name : placeholder} value={item.code} key={item} enabled={!pickerFocused} />)}
-                                        </Picker>
-
-                                        <View style={{ borderBottomWidth: 0.5 }} />
-                                        <Text style={{ fontSize: 15, color: '#000000', marginVertical: 2 }}>Select district:</Text>
-                                        <View style={{ borderBottomWidth: 0.5 }} />
-                                        <Picker
-                                            prompt='--Select district--'
-                                            placeholder='--Select district--'
-                                            placeholderStyle={{
-                                                color: "grey",
-                                            }}
-                                            dropdownIconColor={'#FF6868'}
-                                            dropdownIconRippleColor={'#FF6868'}
-                                            onFocus={getDistrict}
-                                            style={{ color: '#333', backgroundColor: '#EEEEEE' }}
-                                            selectedValue={districtCode}
-                                            onValueChange={i => {
-                                                setDistrictCode(i);
-                                                setWards([])
-                                                setWardCode(null)
-                                            }
-                                            } >
-                                            {provinceCode ? district.map(item => <Picker.Item style={{ backgroundColor: '#FFFFFF', color: '#000000' }} label={item.name} value={item.code} key={item} />) : null}
-                                        </Picker>
-                                        <View style={{ borderBottomWidth: 0.5 }} />
-                                        <Text style={{ fontSize: 15, color: '#000000', marginVertical: 2 }}>Select ward:</Text>
-                                        <View style={{ borderBottomWidth: 0.5 }} />
-                                        <Picker
-                                            prompt='--Select ward--'
-                                            placeholder='--Select ward--'
-                                            placeholderStyle={{
-                                                color: "grey",
-                                            }}
-                                            dropdownIconColor={'#FF6868'}
-                                            dropdownIconRippleColor={'#FF6868'}
-                                            onFocus={getWard}
-                                            style={{ color: '#333', backgroundColor: '#EEEEEE' }}
-                                            selectedValue={wardCode}
-                                            onValueChange={i => setWardCode(i)
-                                            } >
-                                            {districtCode ? wards.map(item => <Picker.Item style={{ backgroundColor: '#FFFFFF', color: '#000000' }} label={item.name} value={item.code} key={item} />) : null}
-                                        </Picker>
-                                        <View style={{ borderBottomWidth: 0.5 }} />
+                                    <View style={{ flex: 1, color: '#333', width: '100%', marginTop:50 }}>
+                                        <Text style={{ color: '#333', marginTop: 10, fontSize: 20, }}>Your location</Text>
+                                        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10, justifyContent: 'space-between', width:'100%'}}>
+                                                <Icon name="location-outline" size={30} style={{ color: '#8B7ED7' }} />
+                                                <Text style={{flex:1,color:'#333', fontSize:17, flexWrap:'wrap'}}>{address}</Text>
+                                        </View>
+                                        <TouchableOpacity onPress={handleGetLocation} style={[styles.buttonClose,{backgroundColor:'#fff',elevation:5}]}>
+                                            <Text style={[styles.textStyle, {color:'#333'}]}> Refresh</Text>
+                                            </TouchableOpacity>
                                     </View>
                                     <Pressable
-                                        onPress={handleSubmit}
-                                        style={[styles.button, styles.buttonClose]}
+                                        onPress={handleUpdateProfile}
+                                        style={styles.buttonClose}
                                     >
                                         <Text style={styles.textStyle}>Comfirm</Text>
                                     </Pressable>

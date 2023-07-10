@@ -50,7 +50,7 @@ const Account = ({ navigation, route }) => {
         <View style={styles.icon}>
           <AwesomeExtraIcon name="check-circle" size={20} color="#2F88FF" />
         </View>
-        <TouchableOpacity style={styles.icon}>
+        <TouchableOpacity onPress = {()=>navigation.navigate('ProfileScreen')} style={styles.icon}>
           <AwesomeExtraIcon name="pencil" size={20} color="#3DA686" />
         </TouchableOpacity>
       </View>
