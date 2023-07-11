@@ -67,6 +67,7 @@ const Tendency = ({ navigation, route }) => {
     return (
         <SafeAreaView style={styles.container}>
             <TouchableOpacity
+                onPress={() => navigation.navigate("Home")}
                 style={[
                     styles.btnClose,
                     {
