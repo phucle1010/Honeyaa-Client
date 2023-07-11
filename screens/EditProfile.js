@@ -21,7 +21,6 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { Picker } from '@react-native-picker/picker';
 import { launchImageLibrary } from 'react-native-image-picker';
 import MyBasicItem from '../components/MyBasicItem';
 import {
@@ -176,16 +175,24 @@ const EditProfileScreen = (props) => {
             const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION);
             const granted1 = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
             if (granted === PermissionsAndroid.RESULTS.GRANTED && granted1 === PermissionsAndroid.RESULTS.GRANTED) {
-                console.log('Quyền truy cập vị trí đã được cấp.');
                 Geolocation.getCurrentPosition(
                     (info) => {
+                        console.log(info.coords.latitude, info.coords.longitude);
                         const apiUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${info.coords.latitude},${info.coords.longitude}&key=AIzaSyDvWoAfSGthu6If2HfoUMrgBGOvj9cn-bQ`;
                         fetch(apiUrl)
                             .then((response) => response.json())
                             .then((responseJson) => {
                                 if (responseJson.results.length > 0) {
-                                    const address = responseJson.results[0].formatted_address;
-                                    setAdress(address);
+                                    let detailAddress = '';
+                                    responseJson.results[0].address_components.forEach((item, index) => {
+                                        if (index > 0) {
+                                            detailAddress += item.long_name;
+                                            if (index < responseJson.results[0].address_components.length - 1) {
+                                                detailAddress += ', ';
+                                            }
+                                        }
+                                    });
+                                    setAdress(detailAddress);
                                 }
                             })
                             .catch((error) => {
@@ -195,7 +202,11 @@ const EditProfileScreen = (props) => {
                     (error) => {
                         console.log('Lỗi lấy vị trí:', error);
                     },
-                    { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
+                    {
+                        enableHighAccuracy: false,
+                        timeout: 20000,
+                        maximumAge: 1000,
+                    },
                 );
             } else {
                 console.log('Quyền truy cập vị trí bị từ chối.');

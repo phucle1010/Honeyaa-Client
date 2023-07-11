@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, FlatList } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import SimpleIcon from 'react-native-vector-icons/SimpleLineIcons';
+import Swiper from 'react-native-swiper';
 
 const ViewProfile = ({ navigation, route }) => {
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -34,27 +35,22 @@ const ViewProfile = ({ navigation, route }) => {
         <View style={styles.container}>
             <ScrollView showsVerticalScrollIndicator={false} style={{ height: '100%' }}>
                 <View style={styles.imageContainer}>
-                    <ScrollView horizontal pagingEnabled>
+                    <Swiper showsButtons={false} dotStyle={{ display: 'none' }} activeDotStyle={{ display: 'none' }}>
                         {userProfile?.img.length > 0 &&
                             userProfile?.img.map((profileImage, index) => (
-                                <TouchableOpacity
+                                <Image
                                     key={index}
-                                    // onPress={() => setSelectedImageIndex(image.id - 1)}
-                                    activeOpacity={0.8}
-                                >
-                                    <Image
-                                        source={{ uri: profileImage.image }}
-                                        style={[
-                                            styles.image,
-                                            {
-                                                height: '100%',
-                                                width: 450,
-                                            },
-                                        ]}
-                                    />
-                                </TouchableOpacity>
+                                    source={{ uri: profileImage.image }}
+                                    style={[
+                                        styles.image,
+                                        {
+                                            height: '100%',
+                                            width: 450,
+                                        },
+                                    ]}
+                                />
                             ))}
-                    </ScrollView>
+                    </Swiper>
                     <TouchableOpacity
                         style={{
                             position: 'absolute',

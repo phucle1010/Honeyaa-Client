@@ -132,7 +132,7 @@ const SettingProfile = ({ navigation, route }) => {
 
     useEffect(() => {
         updateDatabase();
-    }, [state.age, state.distance, state.active_status]);
+    }, [state.age_oriented, state.distance, state.active_status]);
 
     const snapPoints = useMemo(() => ['50%'], []);
 
@@ -199,7 +199,7 @@ const SettingProfile = ({ navigation, route }) => {
                 </View>
 
                 <Slider
-                    maximumValue={100}
+                    maximumValue={10000}
                     minimumValue={0}
                     minimumTrackTintColor="#307ecc"
                     maximumTrackTintColor="#000000"

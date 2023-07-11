@@ -100,7 +100,6 @@ const Home = ({ navigation, route }) => {
             .then((res) => {
                 if (res.data.statusCode === 200) {
                     dispatch(setUser(res.data.responseData[0]));
-                    setLoaded(true);
                 } else {
                     navigation.navigate('Login');
                 }
@@ -149,6 +148,9 @@ const Home = ({ navigation, route }) => {
                 params: {
                     id: user.id,
                     sex_oriented: user.sex_oriented,
+                    age_oriented: user.age_oriented,
+                    distance: user.distance,
+                    current_address: user.address,
                 },
             })
             .then((response) => {
@@ -160,6 +162,7 @@ const Home = ({ navigation, route }) => {
     useEffect(() => {
         if (user?.id && !loadedProfiles) {
             getUserProfile();
+            setLoaded(true);
         }
     }, [user]);
 
@@ -233,10 +236,6 @@ const Home = ({ navigation, route }) => {
         return yearsOld;
     };
 
-    const onSwipe = (direction) => {
-        console.log('You swiped: ' + direction);
-    };
-
     return (
         <SafeAreaView>
             {loaded ? (
@@ -270,8 +269,8 @@ const Home = ({ navigation, route }) => {
                             <Icon name="ios-notifications-outline" size={25} style={styles.optionIcon} />
                         </Pressable>
                     </View>
-                    {loadedProfiles &&
-                        (Object.keys(userProfile).length > 0 ? (
+                    {loadedProfiles ? (
+                        Object.keys(userProfile).length > 0 ? (
                             <View style={styles.profile}>
                                 <Swiper
                                     showsButtons={false}
@@ -346,7 +345,7 @@ const Home = ({ navigation, route }) => {
                                                 color: '#fff',
                                                 fontWeight: '500',
                                             }}
-                                        >{`Cách xa ${userProfile.distance}km`}</Text>
+                                        >{`Cách xa ${userProfile?.realDistance}km`}</Text>
                                         <Icon
                                             name="location-sharp"
                                             style={{
@@ -435,7 +434,10 @@ const Home = ({ navigation, route }) => {
                                     Bạn đã xem hết Profile có sẵn
                                 </Text>
                             </View>
-                        ))}
+                        )
+                    ) : (
+                        <Loading />
+                    )}
 
                     {interactMessageConfig.message && (
                         <InteractNotice
