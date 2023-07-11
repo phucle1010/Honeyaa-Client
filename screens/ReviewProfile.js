@@ -6,60 +6,12 @@ import AwesomeExtraIcon from 'react-native-vector-icons/FontAwesome';
 import { useIsFocused } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import API_URL from '../services/apiRoute';
-
+import Swiper from 'react-native-swiper';
 import Loading from '../components/Loading';
-
-const PROFILES = {
-    id: 1,
-    name: 'Thần Báo',
-    age: 20,
-    status: 'Hoạt động gần đây',
-    distance: 1,
-    gender: 'Nữ',
-    img: [
-        {
-            id: 1,
-            url: 'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/297be08c-1ddb-4b84-be0c-01f60d984bdc/dflvygw-248d6628-a2bb-4978-84b4-c0a2db3e674b.jpg/v1/fill/w_730,h_1095,q_70,strp/beautiful_anime_kawaii_cute_classmate_girl_by_sianworld_dflvygw-pre.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTUzNiIsInBhdGgiOiJcL2ZcLzI5N2JlMDhjLTFkZGItNGI4NC1iZTBjLTAxZjYwZDk4NGJkY1wvZGZsdnlndy0yNDhkNjYyOC1hMmJiLTQ5NzgtODRiNC1jMGEyZGIzZTY3NGIuanBnIiwid2lkdGgiOiI8PTEwMjQifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.hPOU0KOYKq6h5z0uTRwxiGCna0dRTnnmw0M7JJgi1X4',
-        },
-        {
-            id: 2,
-            url: 'https://s3.bukalapak.com/img/8106122415/large/IMG_20181230_WA0156_scaled.jpg.webp',
-        },
-        {
-            id: 3,
-            url: 'https://w0.peakpx.com/wallpaper/432/513/HD-wallpaper-anime-girl-cool-nice-refrishin.jpg',
-        },
-    ],
-    hobbies: [
-        {
-            id: 1,
-            name: 'Du lịch',
-        },
-        {
-            id: 2,
-            name: 'Nghe nhạc',
-        },
-        {
-            id: 3,
-            name: 'Ăn uống',
-        },
-        {
-            id: 4,
-            name: 'Đọc sách',
-        },
-    ],
-    introduction: 'Ly cà phê của em hơi đắng. Có vẻ thiếu vị ngọt từ anh!!!',
-    socialContact: {
-        facebook: 'annoy1010',
-        instagram: 'Annoy',
-    },
-    approachObject: 'Cần tìm người yêu',
-};
 
 const ReviewProfile = () => {
     const currentUser = useSelector((state) => state.user);
     const isFocusedScreen = useIsFocused();
-    const [selectedImageIndex, setSelectedImageIndex] = useState(0);
     const [photos, setPhotos] = useState([]);
     const [loaded, setLoaded] = useState(false);
 
@@ -87,39 +39,44 @@ const ReviewProfile = () => {
         } else {
             setPhotos([]);
         }
-    }, []);
+    }, [isFocusedScreen]);
+
+    const currentYearsOld = (date) => {
+        const currentDate = new Date();
+        const dob = new Date(Date.parse(date));
+        const yearsOld = Number.parseInt(currentDate.getUTCFullYear()) - Number.parseInt(dob.getUTCFullYear());
+        const currentMonth = currentDate.getMonth();
+        const monthInDOB = dob.getMonth();
+        if (currentMonth < monthInDOB) {
+            return yearsOld - 1;
+        }
+        return yearsOld;
+    };
 
     return (
         <View style={styles.container}>
             {loaded ? (
                 <View style={styles.imageContainer}>
-                    <ScrollView horizontal pagingEnabled>
+                    <Swiper showsButtons={false} dotStyle={{ display: 'none' }} activeDotStyle={{ display: 'none' }}>
                         {photos.map((image) => (
                             <TouchableOpacity
                                 key={image.id}
-                                onPress={() => setSelectedImageIndex(image.id - 1)}
                                 activeOpacity={0.8}
                                 style={{
-                                    height: '80%',
+                                    marginTop: 10,
+                                    height: '90%',
                                     width: 450,
+                                    overflow: 'hidden',
+                                    borderRadius: 10,
                                 }}
                             >
-                                <Image
-                                    source={{ uri: image.image }}
-                                    style={[
-                                        styles.image,
-                                        selectedImageIndex === image.id - 1 &&
-                                            {
-                                                // borderWidth: 2,
-                                                // borderColor: 'purple',
-                                            },
-                                    ]}
-                                />
+                                <Image source={{ uri: image.image }} style={[styles.image]} />
                                 <View style={styles.profileDesc}>
                                     <Text style={styles.nameUser}>{currentUser.full_name}</Text>
-                                    <Text style={styles.age}>{PROFILES.age}</Text>
+                                    <Text style={styles.age}>{currentYearsOld(currentUser.dob)}</Text>
                                     <View
                                         style={{
+                                            // marginBottom: 5,
                                             marginLeft: 10,
                                             padding: 4,
                                             borderRadius: 50,
@@ -131,7 +88,7 @@ const ReviewProfile = () => {
                                 </View>
                             </TouchableOpacity>
                         ))}
-                    </ScrollView>
+                    </Swiper>
                 </View>
             ) : (
                 <Loading />
@@ -146,7 +103,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         paddingHorizontal: 22,
         backgroundColor: '#FFFFFF',
-        borderWidth: 1,
     },
     containerHead: {
         flexDirection: 'row',
@@ -193,11 +149,9 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
     },
     image: {
-        marginTop: 15,
         width: '100%',
         height: '100%',
         resizeMode: 'cover',
-        borderRadius: 10,
     },
     profileDesc: {
         position: 'absolute',
@@ -207,23 +161,25 @@ const styles = StyleSheet.create({
         paddingLeft: 20,
         flexDirection: 'row',
         alignItems: 'center',
+        borderBottomLeftRadius: 10,
+        borderBottomRightRadius: 10,
         backgroundColor: 'rgba(103, 103, 103, 0.6)',
-        // backgroundColor: 'red',
         zIndex: 1,
     },
     nameUser: {
         fontWeight: 400,
-        fontSize: 30,
-        fontStyle: 'normal',
+        fontSize: 20,
+        // fontStyle: 'normal',
+        fontWeight: 'bold',
         color: '#FFFFFF',
-        padding: 5,
     },
     age: {
+        marginHorizontal: 10,
         fontWeight: 400,
-        fontSize: 24,
-        fontStyle: 'normal',
+        fontSize: 20,
+        // fontStyle: 'normal',
+        fontWeight: 300,
         color: '#FFFFFF',
-        padding: 5,
     },
 });
 

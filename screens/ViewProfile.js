@@ -1,147 +1,251 @@
-import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, FlatList } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import axios from 'axios';
+import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Animated, Pressable } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import SimpleIcon from 'react-native-vector-icons/SimpleLineIcons';
+import Swiper from 'react-native-swiper';
+import { useSelector } from 'react-redux';
+import API_URL from '../services/apiRoute';
 
-const PROFILES = {
-    id: 1,
-    name: 'Thần Báo',
-    age: 20,
-    status: 'Hoạt động gần đây',
-    distance: 1,
-    gender: 'Nữ',
-    img: [
-        {
-            id: 1,
-            url: 'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/297be08c-1ddb-4b84-be0c-01f60d984bdc/dflvygw-248d6628-a2bb-4978-84b4-c0a2db3e674b.jpg/v1/fill/w_730,h_1095,q_70,strp/beautiful_anime_kawaii_cute_classmate_girl_by_sianworld_dflvygw-pre.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTUzNiIsInBhdGgiOiJcL2ZcLzI5N2JlMDhjLTFkZGItNGI4NC1iZTBjLTAxZjYwZDk4NGJkY1wvZGZsdnlndy0yNDhkNjYyOC1hMmJiLTQ5NzgtODRiNC1jMGEyZGIzZTY3NGIuanBnIiwid2lkdGgiOiI8PTEwMjQifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.hPOU0KOYKq6h5z0uTRwxiGCna0dRTnnmw0M7JJgi1X4',
-        },
-        {
-            id: 2,
-            url: 'https://s3.bukalapak.com/img/8106122415/large/IMG_20181230_WA0156_scaled.jpg.webp',
-        },
-        {
-            id: 3,
-            url: 'https://w0.peakpx.com/wallpaper/432/513/HD-wallpaper-anime-girl-cool-nice-refrishin.jpg',
-        },
-    ],
-    hobbies: [
-        {
-            id: 1,
-            name: 'Du lịch',
-        },
-        {
-            id: 2,
-            name: 'Nghe nhạc',
-        },
-        {
-            id: 3,
-            name: 'Ăn uống',
-        },
-        {
-            id: 4,
-            name: 'Đọc sách',
-        },
-    ],
-    introduction: 'Ly cà phê của em hơi đắng. Có vẻ thiếu vị ngọt từ anh!!!',
-    socialContact: {
-        facebook: 'annoy1010',
-        instagram: 'Annoy',
-    },
-    approachObject: 'Cần tìm người yêu',
+const MyBasicItem = (props) => {
+    const { icon, value, basic } = props;
+    return (
+        <View style={{ ...styles.myBasicItemContainer, paddingVertical: basic ? 4 : 8 }}>
+            {basic && (
+                <View style={styles.myBasicRow}>
+                    <Icon name={icon} size={24} style={styles.iconBasic} />
+                </View>
+            )}
+            <View style={styles.myBasicRow}>
+                <Text style={styles.text}>{value}</Text>
+            </View>
+        </View>
+    );
 };
 
-const ViewProfile = () => {
-    const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+const LIKE = 1;
+const DISLIKE = 2;
+const SUPER_LIKE = 3;
 
-    const renderImageSelector = ({ item }) => {
-        return (
-            <TouchableOpacity
-                onPress={() => setSelectedImageIndex(item.id - 1)}
-                style={[styles.thumbnailContainer, selectedImageIndex === item.id - 1 && styles.thumbnailSelected]}
-            >
-                <Image source={{ uri: item.url }} style={styles.thumbnail} />
-            </TouchableOpacity>
-        );
+const InteractNotice = ({ ...props }) => {
+    const top = useRef(new Animated.Value(20)).current;
+    const opacity = useRef(new Animated.Value(1)).current;
+
+    useEffect(() => {
+        Animated.sequence([
+            Animated.timing(top, {
+                duration: 600,
+                toValue: 60,
+                useNativeDriver: false,
+            }),
+        ]).start();
+
+        Animated.sequence([
+            Animated.timing(opacity, {
+                duration: 1000,
+                toValue: 0,
+                useNativeDriver: false,
+            }),
+        ]).start();
+
+        setTimeout(() => {
+            props.setInteractMessageConfig({
+                message: '',
+                color: '',
+            });
+        }, 1200);
+
+        return clearTimeout();
+    }, []);
+
+    return (
+        <Animated.View
+            style={[
+                styles.interactNoticeContainer,
+                {
+                    top,
+                    opacity,
+                    backgroundColor: props.interactMessageConfig.color,
+                },
+            ]}
+        >
+            <Text style={styles.interactNoticeText}>{props.interactMessageConfig.message}</Text>
+        </Animated.View>
+    );
+};
+
+const ViewProfile = ({ navigation, route }) => {
+    const user = useSelector((state) => state.user);
+    const [interactMessageConfig, setInteractMessageConfig] = useState({
+        message: '',
+        color: '',
+    });
+    const userProfile = route.params?.userProfile;
+    const basics = userProfile.basics[0];
+    const hobbies = userProfile.hobbies;
+
+    const showInteractMessage = (type, response) => {
+        switch (type) {
+            case LIKE:
+                setInteractMessageConfig({
+                    message: response,
+                    color: '#40b5ad',
+                });
+                break;
+            case DISLIKE:
+                setInteractMessageConfig({
+                    message: response,
+                    color: '#fa5f55',
+                });
+                break;
+            case SUPER_LIKE:
+                setInteractMessageConfig({
+                    message: response,
+                    color: '#00bfff',
+                });
+                break;
+            default:
+                break;
+        }
+    };
+
+    const handlePostInteract = (type) => {
+        setTimeout(() => {
+            axios
+                .post(`${API_URL}/api/match/interact`, {
+                    person_id: user.id,
+                    target_id: userProfile.id,
+                    interact_type: type,
+                })
+                .then(async (res) => {
+                    if (res.data.statusCode === 200) {
+                        if (res.data.is_matched) {
+                            // navigate tới màn hình matched
+                            await navigation.navigate('Matched', {
+                                person_img: user.img[0].image,
+                                target_img: userProfile.img[0].image,
+                            });
+                        } else {
+                            showInteractMessage(type, res.data.responseData); /// Hiển thị thanh trượt xuống thông báo tương tác vừa thực hiện
+                            setTimeout(() => navigation.navigate('Home'), 300);
+                        }
+                    } else {
+                        Alert.alert('Fail', res.data.responseData);
+                    }
+                })
+                .catch((err) => Alert.alert('Fail', err.toString()));
+        }, 200);
+    };
+
+    const currentYearsOld = (date) => {
+        const currentDate = new Date();
+        const dob = new Date(Date.parse(date));
+        const yearsOld = Number.parseInt(currentDate.getUTCFullYear()) - Number.parseInt(dob.getUTCFullYear());
+        const currentMonth = currentDate.getMonth();
+        const monthInDOB = dob.getMonth();
+        if (currentMonth < monthInDOB) {
+            return yearsOld - 1;
+        }
+        return yearsOld;
     };
 
     return (
         <View style={styles.container}>
-            <ScrollView>
+            <ScrollView showsVerticalScrollIndicator={false} style={{ height: '100%' }}>
                 <View style={styles.imageContainer}>
-                    <ScrollView horizontal pagingEnabled>
-                        {PROFILES.img.map((image) => (
-                            <TouchableOpacity
-                                key={image.id}
-                                onPress={() => setSelectedImageIndex(image.id - 1)}
-                                activeOpacity={0.8}
-                            >
+                    <Swiper showsButtons={false} dotStyle={{ display: 'none' }} activeDotStyle={{ display: 'none' }}>
+                        {userProfile?.img.length > 0 &&
+                            userProfile?.img.map((profileImage, index) => (
                                 <Image
-                                    source={{ uri: image.url }}
+                                    key={index}
+                                    source={{ uri: profileImage.image }}
                                     style={[
                                         styles.image,
                                         {
                                             height: '100%',
                                             width: 450,
                                         },
-                                        selectedImageIndex === image.id - 1 &&
-                                            {
-                                                // borderWidth: 2,
-                                                // borderColor: 'purple',
-                                            },
                                     ]}
+                                    resizeMode="cover"
                                 />
-                            </TouchableOpacity>
-                        ))}
-                    </ScrollView>
-                    <TouchableOpacity
+                            ))}
+                    </Swiper>
+                    <Pressable
                         style={{
                             position: 'absolute',
                             right: 10,
-                            bottom: 5,
-                            width: 40,
-                            height: 40,
-                            borderRadius: 50,
-                            backgroundColor: '#FFFFFF',
-                            alignItems: 'center',
+                            bottom: '2%',
+                            width: 30,
+                            height: 30,
                             justifyContent: 'center',
-                            borderWidth: 3,
-                            borderColor: '#EF8484',
+                            alignItems: 'center',
+                            backgroundColor: '#EF8484',
+                            borderRadius: 20,
                         }}
+                        onPress={() => navigation.navigate('Home')}
                     >
-                        <Icon name="arrow-up" size={25} color="#EF8484" />
-                    </TouchableOpacity>
+                        <Icon name="arrow-down" size={20} color="#ffff" />
+                    </Pressable>
                 </View>
-                <View style={styles.containerName}>
-                    <Text style={styles.name}> {PROFILES.name} </Text>
-                    <Text style={styles.age}> {PROFILES.age} </Text>
+                <View style={{ ...styles.containerName, marginBottom: 10 }}>
+                    <Text style={{ ...styles.name, marginBottom: 0 }}>{userProfile.name}</Text>
+                    <Text style={{ ...styles.age, marginLeft: 10 }}>{currentYearsOld(userProfile.dob)}</Text>
                 </View>
                 <View style={styles.containerAbout_me}>
-                    <Text style={styles.name}> About me</Text>
+                    <Text style={styles.name}>About me</Text>
+                    <Text>{userProfile.about_me}</Text>
                 </View>
                 <View style={styles.containerBasic}>
-                    <Text style={styles.name}> My basics </Text>
+                    <Text style={styles.name}>My basics</Text>
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                        <MyBasicItem basic={true} icon={'moon-outline'} value={basics.zodiac} />
+                        <MyBasicItem basic={true} icon={'school-outline'} value={basics.education} />
+                        <MyBasicItem basic={true} icon={'language-outline'} value={basics.language} />
+                        <MyBasicItem basic={true} icon={'logo-facebook'} value={basics.social_network} />
+                        <MyBasicItem basic={true} icon={'barbell-outline'} value={basics.physical} />
+                        <MyBasicItem basic={true} icon={'paw-outline'} value={basics.pet} />
+                        <MyBasicItem basic={true} icon={'musical-note-outline'} value={basics.music} />
+                    </View>
                 </View>
                 <View style={styles.containerInterest}>
-                    <Text style={styles.name}> My interests</Text>
-                </View>
-                <View style={styles.profileOptions}>
-                    <TouchableOpacity
-                        style={{ ...styles.profileOptionItem, borderColor: '#fa5f55', width: 53, height: 53 }}
-                    >
-                        <Icon name="close" size={30} color="#fa5f55" />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={{ ...styles.profileOptionItem, borderColor: '#40b5ad', width: 48, height: 48 }}
-                    >
-                        <Icon name="heart-outline" size={30} color="#40b5ad" />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={{ ...styles.profileOptionItem, borderColor: '#00bfff', width: 53, height: 53 }}
-                    >
-                        <SimpleIcon name="star" size={26} color="#00bfff" />
-                    </TouchableOpacity>
+                    <Text style={styles.name}>My interests</Text>
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                        {hobbies.map((hobby) => (
+                            <MyBasicItem basic={false} icon="" key={hobby.id} value={hobby.name} />
+                        ))}
+                    </View>
                 </View>
             </ScrollView>
+            <View style={styles.profileOptions}>
+                <TouchableOpacity
+                    style={{ ...styles.profileOptionItem, borderColor: '#fa5f55', width: 53, height: 53 }}
+                    onPress={() => handlePostInteract(DISLIKE)}
+                >
+                    <Icon name="close" size={30} color="#fa5f55" />
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={{ ...styles.profileOptionItem, borderColor: '#40b5ad', width: 48, height: 48 }}
+                    onPress={() => handlePostInteract(LIKE)}
+                >
+                    <Icon name="heart-outline" size={30} color="#40b5ad" />
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={{ ...styles.profileOptionItem, borderColor: '#00bfff', width: 53, height: 53 }}
+                    onPress={() => handlePostInteract(SUPER_LIKE)}
+                >
+                    <SimpleIcon name="star" size={26} color="#00bfff" />
+                </TouchableOpacity>
+            </View>
+            {interactMessageConfig.message && (
+                <InteractNotice
+                    interactMessageConfig={interactMessageConfig}
+                    setInteractMessageConfig={setInteractMessageConfig}
+                />
+            )}
+            {/* <InteractNotice
+                interactMessageConfig={interactMessageConfig}
+                setInteractMessageConfig={setInteractMessageConfig}
+            /> */}
         </View>
     );
 };
@@ -149,9 +253,20 @@ const ViewProfile = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingHorizontal: 2,
         backgroundColor: '#FFFFFF',
-        padding: 10,
+    },
+    interactNoticeContainer: {
+        position: 'absolute',
+        left: '35%',
+        width: 150,
+        height: 50,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 10,
+    },
+    interactNoticeText: {
+        color: '#fff',
+        fontSize: 20,
     },
     imageContainer: {
         height: 550,
@@ -159,7 +274,6 @@ const styles = StyleSheet.create({
     image: {
         width: '100%',
         height: '100%',
-        resizeMode: 'cover',
     },
     imageSelectorContainer: {
         position: 'absolute',
@@ -188,16 +302,16 @@ const styles = StyleSheet.create({
     containerName: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingVertical: 30,
+        paddingVertical: 20,
         borderBottomColor: '#AAAAAA',
         borderBottomWidth: 0.5,
+        paddingHorizontal: 20,
     },
     name: {
         fontSize: 20,
         fontWeight: 400,
-        marginBottom: 5,
+        marginBottom: 10,
         color: '#000000',
-        paddingLeft: 20,
     },
     age: {
         fontWeight: '400',
@@ -205,27 +319,51 @@ const styles = StyleSheet.create({
         color: '#000000',
     },
     containerAbout_me: {
-        flexDirection: 'row',
-        alignItems: 'center',
         paddingVertical: 30,
         borderBottomColor: '#AAAAAA',
         borderBottomWidth: 0.5,
+        paddingHorizontal: 20,
     },
     containerBasic: {
-        flexDirection: 'row',
-        alignItems: 'center',
         paddingVertical: 30,
         borderBottomColor: '#AAAAAA',
         borderBottomWidth: 0.5,
+        paddingHorizontal: 20,
+    },
+    myBasicItemContainer: {
+        marginRight: 10,
+        marginBottom: 10,
+        paddingHorizontal: 10,
+        borderRadius: 20,
+        flexDirection: 'row',
+        alignSelf: 'flex-start',
+        justifyContent: 'space-between',
+        backgroundColor: '#efefef',
+    },
+    myBasicRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    iconBasic: {
+        color: '#666666',
+    },
+    text: {
+        fontSize: 14,
+        color: '#575757',
+        marginHorizontal: 5,
     },
     containerInterest: {
-        flexDirection: 'row',
-        alignItems: 'center',
         paddingVertical: 30,
         borderBottomColor: '#AAAAAA',
         borderBottomWidth: 0.5,
+        paddingBottom: 200,
+        paddingHorizontal: 20,
     },
     profileOptions: {
+        position: 'absolute',
+        bottom: 10,
+        left: 0,
+        right: 0,
         height: 100,
         flexDirection: 'row',
         alignItems: 'center',

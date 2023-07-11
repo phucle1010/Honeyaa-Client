@@ -28,6 +28,7 @@ import { setUser } from '../reducers/user';
 import DeviceInfo from 'react-native-device-info';
 import { useIsFocused } from '@react-navigation/native';
 import API_URL from '../services/apiRoute';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const SignIn = ({ navigation }) => {
     const initUserInput = {
@@ -38,6 +39,8 @@ const SignIn = ({ navigation }) => {
     const [userInput, setUserInput] = useState(initUserInput);
     const [successLogin, setSuccessLogin] = useState(false);
     const [deviceId, setDeviceId] = useState(null);
+    const [showedPass, setShowedPass] = useState(false);
+    const [isRemember, setIsRemember] = useState(false);
 
     useEffect(() => {
         if (successLogin) {
@@ -165,12 +168,20 @@ const SignIn = ({ navigation }) => {
     }
 
     return (
-        <SafeAreaView style={styles.container}>
-            <ImageBackground style={styles.imgbackground} source={require('../assets/img/background-login.png')}>
+        <View style={styles.container}>
+            {/* <ImageBackground style={styles.imgbackground} source={require('../assets/img/background-login.png')}> */}
+            <ImageBackground
+                style={styles.imgbackground}
+                source={{ uri: 'https://wallpaperaccess.com/full/7155674.jpg' }}
+                resizeMode="stretch"
+            >
                 <View style={styles.section}>
                     <View>
                         {/* <Image style={styles.imgbackground} source={require('../sources/images/dating-App.png')} /> */}
-                        <Text style={styles.txthead}>Welcome to Honeyaa</Text>
+                        <Text style={styles.txthead}>Honeyaa</Text>
+                        <Text style={{ ...styles.txthead, fontSize: 16, fontWeight: 400, marginTop: 6 }}>
+                            Find the compatible people for you
+                        </Text>
                     </View>
                     <View>
                         <TextInput
@@ -186,13 +197,14 @@ const SignIn = ({ navigation }) => {
                                     };
                                 })
                             }
+                            placeholderTextColor={'#fff'}
                         />
                     </View>
                     <View style={styles.passcontainer}>
                         <TextInput
                             style={styles.password}
                             placeholder="Password"
-                            secureTextEntry={true}
+                            secureTextEntry={!showedPass}
                             defaultValue={userInput.pass}
                             onChangeText={(pass) =>
                                 setUserInput((prevUser) => {
@@ -202,14 +214,35 @@ const SignIn = ({ navigation }) => {
                                     };
                                 })
                             }
+                            placeholderTextColor={'#fff'}
                         />
-                        <TouchableOpacity>
-                            <Image style={styles.icon} source={require('../sources/icons/eye.png')} />
+                        <TouchableOpacity onPress={() => setShowedPass((prev) => !prev)}>
+                            <Icon
+                                name={showedPass ? 'eye-outline' : 'eye-off-outline'}
+                                size={25}
+                                style={{ color: '#fff', marginHorizontal: 10 }}
+                            />
                         </TouchableOpacity>
                     </View>
                     <View style={styles.options}>
-                        <Text style={styles.txtRemember}>Remember me</Text>
-                        <TouchableOpacity>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <TouchableOpacity
+                                style={{
+                                    width: 20,
+                                    height: 20,
+                                    borderRadius: 4,
+                                    backgroundColor: '#ffffff',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    marginRight: 6,
+                                }}
+                                onPress={() => setIsRemember((prev) => !prev)}
+                            >
+                                {isRemember && <Icon name="checkmark" size={20} color="#71797E" />}
+                            </TouchableOpacity>
+                            <Text style={styles.txtRemember}>Remember me</Text>
+                        </View>
+                        <TouchableOpacity style={{ flex: 1 }}>
                             <Text style={styles.txtForgotPass}>Forgot password?</Text>
                         </TouchableOpacity>
                     </View>
@@ -244,17 +277,17 @@ const SignIn = ({ navigation }) => {
                     </View>
                 </View>
             </ImageBackground>
-        </SafeAreaView>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        flexDirection: 'column',
+        height: '100%',
+        // flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#fff',
+        // backgroundColor: '#fff',
     },
     section: {
         flexDirection: 'column',
@@ -266,8 +299,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 30,
         color: '#777676',
+        color: '#fff',
         textAlign: 'center',
-        marginHorizontal: 33,
     },
     imgbackground: {
         flex: 1,
@@ -280,9 +313,11 @@ const styles = StyleSheet.create({
         marginHorizontal: 19,
         padding: 10,
         borderWidth: 1,
-        borderColor: '#767676',
+        // borderColor: '#767676',
+        borderColor: '#ffffff',
         marginBottom: 20,
-        marginTop: 60,
+        marginTop: 50,
+        color: '#ffffff',
     },
     passcontainer: {
         flexDirection: 'row',
@@ -292,12 +327,14 @@ const styles = StyleSheet.create({
         marginHorizontal: 20,
         marginBottom: 10,
         borderWidth: 1,
-        borderColor: '#767676',
+        // borderColor: '#767676',
+        borderColor: '#ffffff',
         alignItems: 'center',
     },
     password: {
         flex: 1,
         paddingHorizontal: 10,
+        color: '#ffffff',
     },
     icon: {
         width: 24,
@@ -305,6 +342,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 10,
     },
     options: {
+        width: 346,
         flexDirection: 'row',
         justifyContent: 'space-evenly',
         marginHorizontal: 19,
@@ -316,14 +354,14 @@ const styles = StyleSheet.create({
         fontFamily: 'Overpass',
         fontSize: 14,
         fontWeight: 300,
-        color: '#000000',
+        color: '#fff',
     },
     txtForgotPass: {
+        alignSelf: 'flex-end',
         fontFamily: 'Overpass',
         fontSize: 14,
         fontWeight: 300,
-        marginLeft: 100,
-        color: '#B74545',
+        color: '#FF7F50',
     },
     btnlogin: {
         marginTop: 20,
@@ -385,7 +423,7 @@ const styles = StyleSheet.create({
         marginTop: 15,
         fontFamily: 'Overpass',
         fontSize: 13,
-        color: '#503EBF',
+        color: '#ffffff',
         fontWeight: 'bold',
     },
     signUpContainer: {

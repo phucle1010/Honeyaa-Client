@@ -33,6 +33,7 @@ const MatchChat = (props) => {
             getData();
         }, [currentUser]),
     );
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.searchInputContainer}>

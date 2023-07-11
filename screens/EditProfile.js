@@ -17,10 +17,10 @@ import {
     Alert,
     Pressable,
     TouchableWithoutFeedback,
+    PermissionsAndroid,
 } from 'react-native';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { Picker } from '@react-native-picker/picker';
 import { launchImageLibrary } from 'react-native-image-picker';
 import MyBasicItem from '../components/MyBasicItem';
 import {
@@ -32,11 +32,13 @@ import {
     musicData,
     physicalData,
 } from '../src/constant/Data';
+import Geolocation from 'react-native-geolocation-service';
 
-const { width, height } = Dimensions.get('window');
 import Loading from '../components/Loading';
 import { useIsFocused } from '@react-navigation/native';
 import API_URL from '../services/apiRoute';
+
+const { width, height } = Dimensions.get('window');
 
 const ImageFrameItem = ({ ...props }) => {
     const indexOfImage = props.item.index;
@@ -153,20 +155,10 @@ const EditProfileScreen = (props) => {
     const [showModal, setShowModal] = useState(false);
     const [favoriteItems, setFavoriteItems] = useState([]);
     const favoriteName = favoriteItems.map((i) => i.name);
-    const [province, setProvince] = useState([]);
-    const [district, setDistrict] = useState([]);
-    const [wards, setWards] = useState([]);
     const [showModalAddress, setShowModalAddress] = useState(false);
     const [showModalSex, setShowModalSex] = useState(false);
     const [showModalSexOriented, setShowModalSexOriented] = useState(false);
     const [showModalRelationshipOriented, setShowModalRelationshipOriented] = useState(false);
-    const [provinceCode, setProvinceCode] = useState();
-    const [districtCode, setDistrictCode] = useState();
-    const [wardCode, setWardCode] = useState();
-    const [provinceName, setProvinceName] = useState('');
-    const [districtName, setDistrictName] = useState('');
-    const [wardName, setWardName] = useState('');
-    const [pickerFocused, setPickerFocused] = useState(false);
     const [address, setAdress] = useState('');
     const [sex, setSex] = useState('');
     const [sexOriented, setSexOriented] = useState('');
@@ -176,7 +168,53 @@ const EditProfileScreen = (props) => {
     const [listRelationshipOriented, setListRelationshipOriented] = useState([]);
     const bottomSheetModalRef = useRef(null);
     const scrollViewRef = useRef(null);
-    const snapPoints = ['35%', '75%', '100%'];
+    const snapPoints = ['40%', '70%'];
+
+    const handleGetLocation = async () => {
+        try {
+            const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION);
+            const granted1 = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+            if (granted === PermissionsAndroid.RESULTS.GRANTED && granted1 === PermissionsAndroid.RESULTS.GRANTED) {
+                Geolocation.getCurrentPosition(
+                    (info) => {
+                        console.log(info.coords.latitude, info.coords.longitude);
+                        const apiUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${info.coords.latitude},${info.coords.longitude}&key=AIzaSyDvWoAfSGthu6If2HfoUMrgBGOvj9cn-bQ`;
+                        fetch(apiUrl)
+                            .then((response) => response.json())
+                            .then((responseJson) => {
+                                if (responseJson.results.length > 0) {
+                                    let detailAddress = '';
+                                    responseJson.results[0].address_components.forEach((item, index) => {
+                                        if (index > 0) {
+                                            detailAddress += item.long_name;
+                                            if (index < responseJson.results[0].address_components.length - 1) {
+                                                detailAddress += ', ';
+                                            }
+                                        }
+                                    });
+                                    setAdress(detailAddress);
+                                }
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                            });
+                    },
+                    (error) => {
+                        console.log('Lỗi lấy vị trí:', error);
+                    },
+                    {
+                        enableHighAccuracy: false,
+                        timeout: 20000,
+                        maximumAge: 1000,
+                    },
+                );
+            } else {
+                console.log('Quyền truy cập vị trí bị từ chối.');
+            }
+        } catch (err) {
+            console.warn(err);
+        }
+    };
 
     const getImageListOfUser = async () => {
         await axios
@@ -314,7 +352,10 @@ const EditProfileScreen = (props) => {
                 sexOriented,
                 relationshipOrientedId,
             })
-            .then((response) => {})
+            .then((response) => {
+                Alert.alert('Success', response.data.message);
+                setShowModalAddress(false);
+            })
             .catch((error) => {
                 console.log(error);
             });
@@ -405,64 +446,6 @@ const EditProfileScreen = (props) => {
         }, 100);
     }
 
-    const getProvince = () => {
-        axios
-            .get('https://provinces.open-api.vn/api/?depth=1')
-            .then((response) => {
-                setProvince(response.data);
-            })
-            .catch((error) => {
-                console.log('lỗi:', error);
-            });
-    };
-
-    const getDistrict = () => {
-        if (provinceCode) {
-            axios
-                .get(`https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`)
-                .then((response) => setDistrict(response.data.districts))
-                .catch((error) => {
-                    console.log('lỗi:', error);
-                });
-        }
-    };
-    const getWard = () => {
-        if (districtCode) {
-            axios
-                .get(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`)
-                .then((response) => setWards(response.data.wards))
-                .catch((error) => {
-                    console.log('lỗi:', error);
-                });
-        }
-    };
-
-    useEffect(() => {
-        if (provinceCode && districtCode && wardCode) {
-            const pvname = province.filter((item) => item.code === provinceCode);
-            setProvinceName(pvname[0].name);
-            const dtname = district.filter((item) => item.code === districtCode);
-            setDistrictName(dtname[0].name);
-            const wname = wards.filter((item) => item.code === wardCode);
-            setWardName(wname[0].name);
-        }
-    }, [provinceCode, districtCode, wardCode]);
-
-    useEffect(() => {
-        if (provinceName && districtName && wardName) {
-            setAdress(wardName + ', ' + districtName + ', ' + provinceName);
-        }
-    }, [wardName]);
-
-    const handleSubmit = () => {
-        if (provinceCode && districtCode && wardCode) {
-            setShowModalAddress(false);
-            handleUpdateProfile();
-        } else {
-            Alert.alert('Please complete all information');
-        }
-    };
-
     const handleGetRelationshipOriented = () => {
         axios
             .get(`${API_URL}/api/user/relationship_oriented`)
@@ -510,14 +493,14 @@ const EditProfileScreen = (props) => {
                                                 setRemoveIndex={setRemoveIndex}
                                             />
                                         )}
-                                        // keyExtractor={(item) => item.id}
                                         numColumns={2}
                                         scrollEnabled={false}
                                     />
                                 )}
+
                                 <View style={styles.profile}>
                                     <Text style={styles.titleText}>About me</Text>
-                                    <View style={{ height: 44 }}>
+                                    <View style={{ height: 44, paddingHorizontal: 10 }}>
                                         <TextInput
                                             value={about}
                                             onChangeText={(i) => setAbout(i)}
@@ -582,7 +565,7 @@ const EditProfileScreen = (props) => {
                                                 setShowModal(true);
                                             }}
                                         >
-                                            <View style={{ height: 44 }}>
+                                            <View style={{ height: 44, paddingHorizontal: 10 }}>
                                                 <TextInput
                                                     editable={false}
                                                     value={favoriteName.join(', ')}
@@ -609,7 +592,7 @@ const EditProfileScreen = (props) => {
                                 <View style={styles.profile}>
                                     <Text style={styles.titleText}>My address</Text>
                                     <TouchableWithoutFeedback onPress={() => setShowModalAddress(true)}>
-                                        <View style={{ height: 44 }}>
+                                        <View style={{ height: 44, paddingHorizontal: 10 }}>
                                             <TextInput
                                                 multiline
                                                 numberOfLines={2}
@@ -631,7 +614,7 @@ const EditProfileScreen = (props) => {
                                 <View style={[styles.profile]}>
                                     <Text style={[styles.titleText]}>Sex</Text>
                                     <TouchableWithoutFeedback onPress={() => setShowModalSex(true)}>
-                                        <View style={{ height: 44 }}>
+                                        <View style={{ height: 44, paddingHorizontal: 10 }}>
                                             <TextInput
                                                 value={sex === 1 ? 'Male' : sex === 0 ? 'Female' : 'Others'}
                                                 style={[
@@ -650,9 +633,11 @@ const EditProfileScreen = (props) => {
                                 <View style={styles.profile}>
                                     <Text style={styles.titleText}>Sex oriented</Text>
                                     <TouchableWithoutFeedback onPress={() => setShowModalSexOriented(true)}>
-                                        <View style={{ height: 44 }}>
+                                        <View style={{ height: 44, paddingHorizontal: 10 }}>
                                             <TextInput
-                                                value={sexOriented === 1 ? 'Male' : sex === 0 ? 'Female' : 'Others'}
+                                                value={
+                                                    sexOriented === 1 ? 'Male' : sexOriented === 0 ? 'Female' : 'Others'
+                                                }
                                                 style={[
                                                     styles.textInput,
                                                     { backgroundColor: isOpen ? 'gray' : '#FFFFFF' },
@@ -669,7 +654,7 @@ const EditProfileScreen = (props) => {
                                 <View style={styles.profile}>
                                     <Text style={styles.titleText}>Relationship oriented</Text>
                                     <TouchableWithoutFeedback onPress={handleGetRelationshipOriented}>
-                                        <View style={{ height: 44 }}>
+                                        <View style={{ height: 44, paddingHorizontal: 10 }}>
                                             <TextInput
                                                 value={relationshipOriented}
                                                 style={[
@@ -949,124 +934,42 @@ const EditProfileScreen = (props) => {
                                                 color: '#FF6868',
                                                 top: 0,
                                                 right: 0,
+                                                zIndex: 1,
                                             }}
                                         >
                                             <Icon name="close-outline" size={30} style={{ color: '#FF6868' }} />
                                         </TouchableOpacity>
 
-                                        <View style={{ color: '#333', width: '100%', marginVertical: 30 }}>
-                                            <Text style={{ fontSize: 15, color: '#000000', marginVertical: 2 }}>
-                                                Select province:
+                                        <View style={{ flex: 1, color: '#333', width: '100%', marginTop: 50 }}>
+                                            <Text style={{ color: '#333', marginTop: 10, fontSize: 20 }}>
+                                                Your location
                                             </Text>
-                                            <Picker
-                                                dropdownIconColor={'#FF6868'}
-                                                dropdownIconRippleColor={'#FF6868'}
-                                                prompt="--Select province--"
-                                                placeholder="--Select province--"
-                                                placeholderStyle={{
-                                                    color: 'grey',
-                                                }}
-                                                style={{ color: '#333', backgroundColor: '#ffff' }}
-                                                onFocus={getProvince}
-                                                onBlur={() => setPickerFocused(false)}
-                                                selectedValue={provinceCode}
-                                                onValueChange={(i) => {
-                                                    setProvinceCode(i);
-                                                    setDistrict([]);
-                                                    setWards([]);
-                                                    setDistrictCode(null), setWardCode(null);
-                                                }}
-                                            >
-                                                {province.map((item) => (
-                                                    <Picker.Item
-                                                        style={{ backgroundColor: '#FFFFFF', color: '#000000' }}
-                                                        label={province.length > 0 ? item.name : placeholder}
-                                                        value={item.code}
-                                                        key={item}
-                                                        enabled={!pickerFocused}
-                                                    />
-                                                ))}
-                                            </Picker>
-
                                             <View
                                                 style={{
-                                                    borderBottomWidth: 0.5,
-                                                    marginBottom: 20,
-                                                    borderBottomColor: '#767676',
-                                                }}
-                                            />
-                                            <Text style={{ fontSize: 15, color: '#000000', marginVertical: 2 }}>
-                                                Select district:
-                                            </Text>
-
-                                            <Picker
-                                                prompt="--Select district--"
-                                                placeholder="--Select district--"
-                                                placeholderStyle={{
-                                                    color: 'grey',
-                                                }}
-                                                dropdownIconColor={'#FF6868'}
-                                                dropdownIconRippleColor={'#FF6868'}
-                                                onFocus={getDistrict}
-                                                style={{ color: '#333', backgroundColor: '#ffff' }}
-                                                selectedValue={districtCode}
-                                                onValueChange={(i) => {
-                                                    setDistrictCode(i);
-                                                    setWards([]);
-                                                    setWardCode(null);
+                                                    flexDirection: 'row',
+                                                    alignItems: 'center',
+                                                    marginTop: 10,
+                                                    justifyContent: 'space-between',
+                                                    width: '100%',
                                                 }}
                                             >
-                                                {provinceCode
-                                                    ? district.map((item) => (
-                                                          <Picker.Item
-                                                              style={{ backgroundColor: '#FFFFFF', color: '#000000' }}
-                                                              label={item.name}
-                                                              value={item.code}
-                                                              key={item}
-                                                          />
-                                                      ))
-                                                    : null}
-                                            </Picker>
-                                            <View
-                                                style={{
-                                                    borderBottomWidth: 0.5,
-                                                    marginBottom: 20,
-                                                    borderBottomColor: '#767676',
-                                                }}
-                                            />
-                                            <Text style={{ fontSize: 15, color: '#000000', marginVertical: 2 }}>
-                                                Select ward:
-                                            </Text>
-                                            <View style={{ borderBottomWidth: 0.5 }} />
-                                            <Picker
-                                                prompt="--Select ward--"
-                                                placeholder="--Select ward--"
-                                                placeholderStyle={{
-                                                    color: 'grey',
-                                                }}
-                                                dropdownIconColor={'#FF6868'}
-                                                dropdownIconRippleColor={'#FF6868'}
-                                                onFocus={getWard}
-                                                style={{ color: '#333', backgroundColor: '#ffff' }}
-                                                selectedValue={wardCode}
-                                                onValueChange={(i) => setWardCode(i)}
+                                                <Icon name="location-outline" size={30} style={{ color: '#8B7ED7' }} />
+                                                <Text
+                                                    style={{ flex: 1, color: '#333', fontSize: 17, flexWrap: 'wrap' }}
+                                                >
+                                                    {address}
+                                                </Text>
+                                            </View>
+                                            <TouchableOpacity
+                                                onPress={handleGetLocation}
+                                                style={[styles.buttonClose, { backgroundColor: '#fff', elevation: 5 }]}
                                             >
-                                                {districtCode
-                                                    ? wards.map((item) => (
-                                                          <Picker.Item
-                                                              style={{ backgroundColor: '#FFFFFF', color: '#000000' }}
-                                                              label={item.name}
-                                                              value={item.code}
-                                                              key={item}
-                                                          />
-                                                      ))
-                                                    : null}
-                                            </Picker>
-                                            <View style={{ borderBottomWidth: 0.5, borderBottomColor: '#767676' }} />
+                                                <Text style={[styles.textStyle, { color: '#333' }]}> Refresh</Text>
+                                            </TouchableOpacity>
                                         </View>
-                                        <Pressable onPress={handleSubmit} style={[styles.button, styles.buttonClose]}>
+                                        <TouchableOpacity onPress={handleUpdateProfile} style={styles.buttonClose}>
                                             <Text style={styles.textStyle}>Comfirm</Text>
-                                        </Pressable>
+                                        </TouchableOpacity>
                                     </View>
                                 </View>
                             </View>
@@ -1282,8 +1185,8 @@ const styles = StyleSheet.create({
     },
     imageFrame: {
         borderWidth: 1,
-        width: (width - 100) / 2,
-        height: (width - 100) / 2,
+        width: (width - 80) / 2,
+        height: (width - 80) / 2,
         borderRadius: 25,
         borderStyle: 'dashed',
         margin: 14,
@@ -1307,6 +1210,8 @@ const styles = StyleSheet.create({
     textInput: {
         height: 44,
         width: width - 44,
+        // width: '100%',
+        // marginHorizontal: 20,
         paddingLeft: 10,
         borderRadius: 10,
         justifyContent: 'center',
@@ -1352,7 +1257,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'gray',
         alignItems: 'center',
         justifyContent: 'center',
-        paddingBottom: 30,
+        // paddingBottom: 30,
     },
 
     contentContainer: {

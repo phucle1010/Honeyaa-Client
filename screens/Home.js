@@ -2,7 +2,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { SafeAreaView, Text, View, StyleSheet, Image, Alert, TouchableOpacity, Animated } from 'react-native';
+import {
+    SafeAreaView,
+    Text,
+    View,
+    StyleSheet,
+    Image,
+    Alert,
+    TouchableOpacity,
+    Animated,
+    Pressable,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import AwesomeIcon from 'react-native-vector-icons/FontAwesome5';
 import AwesomeExtraIcon from 'react-native-vector-icons/FontAwesome';
@@ -10,8 +20,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useIsFocused } from '@react-navigation/native';
 import { setUser } from '../reducers/user';
 import DeviceInfo from 'react-native-device-info';
-import API_URL from '../services/apiRoute';
+import Swiper from 'react-native-swiper';
 
+import API_URL from '../services/apiRoute';
 import Loading from '../components/Loading';
 
 const LIKE = 1;
@@ -65,13 +76,12 @@ const InteractNotice = ({ ...props }) => {
     );
 };
 
-const Home = ({ navigation, route }) => {
+const Home = ({ navigation }) => {
     const user = useSelector((state) => state.user);
     const isFocusedScreen = useIsFocused();
     const dispatch = useDispatch();
     const [deviceId, setDeviceId] = useState(null);
     const [loadedProfiles, setLoadedProfiles] = useState(false);
-    const [selectedImageIndex, setSelectedImageIndex] = useState(0);
     const [loaded, setLoaded] = useState(false);
     const [interactMessageConfig, setInteractMessageConfig] = useState({
         message: '',
@@ -90,7 +100,6 @@ const Home = ({ navigation, route }) => {
             .then((res) => {
                 if (res.data.statusCode === 200) {
                     dispatch(setUser(res.data.responseData[0]));
-                    setLoaded(true);
                 } else {
                     navigation.navigate('Login');
                 }
@@ -122,7 +131,6 @@ const Home = ({ navigation, route }) => {
             });
         } else {
             setLoadedProfiles(false);
-            setSelectedImageIndex(0);
             setUserProfile({});
             setDeviceId(null);
         }
@@ -140,6 +148,9 @@ const Home = ({ navigation, route }) => {
                 params: {
                     id: user.id,
                     sex_oriented: user.sex_oriented,
+                    age_oriented: user.age_oriented,
+                    distance: user.distance,
+                    current_address: user.address,
                 },
             })
             .then((response) => {
@@ -151,6 +162,7 @@ const Home = ({ navigation, route }) => {
     useEffect(() => {
         if (user?.id && !loadedProfiles) {
             getUserProfile();
+            setLoaded(true);
         }
     }, [user]);
 
@@ -195,7 +207,6 @@ const Home = ({ navigation, route }) => {
                     if (res.data.statusCode === 200) {
                         if (res.data.is_matched) {
                             // navigate tới màn hình matched
-                            await getUserProfile();
                             await navigation.navigate('Matched', {
                                 person_img: user.img[0].image,
                                 target_img: userProfile.img[0].image,
@@ -230,39 +241,52 @@ const Home = ({ navigation, route }) => {
                 <View style={styles.container}>
                     <View style={styles.header}>
                         <Image source={require('../assets/img/HoneyaaLogo.png')} style={styles.logo} />
-                        <View style={styles.options}>
-                            <Icon name="ios-notifications-outline" size={20} style={styles.optionIcon} />
-                            <AwesomeIcon name="sliders-h" size={20} style={styles.optionIcon} />
-                        </View>
+                        <Pressable style={styles.options} onPress={() => console.log('notice')}>
+                            <View
+                                style={{
+                                    position: 'absolute',
+                                    top: '-5%',
+                                    right: '-1%',
+                                    width: 15,
+                                    height: 15,
+                                    borderRadius: 10,
+                                    backgroundColor: '#ee4b2b',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    zIndex: 1,
+                                }}
+                            >
+                                <Text
+                                    style={{
+                                        color: '#fff',
+                                        fontSize: 10,
+                                    }}
+                                >
+                                    1
+                                </Text>
+                            </View>
+                            <Icon name="ios-notifications-outline" size={25} style={styles.optionIcon} />
+                        </Pressable>
                     </View>
-                    {loadedProfiles &&
-                        (Object.keys(userProfile).length > 0 ? (
+                    {loadedProfiles ? (
+                        Object.keys(userProfile).length > 0 ? (
                             <View style={styles.profile}>
-                                <View style={styles.slider}>
+                                <Swiper
+                                    showsButtons={false}
+                                    dotStyle={{ display: 'none' }}
+                                    activeDotStyle={{ display: 'none' }}
+                                >
                                     {userProfile?.img.length > 0 &&
                                         userProfile?.img.map((profile, index) => (
-                                            <TouchableOpacity
+                                            <Image
                                                 key={index}
-                                                style={{
-                                                    ...styles.sliderItem,
-                                                    backgroundColor:
-                                                        index !== selectedImageIndex
-                                                            ? 'rgba(103, 103, 103, 0.3)'
-                                                            : 'rgba(255, 255, 255, 0.8)',
-                                                    width: `${100 / userProfile?.img.length}%`,
+                                                source={{
+                                                    uri: profile.image,
                                                 }}
-                                                onPress={() => setSelectedImageIndex(index)}
+                                                style={styles.profileImage}
                                             />
                                         ))}
-                                </View>
-                                {
-                                    <Image
-                                        source={{
-                                            uri: userProfile?.img[selectedImageIndex].image,
-                                        }}
-                                        style={styles.profileImage}
-                                    />
-                                }
+                                </Swiper>
                                 <View style={styles.profileInfo}>
                                     <View style={styles.profileDesc}>
                                         <Text
@@ -320,7 +344,7 @@ const Home = ({ navigation, route }) => {
                                                 color: '#fff',
                                                 fontWeight: '500',
                                             }}
-                                        >{`Cách xa ${userProfile.distance}km`}</Text>
+                                        >{`Cách xa ${userProfile?.realDistance}km`}</Text>
                                         <Icon
                                             name="location-sharp"
                                             style={{
@@ -331,7 +355,7 @@ const Home = ({ navigation, route }) => {
                                             }}
                                         />
                                     </View>
-                                    <TouchableOpacity
+                                    <Pressable
                                         style={{
                                             marginLeft: 'auto',
                                             marginBottom: 10,
@@ -342,10 +366,10 @@ const Home = ({ navigation, route }) => {
                                             backgroundColor: '#EF8484',
                                             borderRadius: 20,
                                         }}
-                                        onPress={() => Alert.alert('Click view detail')}
+                                        onPress={() => navigation.navigate('ViewProfile', { userProfile })}
                                     >
                                         <Icon name="arrow-up" size={18} color="#ffff" />
-                                    </TouchableOpacity>
+                                    </Pressable>
                                 </View>
 
                                 <View style={styles.profileOptions}>
@@ -409,7 +433,10 @@ const Home = ({ navigation, route }) => {
                                     Bạn đã xem hết Profile có sẵn
                                 </Text>
                             </View>
-                        ))}
+                        )
+                    ) : (
+                        <Loading />
+                    )}
 
                     {interactMessageConfig.message && (
                         <InteractNotice
@@ -437,6 +464,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFFFF',
         flexDirection: 'row',
         alignItems: 'center',
+        zIndex: 1000,
     },
     logo: {
         marginLeft: -48,
@@ -451,30 +479,17 @@ const styles = StyleSheet.create({
     },
     optionIcon: {
         marginLeft: 15,
+        color: '#faa0a0',
     },
     profile: {
         marginHorizontal: 20,
         marginTop: 10,
         height: '75%',
         borderRadius: 10,
+        backgroundColor: '#fff',
+        overflow: 'hidden',
     },
-    slider: {
-        position: 'absolute',
-        bottom: '98%',
-        zIndex: 100,
-        height: 6,
-        left: 10,
-        right: 10,
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: 'rgba(103, 103, 103, 0.3)',
-        borderRadius: 13,
-    },
-    sliderItem: {
-        height: '100%',
-        backgroundColor: 'rgba(255, 255, 255, 0.8)',
-        borderRadius: 10,
-    },
+
     profileImage: {
         height: '100%',
         width: '100%',

@@ -20,9 +20,6 @@ const renderScene = SceneMap({
 
 const renderTabBar = (props) => (
     <View style={styles.container}>
-        <TouchableOpacity style={styles.btnArrowBack} onPress={() => {}}>
-            <Icon name="arrow-back-circle-outline" size={24} style={styles.iconArrowBack} />
-        </TouchableOpacity>
         <Image source={require('../assets/img/HoneyaaLogo.png')} resizeMode="stretch" style={styles.logo} />
 
         <View style={{ flexDirection: 'row', backgroundColor: 'blue' }}>
@@ -35,17 +32,7 @@ const renderTabBar = (props) => (
 
                 return (
                     <TouchableWithoutFeedback key={route.key} onPress={onPress}>
-                        <View
-                            style={[
-                                styles.tab,
-                                {
-                                    // borderColor: isFocused ? '#FF6868' : '#000000',
-                                    // borderBottomWidth: isFocused ? 1 : 0,
-                                    // borderColor: '#B2B2B2',
-                                    // borderBottomWidth: 1,
-                                },
-                            ]}
-                        >
+                        <View style={[styles.tab]}>
                             <Text
                                 style={[
                                     styles.headerText,
@@ -77,14 +64,20 @@ export default function ProfileScreen({ navigation }) {
     ]);
 
     return (
-        <TabView
-            style={{ backgroundColor: 'red', height: 400 }}
-            navigationState={{ index, routes }}
-            renderScene={renderScene}
-            onIndexChange={setIndex}
-            initialLayout={{ width: layout.width }}
-            renderTabBar={renderTabBar}
-        />
+        <React.Fragment>
+            <TouchableOpacity style={styles.btnArrowBack} onPress={() => navigation.goBack()}>
+                <Icon name="arrow-back-circle-outline" size={30} style={styles.iconArrowBack} />
+            </TouchableOpacity>
+            <TabView
+                style={{ backgroundColor: 'red', height: 400 }}
+                navigationState={{ index, routes }}
+                // goBack={navigation.goBack()}
+                renderScene={renderScene}
+                onIndexChange={setIndex}
+                initialLayout={{ width: layout.width }}
+                renderTabBar={renderTabBar}
+            />
+        </React.Fragment>
     );
 }
 
@@ -96,9 +89,10 @@ const styles = StyleSheet.create({
     },
     btnArrowBack: {
         position: 'absolute',
-        top: 23,
-        left: 12,
+        top: 10,
+        left: 10,
         padding: 10,
+        zIndex: 1000,
     },
     iconArrowBack: {
         color: '#8B7ED7',
