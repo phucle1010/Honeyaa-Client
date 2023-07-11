@@ -4,9 +4,27 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import SimpleIcon from 'react-native-vector-icons/SimpleLineIcons';
 import Swiper from 'react-native-swiper';
 
+const MyBasicItem = (props) => {
+    const { icon, value, basic } = props;
+    return (
+        <View style={{ ...styles.myBasicItemContainer, paddingVertical: basic ? 4 : 8 }}>
+            {basic && (
+                <View style={styles.myBasicRow}>
+                    <Icon name={icon} size={24} style={styles.iconBasic} />
+                </View>
+            )}
+            <View style={styles.myBasicRow}>
+                <Text style={styles.text}>{value}</Text>
+            </View>
+        </View>
+    );
+};
+
 const ViewProfile = ({ navigation, route }) => {
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
     const userProfile = route.params?.userProfile;
+    const basics = userProfile.basics[0];
+    const hobbies = userProfile.hobbies;
 
     const renderImageSelector = ({ item }) => {
         return (
@@ -48,6 +66,7 @@ const ViewProfile = ({ navigation, route }) => {
                                             width: 450,
                                         },
                                     ]}
+                                    resizeMode="cover"
                                 />
                             ))}
                     </Swiper>
@@ -68,18 +87,33 @@ const ViewProfile = ({ navigation, route }) => {
                         <Icon name="arrow-down" size={20} color="#ffff" />
                     </TouchableOpacity>
                 </View>
-                <View style={styles.containerName}>
-                    <Text style={styles.name}> {userProfile.name} </Text>
-                    <Text style={styles.age}> {currentYearsOld(userProfile.dob)} </Text>
+                <View style={{ ...styles.containerName, marginBottom: 10 }}>
+                    <Text style={{ ...styles.name, marginBottom: 0 }}>{userProfile.name}</Text>
+                    <Text style={{ ...styles.age, marginLeft: 10 }}>{currentYearsOld(userProfile.dob)}</Text>
                 </View>
                 <View style={styles.containerAbout_me}>
-                    <Text style={styles.name}> About me</Text>
+                    <Text style={styles.name}>About me</Text>
+                    <Text>{userProfile.about_me}</Text>
                 </View>
                 <View style={styles.containerBasic}>
-                    <Text style={styles.name}> My basics </Text>
+                    <Text style={styles.name}>My basics</Text>
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                        <MyBasicItem basic={true} icon={'moon-outline'} value={basics.zodiac} />
+                        <MyBasicItem basic={true} icon={'school-outline'} value={basics.education} />
+                        <MyBasicItem basic={true} icon={'language-outline'} value={basics.language} />
+                        <MyBasicItem basic={true} icon={'logo-facebook'} value={basics.social_network} />
+                        <MyBasicItem basic={true} icon={'barbell-outline'} value={basics.physical} />
+                        <MyBasicItem basic={true} icon={'paw-outline'} value={basics.pet} />
+                        <MyBasicItem basic={true} icon={'musical-note-outline'} value={basics.music} />
+                    </View>
                 </View>
                 <View style={styles.containerInterest}>
-                    <Text style={styles.name}> My interests</Text>
+                    <Text style={styles.name}>My interests</Text>
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                        {hobbies.map((hobby) => (
+                            <MyBasicItem basic={false} icon="" key={hobby.id} value={hobby.name} />
+                        ))}
+                    </View>
                 </View>
             </ScrollView>
             <View style={styles.profileOptions}>
@@ -106,7 +140,6 @@ const ViewProfile = ({ navigation, route }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingHorizontal: 2,
         backgroundColor: '#FFFFFF',
     },
     imageContainer: {
@@ -115,7 +148,6 @@ const styles = StyleSheet.create({
     image: {
         width: '100%',
         height: '100%',
-        resizeMode: 'cover',
     },
     imageSelectorContainer: {
         position: 'absolute',
@@ -147,13 +179,13 @@ const styles = StyleSheet.create({
         paddingVertical: 20,
         borderBottomColor: '#AAAAAA',
         borderBottomWidth: 0.5,
+        paddingHorizontal: 20,
     },
     name: {
         fontSize: 20,
         fontWeight: 400,
-        marginBottom: 5,
+        marginBottom: 10,
         color: '#000000',
-        paddingLeft: 20,
     },
     age: {
         fontWeight: '400',
@@ -161,26 +193,45 @@ const styles = StyleSheet.create({
         color: '#000000',
     },
     containerAbout_me: {
-        flexDirection: 'row',
-        alignItems: 'center',
         paddingVertical: 30,
         borderBottomColor: '#AAAAAA',
         borderBottomWidth: 0.5,
+        paddingHorizontal: 20,
     },
     containerBasic: {
-        flexDirection: 'row',
-        alignItems: 'center',
         paddingVertical: 30,
         borderBottomColor: '#AAAAAA',
         borderBottomWidth: 0.5,
+        paddingHorizontal: 20,
+    },
+    myBasicItemContainer: {
+        marginRight: 10,
+        marginBottom: 10,
+        paddingHorizontal: 10,
+        borderRadius: 20,
+        flexDirection: 'row',
+        alignSelf: 'flex-start',
+        justifyContent: 'space-between',
+        backgroundColor: '#efefef',
+    },
+    myBasicRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    iconBasic: {
+        color: '#666666',
+    },
+    text: {
+        fontSize: 14,
+        color: '#575757',
+        marginHorizontal: 5,
     },
     containerInterest: {
-        flexDirection: 'row',
-        alignItems: 'center',
         paddingVertical: 30,
         borderBottomColor: '#AAAAAA',
         borderBottomWidth: 0.5,
-        paddingBottom: 100,
+        paddingBottom: 200,
+        paddingHorizontal: 20,
     },
     profileOptions: {
         position: 'absolute',

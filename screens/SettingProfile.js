@@ -199,7 +199,7 @@ const SettingProfile = ({ navigation, route }) => {
                 </View>
 
                 <Slider
-                    maximumValue={10000}
+                    maximumValue={1000}
                     minimumValue={0}
                     minimumTrackTintColor="#307ecc"
                     maximumTrackTintColor="#000000"
@@ -215,8 +215,6 @@ const SettingProfile = ({ navigation, route }) => {
                     <Switch
                         style={{ marginTop: 30, marginLeft: 20 }}
                         value={state.active_status}
-                        // thumbColor={'#503EBF'}
-                        // trackColor={state.active_status ? '#fafafa' : '#efefef'}
                         onValueChange={handleActiveStatusChange}
                     />
                     <Text style={[styles.txtWrap, { marginTop: 20 }]}>ON</Text>
