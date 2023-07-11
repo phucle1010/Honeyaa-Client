@@ -76,7 +76,7 @@ const InteractNotice = ({ ...props }) => {
     );
 };
 
-const Home = ({ navigation, route }) => {
+const Home = ({ navigation }) => {
     const user = useSelector((state) => state.user);
     const isFocusedScreen = useIsFocused();
     const dispatch = useDispatch();
@@ -207,7 +207,6 @@ const Home = ({ navigation, route }) => {
                     if (res.data.statusCode === 200) {
                         if (res.data.is_matched) {
                             // navigate tới màn hình matched
-                            await getUserProfile();
                             await navigation.navigate('Matched', {
                                 person_img: user.img[0].image,
                                 target_img: userProfile.img[0].image,
@@ -356,7 +355,7 @@ const Home = ({ navigation, route }) => {
                                             }}
                                         />
                                     </View>
-                                    <TouchableOpacity
+                                    <Pressable
                                         style={{
                                             marginLeft: 'auto',
                                             marginBottom: 10,
@@ -370,7 +369,7 @@ const Home = ({ navigation, route }) => {
                                         onPress={() => navigation.navigate('ViewProfile', { userProfile })}
                                     >
                                         <Icon name="arrow-up" size={18} color="#ffff" />
-                                    </TouchableOpacity>
+                                    </Pressable>
                                 </View>
 
                                 <View style={styles.profileOptions}>

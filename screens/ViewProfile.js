@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, FlatList } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import axios from 'axios';
+import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Animated, Pressable } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import SimpleIcon from 'react-native-vector-icons/SimpleLineIcons';
 import Swiper from 'react-native-swiper';
+import { useSelector } from 'react-redux';
+import API_URL from '../services/apiRoute';
 
 const MyBasicItem = (props) => {
     const { icon, value, basic } = props;
@@ -20,21 +23,118 @@ const MyBasicItem = (props) => {
     );
 };
 
+const LIKE = 1;
+const DISLIKE = 2;
+const SUPER_LIKE = 3;
+
+const InteractNotice = ({ ...props }) => {
+    const top = useRef(new Animated.Value(20)).current;
+    const opacity = useRef(new Animated.Value(1)).current;
+
+    useEffect(() => {
+        Animated.sequence([
+            Animated.timing(top, {
+                duration: 600,
+                toValue: 60,
+                useNativeDriver: false,
+            }),
+        ]).start();
+
+        Animated.sequence([
+            Animated.timing(opacity, {
+                duration: 1000,
+                toValue: 0,
+                useNativeDriver: false,
+            }),
+        ]).start();
+
+        setTimeout(() => {
+            props.setInteractMessageConfig({
+                message: '',
+                color: '',
+            });
+        }, 1200);
+
+        return clearTimeout();
+    }, []);
+
+    return (
+        <Animated.View
+            style={[
+                styles.interactNoticeContainer,
+                {
+                    top,
+                    opacity,
+                    backgroundColor: props.interactMessageConfig.color,
+                },
+            ]}
+        >
+            <Text style={styles.interactNoticeText}>{props.interactMessageConfig.message}</Text>
+        </Animated.View>
+    );
+};
+
 const ViewProfile = ({ navigation, route }) => {
-    const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+    const user = useSelector((state) => state.user);
+    const [interactMessageConfig, setInteractMessageConfig] = useState({
+        message: '',
+        color: '',
+    });
     const userProfile = route.params?.userProfile;
     const basics = userProfile.basics[0];
     const hobbies = userProfile.hobbies;
 
-    const renderImageSelector = ({ item }) => {
-        return (
-            <TouchableOpacity
-                onPress={() => setSelectedImageIndex(item.id - 1)}
-                style={[styles.thumbnailContainer, selectedImageIndex === item.id - 1 && styles.thumbnailSelected]}
-            >
-                <Image source={{ uri: item.url }} style={styles.thumbnail} />
-            </TouchableOpacity>
-        );
+    const showInteractMessage = (type, response) => {
+        switch (type) {
+            case LIKE:
+                setInteractMessageConfig({
+                    message: response,
+                    color: '#40b5ad',
+                });
+                break;
+            case DISLIKE:
+                setInteractMessageConfig({
+                    message: response,
+                    color: '#fa5f55',
+                });
+                break;
+            case SUPER_LIKE:
+                setInteractMessageConfig({
+                    message: response,
+                    color: '#00bfff',
+                });
+                break;
+            default:
+                break;
+        }
+    };
+
+    const handlePostInteract = (type) => {
+        setTimeout(() => {
+            axios
+                .post(`${API_URL}/api/match/interact`, {
+                    person_id: user.id,
+                    target_id: userProfile.id,
+                    interact_type: type,
+                })
+                .then(async (res) => {
+                    if (res.data.statusCode === 200) {
+                        if (res.data.is_matched) {
+                            // navigate tới màn hình matched
+                            await navigation.navigate('Matched', {
+                                person_img: user.img[0].image,
+                                target_img: userProfile.img[0].image,
+                            });
+                        } else {
+                            showInteractMessage(type, res.data.responseData); /// Hiển thị thanh trượt xuống thông báo tương tác vừa thực hiện
+                            setTimeout(() => navigation.navigate('Home'), 300);
+                        }
+                    } else {
+                        Alert.alert('Fail', res.data.responseData);
+                    }
+                })
+                .catch((err) => Alert.alert('Fail', err.toString()));
+        }, 200);
     };
 
     const currentYearsOld = (date) => {
@@ -70,7 +170,7 @@ const ViewProfile = ({ navigation, route }) => {
                                 />
                             ))}
                     </Swiper>
-                    <TouchableOpacity
+                    <Pressable
                         style={{
                             position: 'absolute',
                             right: 10,
@@ -85,7 +185,7 @@ const ViewProfile = ({ navigation, route }) => {
                         onPress={() => navigation.navigate('Home')}
                     >
                         <Icon name="arrow-down" size={20} color="#ffff" />
-                    </TouchableOpacity>
+                    </Pressable>
                 </View>
                 <View style={{ ...styles.containerName, marginBottom: 10 }}>
                     <Text style={{ ...styles.name, marginBottom: 0 }}>{userProfile.name}</Text>
@@ -119,20 +219,33 @@ const ViewProfile = ({ navigation, route }) => {
             <View style={styles.profileOptions}>
                 <TouchableOpacity
                     style={{ ...styles.profileOptionItem, borderColor: '#fa5f55', width: 53, height: 53 }}
+                    onPress={() => handlePostInteract(DISLIKE)}
                 >
                     <Icon name="close" size={30} color="#fa5f55" />
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={{ ...styles.profileOptionItem, borderColor: '#40b5ad', width: 48, height: 48 }}
+                    onPress={() => handlePostInteract(LIKE)}
                 >
                     <Icon name="heart-outline" size={30} color="#40b5ad" />
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={{ ...styles.profileOptionItem, borderColor: '#00bfff', width: 53, height: 53 }}
+                    onPress={() => handlePostInteract(SUPER_LIKE)}
                 >
                     <SimpleIcon name="star" size={26} color="#00bfff" />
                 </TouchableOpacity>
             </View>
+            {interactMessageConfig.message && (
+                <InteractNotice
+                    interactMessageConfig={interactMessageConfig}
+                    setInteractMessageConfig={setInteractMessageConfig}
+                />
+            )}
+            {/* <InteractNotice
+                interactMessageConfig={interactMessageConfig}
+                setInteractMessageConfig={setInteractMessageConfig}
+            /> */}
         </View>
     );
 };
@@ -141,6 +254,19 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#FFFFFF',
+    },
+    interactNoticeContainer: {
+        position: 'absolute',
+        left: '35%',
+        width: 150,
+        height: 50,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 10,
+    },
+    interactNoticeText: {
+        color: '#fff',
+        fontSize: 20,
     },
     imageContainer: {
         height: 550,

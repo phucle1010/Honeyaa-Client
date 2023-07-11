@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
     },
     nameUser: {
         fontWeight: 400,
-        fontSize: 30,
+        fontSize: 20,
         // fontStyle: 'normal',
         fontWeight: 'bold',
         color: '#FFFFFF',
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
     age: {
         marginHorizontal: 10,
         fontWeight: 400,
-        fontSize: 30,
+        fontSize: 20,
         // fontStyle: 'normal',
         fontWeight: 300,
         color: '#FFFFFF',
