@@ -1,7 +1,7 @@
 import React from 'react';
 import { SafeAreaView, Text, View, Image, TouchableOpacity, StyleSheet } from 'react-native';
 
-const Discover = () => {
+const Discover = ({ navigation, route }) => {
     return (
         <SafeAreaView style={styles.container}>
             <View style={[{ justifyContent: 'center', alignItems: 'center', marginTop: 70 }]}>
@@ -37,7 +37,7 @@ const Discover = () => {
             </View>
             <Text style={[styles.txt, { marginTop: 15 }]}>For you</Text>
             <View style={{ flexDirection: 'row' }}>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('AnswerQuestion', { topicId: 1 })}>
                     <View style={styles.wrapItem}>
                         <View style={styles.wrapImage}>
                             <Image
@@ -49,7 +49,7 @@ const Discover = () => {
                         <Text style={styles.txtItem}>Travel</Text>
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('AnswerQuestion', { topicId: 2 })}>
                     <View style={styles.wrapItem}>
                         <View style={styles.wrapImage}>
                             <Image
@@ -63,7 +63,7 @@ const Discover = () => {
                 </TouchableOpacity>
             </View>
             <View style={{ flexDirection: 'row' }}>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('AnswerQuestion', { topicId: 3 })}>
                     <View style={styles.wrapItem}>
                         <View style={styles.wrapImage}>
                             <Image
@@ -75,7 +75,7 @@ const Discover = () => {
                         <Text style={styles.txtItem}>Eat</Text>
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('AnswerQuestion', { topicId: 4 })}>
                     <View style={styles.wrapItem}>
                         <View style={styles.wrapImage}>
                             <Image
