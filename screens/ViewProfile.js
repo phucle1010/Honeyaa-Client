@@ -193,7 +193,7 @@ const ViewProfile = ({ navigation, route }) => {
                 </View>
                 <View style={styles.containerAbout_me}>
                     <Text style={styles.name}>About me</Text>
-                    <Text>{userProfile.about_me}</Text>
+                    <Text style={{ color: '#575757', fontSize: 14 }}>{userProfile.about_me}</Text>
                 </View>
                 <View style={styles.containerBasic}>
                     <Text style={styles.name}>My basics</Text>
@@ -242,10 +242,6 @@ const ViewProfile = ({ navigation, route }) => {
                     setInteractMessageConfig={setInteractMessageConfig}
                 />
             )}
-            {/* <InteractNotice
-                interactMessageConfig={interactMessageConfig}
-                setInteractMessageConfig={setInteractMessageConfig}
-            /> */}
         </View>
     );
 };
@@ -338,7 +334,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignSelf: 'flex-start',
         justifyContent: 'space-between',
-        backgroundColor: '#efefef',
+        backgroundColor: '#ffffff',
+        borderWidth: 1,
+        borderColor: '#575757',
     },
     myBasicRow: {
         flexDirection: 'row',

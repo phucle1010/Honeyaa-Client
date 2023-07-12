@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { GiftedChat } from 'react-native-gifted-chat';
+import { GiftedChat, InputToolbar, Message, MessageContainer } from 'react-native-gifted-chat';
 import { View, Text, TouchableOpacity, SafeAreaView, StyleSheet, Image, Dimensions, Alert } from 'react-native';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -213,7 +213,7 @@ const Chat = (props) => {
                     )}
                 </View>
             </View>
-            <View style={{ borderWidth: 0.5, borderColor: '#333', marginTop: 10 }} />
+            <View style={{ borderWidth: 0.25, borderColor: '#eaeaea', marginTop: 10 }} />
             <GiftedChat
                 messages={messages}
                 showAvatarForEveryMessage={false}
@@ -228,6 +228,17 @@ const Chat = (props) => {
                     borderWidth: 0.5,
                     paddingHorizontal: 15,
                 }}
+                messagesContainerStyle={{ marginHorizontal: -24, paddingBottom: 10 }}
+                renderInputToolbar={(props) => (
+                    <InputToolbar
+                        {...props}
+                        containerStyle={{
+                            borderTopWidth: 0,
+                            paddingBottom: 5,
+                            // marginHorizontal: -24,
+                        }}
+                    />
+                )}
             />
         </SafeAreaView>
     );

@@ -940,7 +940,14 @@ const EditProfileScreen = (props) => {
                                             <Icon name="close-outline" size={30} style={{ color: '#FF6868' }} />
                                         </TouchableOpacity>
 
-                                        <View style={{ flex: 1, color: '#333', width: '100%', marginTop: 50 }}>
+                                        <View
+                                            style={{
+                                                flex: 1,
+                                                color: '#333',
+                                                width: '100%',
+                                                marginTop: 50,
+                                            }}
+                                        >
                                             <Text style={{ color: '#333', marginTop: 10, fontSize: 20 }}>
                                                 Your location
                                             </Text>
@@ -964,7 +971,7 @@ const EditProfileScreen = (props) => {
                                                 onPress={handleGetLocation}
                                                 style={[styles.buttonClose, { backgroundColor: '#fff', elevation: 5 }]}
                                             >
-                                                <Text style={[styles.textStyle, { color: '#333' }]}> Refresh</Text>
+                                                <Text style={[styles.textStyle, { color: '#333' }]}>Refresh</Text>
                                             </TouchableOpacity>
                                         </View>
                                         <TouchableOpacity onPress={handleUpdateProfile} style={styles.buttonClose}>
@@ -1317,7 +1324,7 @@ const styles = StyleSheet.create({
         color: 'green',
         backgroundColor: 'white',
         alignItems: 'center',
-        padding: 22,
+        paddingHorizontal: 20,
     },
 
     buttonClose: {

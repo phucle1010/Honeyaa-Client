@@ -267,6 +267,9 @@ const Home = ({ navigation }) => {
                             </View>
                             <Icon name="ios-notifications-outline" size={25} style={styles.optionIcon} />
                         </Pressable>
+                        <Pressable onPress={() => navigation.navigate('SettingProfile')}>
+                            <AwesomeExtraIcon name="sliders" size={25} style={styles.optionIcon} />
+                        </Pressable>
                     </View>
                     {loadedProfiles ? (
                         Object.keys(userProfile).length > 0 ? (
@@ -479,7 +482,7 @@ const styles = StyleSheet.create({
     },
     optionIcon: {
         marginLeft: 15,
-        color: '#faa0a0',
+        color: '#848884',
     },
     profile: {
         marginHorizontal: 20,

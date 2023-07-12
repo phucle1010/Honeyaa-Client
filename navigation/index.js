@@ -8,7 +8,6 @@ import ReviewProfile from '../screens/ReviewProfile';
 import Matched from '../screens/Matched';
 import MatchChat from '../screens/MatchChat';
 import VideoCall from '../screens/VideoCall';
-import ProfileDetail from '../screens/ProfileDetail';
 import SignIn from '../screens/SignIn';
 import Profile from '../screens/Profile';
 import EditProfile from '../screens/EditProfile';
@@ -283,16 +282,6 @@ const screens = [
     {
         name: 'VerifyResetPhone',
         component: VerifyResetPhone,
-        tabIconName: 'account-circle-outline',
-        tabIconSize: 30,
-        tabIconColor: '#faa0a0',
-        activeColor: '#ee4b2b',
-        isHideTabItem: true,
-        isHideNavigationTab: true,
-    },
-    {
-        name: 'ProfileDetail',
-        component: ProfileDetail,
         tabIconName: 'account-circle-outline',
         tabIconSize: 30,
         tabIconColor: '#faa0a0',

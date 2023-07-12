@@ -12,7 +12,6 @@ const App = () => {
             <NavigationContainer>
                 <ZegoCallInvitationDialog />
                 <BottomTab />
-                {/* <ZegoUIKitPrebuiltCallFloatingMinimizedView /> */}
             </NavigationContainer>
         </Provider>
     );

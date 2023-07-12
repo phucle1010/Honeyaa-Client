@@ -284,10 +284,8 @@ const SignIn = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         height: '100%',
-        // flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        // backgroundColor: '#fff',
     },
     section: {
         flexDirection: 'column',
@@ -303,7 +301,8 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     imgbackground: {
-        flex: 1,
+        height: '110%',
+        width: '110%',
         justifyContent: 'center',
     },
     phone: {
