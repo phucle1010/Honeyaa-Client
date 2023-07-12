@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, Text, View, Image, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { SafeAreaView, Text, View, Image, StyleSheet, TouchableOpacity, Alert, Pressable } from 'react-native';
 //import {TouchableOpacity} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Ionicons';
 import API_URL from '../services/apiRoute';
@@ -85,6 +85,21 @@ const AnswerQuestion = ({ navigation, route }) => {
         }
     };
 
+    const getTitle = () => {
+        switch (topicId) {
+            case 1:
+                return 'Travel';
+            case 2:
+                return 'Sport';
+            case 3:
+                return 'Eat';
+            case 4:
+                return 'Music';
+            default:
+                return;
+        }
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <View
@@ -97,15 +112,15 @@ const AnswerQuestion = ({ navigation, route }) => {
             >
                 <Image source={require('../assets/img/HoneyaaLogo.png')} style={styles.logo} />
                 <TouchableOpacity
-                    onPress={() => navigation.navigate('Home')}
+                    onPress={() => navigation.goBack()}
                     style={[
                         styles.btnClose,
                         {
                             position: 'absolute',
                             top: 20,
                             left: 20,
-                            width: 35,
-                            height: 35,
+                            width: 30,
+                            height: 30,
                             alignItems: 'center',
                             justifyContent: 'center',
                             backgroundColor: '#fff',
@@ -115,16 +130,16 @@ const AnswerQuestion = ({ navigation, route }) => {
                         },
                     ]}
                 >
-                    <Icon name="close" size={25} color="#FF6868" />
+                    <Icon name="close" size={20} color="#FF6868" />
                 </TouchableOpacity>
             </View>
             <View style={styles.wrapContent}>
-                <Text style={styles.txtContent}>Tiêu đề</Text>
+                <Text style={styles.txtContent}>{getTitle()}</Text>
             </View>
             <View style={styles.wrapQuestion}>
                 <Text style={styles.txtQuestion}>{questions[currentQuestion]?.content}</Text>
             </View>
-            <TouchableOpacity onPress={() => handleSelectAnswer(questions[currentQuestion]?.answers?.[0]?.id)}>
+            <Pressable onPress={() => handleSelectAnswer(questions[currentQuestion]?.answers?.[0]?.id)}>
                 <View style={styles.wrapAnswer}>
                     <Text
                         style={[
@@ -135,8 +150,8 @@ const AnswerQuestion = ({ navigation, route }) => {
                         {questions[currentQuestion]?.answers?.[0]?.content}
                     </Text>
                 </View>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleSelectAnswer(questions[currentQuestion]?.answers?.[1]?.id)}>
+            </Pressable>
+            <Pressable onPress={() => handleSelectAnswer(questions[currentQuestion]?.answers?.[1]?.id)}>
                 <View style={styles.wrapAnswer}>
                     <Text
                         style={[
@@ -147,8 +162,8 @@ const AnswerQuestion = ({ navigation, route }) => {
                         {questions[currentQuestion]?.answers?.[1]?.content}
                     </Text>
                 </View>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleSelectAnswer(questions[currentQuestion]?.answers?.[2]?.id)}>
+            </Pressable>
+            <Pressable onPress={() => handleSelectAnswer(questions[currentQuestion]?.answers?.[2]?.id)}>
                 <View style={styles.wrapAnswer}>
                     <Text
                         style={[
@@ -159,8 +174,8 @@ const AnswerQuestion = ({ navigation, route }) => {
                         {questions[currentQuestion]?.answers?.[2]?.content}
                     </Text>
                 </View>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleSelectAnswer(questions[currentQuestion]?.answers?.[3]?.id)}>
+            </Pressable>
+            <Pressable onPress={() => handleSelectAnswer(questions[currentQuestion]?.answers?.[3]?.id)}>
                 <View style={styles.wrapAnswer}>
                     <Text
                         style={[
@@ -171,7 +186,7 @@ const AnswerQuestion = ({ navigation, route }) => {
                         {questions[currentQuestion]?.answers?.[3]?.content}
                     </Text>
                 </View>
-            </TouchableOpacity>
+            </Pressable>
             <View style={[{ flexDirection: 'row', width: '100%', justifyContent: 'space-between' }]}>
                 <TouchableOpacity style={styles.btnSkip}>
                     <Text style={styles.txtSkip} onPress={() => handleSkipQuestion()}>
@@ -244,25 +259,30 @@ const styles = StyleSheet.create({
         position: 'absolute',
     },
     wrapQuestion: {
+        // marginHorizontal: 20,
         width: 346,
         height: 116,
         marginTop: 40,
         marginBottom: 20,
+        paddingHorizontal: 10,
         backgroundColor: '#FFFFFF',
         borderRadius: 15,
         elevation: 3,
         justifyContent: 'center',
         alignItems: 'center',
+        overflow: 'scroll',
     },
     txtQuestion: {
         fontFamily: 'Overpass',
         fontWeight: 400,
-        fontSize: 30,
+        fontSize: 20,
         color: '#FF7575',
     },
     wrapAnswer: {
         width: 346,
-        height: 47,
+        height: 60,
+        // paddingVertical: 10,
+        paddingHorizontal: 10,
         backgroundColor: '#FFFF',
         borderRadius: 25,
         elevation: 3,
@@ -273,7 +293,7 @@ const styles = StyleSheet.create({
     txtAnswer: {
         fontFamily: 'Overpass',
         fontWeight: 400,
-        fontSize: 22,
+        fontSize: 18,
         color: '#FF7575',
     },
     btnSkip: {
@@ -284,7 +304,7 @@ const styles = StyleSheet.create({
         borderColor: '#FC775A',
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 40,
+        marginTop: 30,
         marginLeft: 20,
     },
     txtSkip: {
@@ -301,7 +321,7 @@ const styles = StyleSheet.create({
         borderColor: '#729BDA',
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 40,
+        marginTop: 30,
         marginRight: 20,
     },
     txtContinue: {

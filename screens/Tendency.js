@@ -14,8 +14,6 @@ import axios from 'axios';
 import API_URL from '../services/apiRoute';
 import Loading from '../components/Loading';
 
-const NUMBER_IMAGES_OF_EACH_PROFILE = 5;
-
 const LIKE = 1;
 const DISLIKE = 2;
 const SUPER_LIKE = 3;
@@ -232,7 +230,7 @@ const Tendency = ({ navigation, route }) => {
             {loaded ? (
                 <View style={styles.container}>
                     <TouchableOpacity
-                        onPress={() => navigation.goBack()}
+                        onPress={() => navigation.navigate('Discover')}
                         style={[
                             styles.btnClose,
                             {
@@ -246,6 +244,7 @@ const Tendency = ({ navigation, route }) => {
                                 backgroundColor: '#fff',
                                 alignItems: 'center',
                                 justifyContent: 'center',
+                                zIndex: 100,
                             },
                         ]}
                     >
@@ -254,26 +253,7 @@ const Tendency = ({ navigation, route }) => {
                     {loadedProfiles ? (
                         Object.keys(userProfile).length > 0 ? (
                             <View style={styles.profile}>
-                                {/* <View style={styles.slider}>
-                                    <TouchableOpacity style={styles.sliderItem} onPress={() => setSelectedImageIndex(0)} />
-                                    <TouchableOpacity style={styles.sliderItem} onPress={() => setSelectedImageIndex(1)} />
-                                    <TouchableOpacity style={styles.sliderItem} onPress={() => setSelectedImageIndex(2)} />
-                                    <TouchableOpacity style={styles.sliderItem} onPress={() => setSelectedImageIndex(3)} />
-                                    <TouchableOpacity style={styles.sliderItem} onPress={() => setSelectedImageIndex(4)} />
-                                </View>
-                                {
-                                    <Image
-                                        source={{
-                                            uri: PROFILE.img[selectedImageIndex].url,
-                                        }}
-                                        style={styles.profileImage}
-                                    />
-                                } */}
-                                <Swiper
-                                // showsButtons={false}
-                                // dotStyle={{ display: 'none' }}
-                                // activeDotStyle={{ display: 'none' }}
-                                >
+                                <Swiper>
                                     {userProfile?.img.length > 0 &&
                                         userProfile?.img.map((profile, index) => (
                                             <Image
@@ -409,7 +389,7 @@ const Tendency = ({ navigation, route }) => {
                                         }}
                                     />
                                 </View>
-                                <Text style={{ marginTop: 20, fontSize: 18, fontWeight: 400 }}>
+                                <Text style={{ marginTop: 20, fontSize: 18, fontWeight: 400, color: '#fff' }}>
                                     Bạn đã xem hết Profile có sẵn
                                 </Text>
                             </View>
