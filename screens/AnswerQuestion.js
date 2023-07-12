@@ -1,9 +1,83 @@
-import React from 'react';
-import { SafeAreaView, Text, View, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import { SafeAreaView, Text, View, Image, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 //import {TouchableOpacity} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Ionicons';
+import API_URL from '../services/apiRoute';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const AnswerQuestion = () => {
+const AnswerQuestion = ({navigation, route}) => {
+    const [questions, setQuestions] = useState([{}]);
+    const {topicId} = route.params; 
+
+    useEffect(() => {
+        const getQuestionAnswers = async () => {
+            const userToken = await AsyncStorage.getItem('user_token');
+            axios
+                .get(`${API_URL}/api/user/questions-answers`, {params: {id: topicId},  headers: {'authentication': userToken}})
+                .then((res) => {
+                    setQuestions(res.data);
+                    if (!res.data?.length) return navigation.navigate("Tendency");
+                })
+                .catch((err) => console.log(err))
+        }
+        getQuestionAnswers() 
+    },[]);
+        
+    const postAnswers = async () => {
+        try {
+            const userToken = await AsyncStorage.getItem('user_token');
+            await axios
+                    .post(`${API_URL}/api/user/questions-answers/answers`, { answers }, {
+                        headers: {'authentication': userToken}
+                    })
+                    .then((res) => {
+                        Alert.alert('thanh cong');
+                        navigation.navigate("Tendency");
+                    })
+                    .catch((err) => Alert.alert('please try again'));
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const [currentQuestion, setCurrentQuestion] = useState(0);
+    const [selectedAnswer, setSelectedAnswer] = useState(null);
+    const [answers, setAnswers] = useState([]);
+
+    useEffect(() => {
+        const handle = async () => {
+            if (currentQuestion === questions.length) {
+                await postAnswers();
+            } 
+        } 
+        handle();
+    }, [currentQuestion]);
+
+    const handleSelectAnswer = (answerIndex) => {
+        setSelectedAnswer(answerIndex);
+    }
+
+    const handleSkipQuestion = () => {
+        if (selectedAnswer !== null) {
+            setAnswers(prevAnswers => [...prevAnswers, selectedAnswer]);
+        } else {
+            setAnswers(prevAnswers => [...prevAnswers, null]); 
+        }
+        setSelectedAnswer(null);
+        setCurrentQuestion((prevQuestion) => prevQuestion + 1);
+    }
+
+    const handleContinue = () => {
+        if (selectedAnswer === null) {
+            Alert.alert('Please select an answer before continuing.');
+        } else {
+            setAnswers(prevAnswers => [...prevAnswers, selectedAnswer]);
+            setSelectedAnswer(null);
+            setCurrentQuestion((prevQuestion) => prevQuestion + 1);
+        }
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             <View
@@ -16,6 +90,7 @@ const AnswerQuestion = () => {
             >
                 <Image source={require('../assets/img/HoneyaaLogo.png')} style={styles.logo} />
                 <TouchableOpacity
+                    onPress={() => navigation.navigate("Home")}
                     style={[
                         styles.btnClose,
                         {
@@ -40,33 +115,49 @@ const AnswerQuestion = () => {
                 <Text style={styles.txtContent}>Tiêu đề</Text>
             </View>
             <View style={styles.wrapQuestion}>
-                <Text style={styles.txtQuestion}>Question</Text>
+                <Text style={styles.txtQuestion}>{questions[currentQuestion]?.content}</Text>
             </View>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => handleSelectAnswer(questions[currentQuestion]?.answers?.[0]?.id)}>
                 <View style={styles.wrapAnswer}>
-                    <Text style={styles.txtAnswer}>Question</Text>
+                    <Text 
+                        style={[styles.txtAnswer, selectedAnswer === questions[currentQuestion]?.answers?.[0]?.id && {color: '#007AFF'}]}
+                    >
+                        {questions[currentQuestion]?.answers?.[0]?.content}
+                    </Text>
                 </View>
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => handleSelectAnswer(questions[currentQuestion]?.answers?.[1]?.id)}>
                 <View style={styles.wrapAnswer}>
-                    <Text style={styles.txtAnswer}>Question</Text>
+                    <Text 
+                        style={[styles.txtAnswer, selectedAnswer === questions[currentQuestion]?.answers?.[1]?.id && {color: '#007AFF'}]}
+                    >
+                        {questions[currentQuestion]?.answers?.[1]?.content}
+                    </Text>
                 </View>
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => handleSelectAnswer(questions[currentQuestion]?.answers?.[2]?.id)}>
                 <View style={styles.wrapAnswer}>
-                    <Text style={styles.txtAnswer}>Question</Text>
+                    <Text 
+                        style={[styles.txtAnswer, selectedAnswer === questions[currentQuestion]?.answers?.[2]?.id && {color: '#007AFF'}]}
+                    >
+                        {questions[currentQuestion]?.answers?.[2]?.content}
+                    </Text>
                 </View>
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => handleSelectAnswer(questions[currentQuestion]?.answers?.[3]?.id)}>
                 <View style={styles.wrapAnswer}>
-                    <Text style={styles.txtAnswer}>Question</Text>
+                    <Text 
+                        style={[styles.txtAnswer, selectedAnswer === questions[currentQuestion]?.answers?.[3]?.id && {color: '#007AFF'}]}
+                    >
+                        {questions[currentQuestion]?.answers?.[3]?.content}
+                    </Text>
                 </View>
             </TouchableOpacity>
             <View style={[{ flexDirection: 'row', width: '100%', justifyContent: 'space-between' }]}>
                 <TouchableOpacity style={styles.btnSkip}>
-                    <Text style={styles.txtSkip}>Skip</Text>
+                    <Text style={styles.txtSkip} onPress={() => handleSkipQuestion()}>Skip</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.btnContinue}>
+                <TouchableOpacity style={styles.btnContinue} onPress={() => handleContinue()}>
                     <Text style={styles.txtContinue}>Continue</Text>
                 </TouchableOpacity>
             </View>
