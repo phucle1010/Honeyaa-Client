@@ -256,7 +256,7 @@ const Home = ({ navigation }) => {
                                     width: 10,
                                     height: 10,
                                     borderRadius: 10,
-                                    backgroundColor: '#ee4b2b',
+                                    backgroundColor: '#faa0a0',
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     zIndex: 1,

@@ -433,7 +433,7 @@ const EditProfileScreen = (props) => {
     const handlePresentModal = useCallback((y) => {
         bottomSheetModalRef.current?.present();
         setTimeout(() => {
-            bottomSheetModalRef.current?.snapToIndex(2);
+            bottomSheetModalRef.current?.snapToIndex(1);
             scrollViewRef.current?.scrollTo({ y: y, animated: true });
             setIsOpen(true);
         }, 600);
@@ -458,9 +458,9 @@ const EditProfileScreen = (props) => {
             });
     };
 
-    const handleSnapPress = useCallback((index) => {
-        bottomSheetModalRef.current?.snapToIndex(index);
-    }, []);
+    // const handleSnapPress = useCallback((index) => {
+    //     bottomSheetModalRef.current?.snapToIndex(index);
+    // }, []);
 
     const handleSaveProfile = () => {
         handleUploadImage();

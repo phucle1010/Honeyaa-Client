@@ -334,7 +334,11 @@ const Tendency = ({ navigation, route }) => {
                                     }}
                                 >
                                     <Image
-                                        source={{ uri: user.img[0].image }}
+                                        source={{
+                                            uri:
+                                                user?.img[0]?.image ||
+                                                'https://cdn-icons-png.flaticon.com/512/3607/3607444.png',
+                                        }}
                                         style={{
                                             width: '96%',
                                             height: '96%',

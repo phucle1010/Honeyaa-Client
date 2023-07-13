@@ -53,6 +53,7 @@ const NotifyItem = ({ notify, navigation }) => {
 const Notification = ({ show, navigation }) => {
     const currentUser = useSelector((state) => state.user);
     const width = useRef(new Animated.Value(0)).current;
+    const opacity = useRef(new Animated.Value(0)).current;
     const [notifications, setNotifications] = useState([]);
     const [loaded, setLoaded] = useState(false);
 
@@ -61,6 +62,13 @@ const Notification = ({ show, navigation }) => {
             Animated.timing(width, {
                 duration: 200,
                 toValue: screenWidth,
+                useNativeDriver: false,
+            }),
+        ]).start();
+        Animated.sequence([
+            Animated.timing(opacity, {
+                duration: 150,
+                toValue: 1,
                 useNativeDriver: false,
             }),
         ]).start();
@@ -84,7 +92,7 @@ const Notification = ({ show, navigation }) => {
     };
 
     return (
-        <Animated.View style={[styles.container, { width }]}>
+        <Animated.View style={[styles.container, { width, opacity }]}>
             {loaded && (
                 <React.Fragment>
                     <Pressable style={styles.closeBtn} onPress={handleHideNotification}>
