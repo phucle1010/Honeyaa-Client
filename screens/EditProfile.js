@@ -1002,11 +1002,11 @@ const EditProfileScreen = (props) => {
                                             <Text style={{ fontSize: 18, color: '#000000', marginVertical: 2 }}>
                                                 You are:
                                             </Text>
-                                            {['Male', 'Female', 'Other'].map((item) => (
+                                            {[{id:1,type:'Male'}, {id:0,type:'Female'}, {id:2,type:'Other'}].map((item) => (
                                                 <TouchableOpacity
-                                                    key={item}
+                                                    key={item.id}
                                                     onPress={() => {
-                                                        setSex(item);
+                                                        setSex(item.id);
                                                     }}
                                                     style={{
                                                         width: '100%',
@@ -1021,12 +1021,12 @@ const EditProfileScreen = (props) => {
                                                             {
                                                                 paddingVertical: 10,
                                                                 fontSize: 15,
-                                                                color: sex === item ? '#FF6868' : 'gray',
-                                                                borderColor: sex === item ? '#FF6868' : 'gray',
+                                                                color: sex === item.id ? '#FF6868' : 'gray',
+                                                                borderColor: sex === item.id ? '#FF6868' : 'gray',
                                                             },
                                                         ]}
                                                     >
-                                                        {item}
+                                                        {item.type}
                                                     </Text>
                                                 </TouchableOpacity>
                                             ))}
@@ -1064,11 +1064,11 @@ const EditProfileScreen = (props) => {
                                             <Text style={{ fontSize: 18, color: '#000000', marginVertical: 2 }}>
                                                 Sex oriented:
                                             </Text>
-                                            {['Male', 'Female', 'Other'].map((item) => (
+                                            {[{id:1,type:'Male'}, {id:0,type:'Female'}, {id:2,type:'Other'}].map((item) => (
                                                 <TouchableOpacity
-                                                    key={item}
+                                                    key={item.id}
                                                     onPress={() => {
-                                                        setSexOriented(item);
+                                                        setSexOriented(item.id);
                                                     }}
                                                     style={{
                                                         width: '100%',
@@ -1083,12 +1083,12 @@ const EditProfileScreen = (props) => {
                                                             {
                                                                 paddingVertical: 10,
                                                                 fontSize: 15,
-                                                                color: sexOriented === item ? '#FF6868' : 'gray',
-                                                                borderColor: sexOriented === item ? '#FF6868' : 'gray',
+                                                                color: sexOriented === item.id ? '#FF6868' : 'gray',
+                                                                borderColor: sexOriented === item.id ? '#FF6868' : 'gray',
                                                             },
                                                         ]}
                                                     >
-                                                        {item}
+                                                        {item.type}
                                                     </Text>
                                                 </TouchableOpacity>
                                             ))}
