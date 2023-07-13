@@ -93,9 +93,21 @@ const Notification = ({ show, navigation }) => {
                     <View style={styles.notifyContainer}>
                         <Text style={styles.headerText}>Notification</Text>
                         <ScrollView>
-                            {notifications.map((notify, index) => (
-                                <NotifyItem key={index} notify={notify} navigation={navigation} />
-                            ))}
+                            {notifications.length > 0 ? (
+                                notifications.map((notify, index) => (
+                                    <NotifyItem key={index} notify={notify} navigation={navigation} />
+                                ))
+                            ) : (
+                                <View style={{ width: '100%', alignItems: 'center', justifyContent: 'center' }}>
+                                    <Text
+                                        style={{
+                                            marginTop: 20,
+                                        }}
+                                    >
+                                        Bạn không có bất kỳ thông báo nào
+                                    </Text>
+                                </View>
+                            )}
                         </ScrollView>
                     </View>
                 </React.Fragment>

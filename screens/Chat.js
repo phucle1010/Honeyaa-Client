@@ -33,8 +33,8 @@ const Chat = (props) => {
     const initCall = () => {
         if (!initedCall) {
             ZegoUIKitPrebuiltCallService.init(
-                652126903,
-                '190849d49a227db415d6aa35625639a7bdd867ca738a0e6a458bd8acba1f0c6c',
+                1439808828,
+                '7f19aedd5544c23d9bc51e39e9de907fe7ca08c248d291d24118b26ae4862dd7',
                 `${currentUser.id}`,
                 currentUser.full_name,
                 [ZIM],
