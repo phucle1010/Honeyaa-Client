@@ -13,7 +13,7 @@ const FinishSignUp = (props) => {
                 <View>
                     <Text style={styles.title}>Your profile is set</Text>
                 </View>
-                <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate('Home')}>
+                <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate('Login')}>
                     <Text style={{ color: '#FFFFFF', fontSize: 18 }}>Let's match</Text>
                 </TouchableOpacity>
             </View>
