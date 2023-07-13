@@ -24,57 +24,59 @@ import Swiper from 'react-native-swiper';
 
 import API_URL from '../services/apiRoute';
 import Loading from '../components/Loading';
+import Notification from '../components/Notification';
+import InteractNotice from '../components/InteractNotice';
 
 const LIKE = 1;
 const DISLIKE = 2;
 const SUPER_LIKE = 3;
 
-const InteractNotice = ({ ...props }) => {
-    const top = useRef(new Animated.Value(80)).current;
-    const opacity = useRef(new Animated.Value(1)).current;
+// const InteractNotice = ({ ...props }) => {
+//     const top = useRef(new Animated.Value(80)).current;
+//     const opacity = useRef(new Animated.Value(1)).current;
 
-    useEffect(() => {
-        Animated.sequence([
-            Animated.timing(top, {
-                duration: 600,
-                toValue: 120,
-                useNativeDriver: false,
-            }),
-        ]).start();
+//     useEffect(() => {
+//         Animated.sequence([
+//             Animated.timing(top, {
+//                 duration: 600,
+//                 toValue: 120,
+//                 useNativeDriver: false,
+//             }),
+//         ]).start();
 
-        Animated.sequence([
-            Animated.timing(opacity, {
-                duration: 1000,
-                toValue: 0,
-                useNativeDriver: false,
-            }),
-        ]).start();
+//         Animated.sequence([
+//             Animated.timing(opacity, {
+//                 duration: 1000,
+//                 toValue: 0,
+//                 useNativeDriver: false,
+//             }),
+//         ]).start();
 
-        setTimeout(() => {
-            props.setInteractMessageConfig({
-                message: '',
-                color: '',
-            });
-        }, 1200);
+//         setTimeout(() => {
+//             props.setInteractMessageConfig({
+//                 message: '',
+//                 color: '',
+//             });
+//         }, 1200);
 
-        return clearTimeout();
-    }, []);
+//         return clearTimeout();
+//     }, []);
 
-    return (
-        <Animated.View
-            style={[
-                styles.interactNoticeContainer,
-                {
-                    top,
-                    opacity,
-                    backgroundColor: props.interactMessageConfig.color,
-                },
-            ]}
-        >
-            <Text style={styles.interactNoticeText}>{props.interactMessageConfig.message}</Text>
-        </Animated.View>
-    );
-};
+//     return (
+//         <Animated.View
+//             style={[
+//                 styles.interactNoticeContainer,
+//                 {
+//                     top,
+//                     opacity,
+//                     backgroundColor: props.interactMessageConfig.color,
+//                 },
+//             ]}
+//         >
+//             <Text style={styles.interactNoticeText}>{props.interactMessageConfig.message}</Text>
+//         </Animated.View>
+//     );
+// };
 
 const Home = ({ navigation }) => {
     const user = useSelector((state) => state.user);
@@ -88,6 +90,7 @@ const Home = ({ navigation }) => {
         color: '',
     });
     const [userProfile, setUserProfile] = useState({});
+    const [showedNotification, setShowedNotification] = useState(false);
 
     const storeUserData = async (token) => {
         await axios
@@ -133,6 +136,7 @@ const Home = ({ navigation }) => {
             setLoadedProfiles(false);
             setUserProfile({});
             setDeviceId(null);
+            setShowedNotification(false);
         }
     }, [isFocusedScreen]);
 
@@ -213,7 +217,9 @@ const Home = ({ navigation }) => {
                             });
                         } else {
                             showInteractMessage(type, res.data.responseData); /// Hiển thị thanh trượt xuống thông báo tương tác vừa thực hiện
-                            await getUserProfile();
+                            setTimeout(() => {
+                                getUserProfile();
+                            }, 300);
                         }
                     } else {
                         Alert.alert('Fail', res.data.responseData);
@@ -241,30 +247,21 @@ const Home = ({ navigation }) => {
                 <View style={styles.container}>
                     <View style={styles.header}>
                         <Image source={require('../assets/img/HoneyaaLogo.png')} style={styles.logo} />
-                        <Pressable style={styles.options} onPress={() => console.log('notice')}>
+                        <Pressable style={styles.options} onPress={() => setShowedNotification(true)}>
                             <View
                                 style={{
                                     position: 'absolute',
-                                    top: '-5%',
-                                    right: '-1%',
-                                    width: 15,
-                                    height: 15,
+                                    top: 0,
+                                    right: '1%',
+                                    width: 10,
+                                    height: 10,
                                     borderRadius: 10,
                                     backgroundColor: '#ee4b2b',
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     zIndex: 1,
                                 }}
-                            >
-                                <Text
-                                    style={{
-                                        color: '#fff',
-                                        fontSize: 10,
-                                    }}
-                                >
-                                    1
-                                </Text>
-                            </View>
+                            />
                             <Icon name="ios-notifications-outline" size={25} style={styles.optionIcon} />
                         </Pressable>
                         <Pressable onPress={() => navigation.navigate('SettingProfile')}>
@@ -445,8 +442,11 @@ const Home = ({ navigation }) => {
                         <InteractNotice
                             interactMessageConfig={interactMessageConfig}
                             setInteractMessageConfig={setInteractMessageConfig}
+                            mainScreen="Home"
                         />
                     )}
+
+                    {showedNotification && <Notification show={setShowedNotification} navigation={navigation} />}
                 </View>
             ) : (
                 <Loading />
@@ -542,19 +542,19 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: '#fff',
     },
-    interactNoticeContainer: {
-        position: 'absolute',
-        left: '35%',
-        width: 150,
-        height: 50,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: 10,
-    },
-    interactNoticeText: {
-        color: '#fff',
-        fontSize: 20,
-    },
+    // interactNoticeContainer: {
+    //     position: 'absolute',
+    //     left: '35%',
+    //     width: 150,
+    //     height: 50,
+    //     alignItems: 'center',
+    //     justifyContent: 'center',
+    //     borderRadius: 10,
+    // },
+    // interactNoticeText: {
+    //     color: '#fff',
+    //     fontSize: 20,
+    // },
 });
 
 export default Home;

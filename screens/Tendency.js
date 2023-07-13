@@ -13,57 +13,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import API_URL from '../services/apiRoute';
 import Loading from '../components/Loading';
+import InteractNotice from '../components/InteractNotice';
 
 const LIKE = 1;
 const DISLIKE = 2;
 const SUPER_LIKE = 3;
-
-const InteractNotice = ({ ...props }) => {
-    const top = useRef(new Animated.Value(80)).current;
-    const opacity = useRef(new Animated.Value(1)).current;
-
-    useEffect(() => {
-        Animated.sequence([
-            Animated.timing(top, {
-                duration: 600,
-                toValue: 120,
-                useNativeDriver: false,
-            }),
-        ]).start();
-
-        Animated.sequence([
-            Animated.timing(opacity, {
-                duration: 1000,
-                toValue: 0,
-                useNativeDriver: false,
-            }),
-        ]).start();
-
-        setTimeout(() => {
-            props.setInteractMessageConfig({
-                message: '',
-                color: '',
-            });
-        }, 1200);
-
-        return clearTimeout();
-    }, []);
-
-    return (
-        <Animated.View
-            style={[
-                styles.interactNoticeContainer,
-                {
-                    top,
-                    opacity,
-                    backgroundColor: props.interactMessageConfig.color,
-                },
-            ]}
-        >
-            <Text style={styles.interactNoticeText}>{props.interactMessageConfig.message}</Text>
-        </Animated.View>
-    );
-};
 
 const Tendency = ({ navigation, route }) => {
     const user = useSelector((state) => state.user);
@@ -402,6 +356,7 @@ const Tendency = ({ navigation, route }) => {
                         <InteractNotice
                             interactMessageConfig={interactMessageConfig}
                             setInteractMessageConfig={setInteractMessageConfig}
+                            mainScreen="Home"
                         />
                     )}
                 </View>

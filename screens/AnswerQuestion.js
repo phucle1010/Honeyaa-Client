@@ -5,27 +5,41 @@ import { SafeAreaView, Text, View, Image, StyleSheet, TouchableOpacity, Alert, P
 import Icon from 'react-native-vector-icons/Ionicons';
 import API_URL from '../services/apiRoute';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Loading from '../components/Loading';
+import { useIsFocused } from '@react-navigation/native';
 
 const AnswerQuestion = ({ navigation, route }) => {
-    const [questions, setQuestions] = useState([{}]);
+    const isFocusedScreen = useIsFocused();
+    const [questions, setQuestions] = useState([]);
     const { topicId } = route.params;
+    const [loaded, setLoaded] = useState(false);
+
+    const getQuestionAnswers = async () => {
+        const userToken = await AsyncStorage.getItem('user_token');
+        axios
+            .get(`${API_URL}/api/user/questions-answers`, {
+                params: { id: topicId },
+                headers: { authentication: userToken },
+            })
+            .then((res) => {
+                if (!res.data?.length) {
+                    navigation.navigate('Tendency');
+                } else {
+                    setQuestions(res.data);
+                    setLoaded(true);
+                }
+            })
+            .catch((err) => console.log(err));
+    };
 
     useEffect(() => {
-        const getQuestionAnswers = async () => {
-            const userToken = await AsyncStorage.getItem('user_token');
-            axios
-                .get(`${API_URL}/api/user/questions-answers`, {
-                    params: { id: topicId },
-                    headers: { authentication: userToken },
-                })
-                .then((res) => {
-                    setQuestions(res.data);
-                    if (!res.data?.length) return navigation.navigate('Tendency');
-                })
-                .catch((err) => console.log(err));
-        };
-        getQuestionAnswers();
-    }, []);
+        if (isFocusedScreen) {
+            getQuestionAnswers();
+        } else {
+            setQuestions([]);
+            setLoaded(false);
+        }
+    }, [isFocusedScreen]);
 
     const postAnswers = async () => {
         try {
@@ -101,103 +115,117 @@ const AnswerQuestion = ({ navigation, route }) => {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
-            <View
-                style={{
-                    width: '100%',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    // backgroundColor: 'red',
-                }}
-            >
-                <Image source={require('../assets/img/HoneyaaLogo.png')} style={styles.logo} />
-                <TouchableOpacity
-                    onPress={() => navigation.goBack()}
-                    style={[
-                        styles.btnClose,
-                        {
-                            position: 'absolute',
-                            top: 20,
-                            left: 20,
-                            width: 30,
-                            height: 30,
-                            alignItems: 'center',
+        <React.Fragment>
+            {loaded ? (
+                <SafeAreaView style={styles.container}>
+                    <View
+                        style={{
+                            width: '100%',
                             justifyContent: 'center',
-                            backgroundColor: '#fff',
-                            borderRadius: 50,
-                            borderWidth: 2,
-                            borderColor: '#FF6868',
-                        },
-                    ]}
-                >
-                    <Icon name="close" size={20} color="#FF6868" />
-                </TouchableOpacity>
-            </View>
-            <View style={styles.wrapContent}>
-                <Text style={styles.txtContent}>{getTitle()}</Text>
-            </View>
-            <View style={styles.wrapQuestion}>
-                <Text style={styles.txtQuestion}>{questions[currentQuestion]?.content}</Text>
-            </View>
-            <Pressable onPress={() => handleSelectAnswer(questions[currentQuestion]?.answers?.[0]?.id)}>
-                <View style={styles.wrapAnswer}>
-                    <Text
-                        style={[
-                            styles.txtAnswer,
-                            selectedAnswer === questions[currentQuestion]?.answers?.[0]?.id && { color: '#007AFF' },
-                        ]}
+                            alignItems: 'center',
+                            // backgroundColor: 'red',
+                        }}
                     >
-                        {questions[currentQuestion]?.answers?.[0]?.content}
-                    </Text>
-                </View>
-            </Pressable>
-            <Pressable onPress={() => handleSelectAnswer(questions[currentQuestion]?.answers?.[1]?.id)}>
-                <View style={styles.wrapAnswer}>
-                    <Text
-                        style={[
-                            styles.txtAnswer,
-                            selectedAnswer === questions[currentQuestion]?.answers?.[1]?.id && { color: '#007AFF' },
-                        ]}
-                    >
-                        {questions[currentQuestion]?.answers?.[1]?.content}
-                    </Text>
-                </View>
-            </Pressable>
-            <Pressable onPress={() => handleSelectAnswer(questions[currentQuestion]?.answers?.[2]?.id)}>
-                <View style={styles.wrapAnswer}>
-                    <Text
-                        style={[
-                            styles.txtAnswer,
-                            selectedAnswer === questions[currentQuestion]?.answers?.[2]?.id && { color: '#007AFF' },
-                        ]}
-                    >
-                        {questions[currentQuestion]?.answers?.[2]?.content}
-                    </Text>
-                </View>
-            </Pressable>
-            <Pressable onPress={() => handleSelectAnswer(questions[currentQuestion]?.answers?.[3]?.id)}>
-                <View style={styles.wrapAnswer}>
-                    <Text
-                        style={[
-                            styles.txtAnswer,
-                            selectedAnswer === questions[currentQuestion]?.answers?.[3]?.id && { color: '#007AFF' },
-                        ]}
-                    >
-                        {questions[currentQuestion]?.answers?.[3]?.content}
-                    </Text>
-                </View>
-            </Pressable>
-            <View style={[{ flexDirection: 'row', width: '100%', justifyContent: 'space-between' }]}>
-                <TouchableOpacity style={styles.btnSkip}>
-                    <Text style={styles.txtSkip} onPress={() => handleSkipQuestion()}>
-                        Skip
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.btnContinue} onPress={() => handleContinue()}>
-                    <Text style={styles.txtContinue}>Continue</Text>
-                </TouchableOpacity>
-            </View>
-        </SafeAreaView>
+                        <Image source={require('../assets/img/HoneyaaLogo.png')} style={styles.logo} />
+                        <TouchableOpacity
+                            onPress={() => navigation.goBack()}
+                            style={[
+                                styles.btnClose,
+                                {
+                                    position: 'absolute',
+                                    top: 20,
+                                    left: 20,
+                                    width: 30,
+                                    height: 30,
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    backgroundColor: '#fff',
+                                    borderRadius: 50,
+                                    borderWidth: 2,
+                                    borderColor: '#FF6868',
+                                },
+                            ]}
+                        >
+                            <Icon name="close" size={20} color="#FF6868" />
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.wrapContent}>
+                        <Text style={styles.txtContent}>{getTitle()}</Text>
+                    </View>
+                    <View style={styles.wrapQuestion}>
+                        <Text style={styles.txtQuestion}>{questions[currentQuestion]?.content}</Text>
+                    </View>
+                    <Pressable onPress={() => handleSelectAnswer(questions[currentQuestion]?.answers?.[0]?.id)}>
+                        <View style={styles.wrapAnswer}>
+                            <Text
+                                style={[
+                                    styles.txtAnswer,
+                                    selectedAnswer === questions[currentQuestion]?.answers?.[0]?.id && {
+                                        color: '#007AFF',
+                                    },
+                                ]}
+                            >
+                                {questions[currentQuestion]?.answers?.[0]?.content}
+                            </Text>
+                        </View>
+                    </Pressable>
+                    <Pressable onPress={() => handleSelectAnswer(questions[currentQuestion]?.answers?.[1]?.id)}>
+                        <View style={styles.wrapAnswer}>
+                            <Text
+                                style={[
+                                    styles.txtAnswer,
+                                    selectedAnswer === questions[currentQuestion]?.answers?.[1]?.id && {
+                                        color: '#007AFF',
+                                    },
+                                ]}
+                            >
+                                {questions[currentQuestion]?.answers?.[1]?.content}
+                            </Text>
+                        </View>
+                    </Pressable>
+                    <Pressable onPress={() => handleSelectAnswer(questions[currentQuestion]?.answers?.[2]?.id)}>
+                        <View style={styles.wrapAnswer}>
+                            <Text
+                                style={[
+                                    styles.txtAnswer,
+                                    selectedAnswer === questions[currentQuestion]?.answers?.[2]?.id && {
+                                        color: '#007AFF',
+                                    },
+                                ]}
+                            >
+                                {questions[currentQuestion]?.answers?.[2]?.content}
+                            </Text>
+                        </View>
+                    </Pressable>
+                    <Pressable onPress={() => handleSelectAnswer(questions[currentQuestion]?.answers?.[3]?.id)}>
+                        <View style={styles.wrapAnswer}>
+                            <Text
+                                style={[
+                                    styles.txtAnswer,
+                                    selectedAnswer === questions[currentQuestion]?.answers?.[3]?.id && {
+                                        color: '#007AFF',
+                                    },
+                                ]}
+                            >
+                                {questions[currentQuestion]?.answers?.[3]?.content}
+                            </Text>
+                        </View>
+                    </Pressable>
+                    <View style={[{ flexDirection: 'row', width: '100%', justifyContent: 'space-between' }]}>
+                        <TouchableOpacity style={styles.btnSkip}>
+                            <Text style={styles.txtSkip} onPress={() => handleSkipQuestion()}>
+                                Skip
+                            </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.btnContinue} onPress={() => handleContinue()}>
+                            <Text style={styles.txtContinue}>Continue</Text>
+                        </TouchableOpacity>
+                    </View>
+                </SafeAreaView>
+            ) : (
+                <Loading />
+            )}
+        </React.Fragment>
     );
 };
 
