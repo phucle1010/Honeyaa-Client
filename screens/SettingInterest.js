@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, SafeAreaView, StyleSheet, ScrollView, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-const API_URI = 'http://192.168.1.186:8080';
+import API_URI from '../services/apiRoute';
 
 const SettingInterest = ({ navigation, route }) => {
     const [selectedInterests, setSelectedInterests] = useState([]);
@@ -33,24 +33,17 @@ const SettingInterest = ({ navigation, route }) => {
     };
 
     const handleFinish = () => {
-        axios
-            .post(`${API_URI}/api/user/signup`, {
-                phone,
-                pass,
-                name,
-                birthday,
-                photo,
-                photo1,
-                gender,
-                obgender,
-                interests: selectedInterests,
-            })
-            .then((res) => {
-                if (res.status === 200) {
-                    navigation.navigate('FinishSignUp', route);
-                }
-            })
-            .catch((err) => Alert.alert(err));
+        navigation.navigate('SettingAddress', {
+            phone,
+            pass,
+            name,
+            birthday,
+            photo,
+            photo1,
+            gender,
+            obgender,
+            interests: selectedInterests,
+        });
     };
 
     return (
@@ -69,7 +62,7 @@ const SettingInterest = ({ navigation, route }) => {
                         marginRight: 66 - 22,
                     }}
                 >
-                    Step 6 of 6
+                    Step 6 of 7
                 </Text>
             </View>
             <View style={{ flex: 3, justifyContent: 'center' }}>
@@ -94,7 +87,7 @@ const SettingInterest = ({ navigation, route }) => {
             </View>
             <View style={{ flex: 2, justifyContent: 'center' }}>
                 <TouchableOpacity style={styles.btn} onPress={() => handleFinish()}>
-                    <Text style={{ color: '#FFFFFF' }}>Finish</Text>
+                    <Text style={{ color: '#FFFFFF', fontSize: 18 }}>Continue</Text>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>
@@ -137,7 +130,7 @@ const styles = StyleSheet.create({
     },
     btn: {
         height: 46,
-        borderRadius: 100,
+        borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#503EBF',

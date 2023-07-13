@@ -1002,7 +1002,11 @@ const EditProfileScreen = (props) => {
                                             <Text style={{ fontSize: 18, color: '#000000', marginVertical: 2 }}>
                                                 You are:
                                             </Text>
-                                            {[{id:1,type:'Male'}, {id:0,type:'Female'}, {id:2,type:'Other'}].map((item) => (
+                                            {[
+                                                { id: 1, type: 'Male' },
+                                                { id: 0, type: 'Female' },
+                                                { id: 2, type: 'Other' },
+                                            ].map((item) => (
                                                 <TouchableOpacity
                                                     key={item.id}
                                                     onPress={() => {
@@ -1064,7 +1068,11 @@ const EditProfileScreen = (props) => {
                                             <Text style={{ fontSize: 18, color: '#000000', marginVertical: 2 }}>
                                                 Sex oriented:
                                             </Text>
-                                            {[{id:1,type:'Male'}, {id:0,type:'Female'}, {id:2,type:'Other'}].map((item) => (
+                                            {[
+                                                { id: 1, type: 'Male' },
+                                                { id: 0, type: 'Female' },
+                                                { id: 2, type: 'Other' },
+                                            ].map((item) => (
                                                 <TouchableOpacity
                                                     key={item.id}
                                                     onPress={() => {
@@ -1084,7 +1092,8 @@ const EditProfileScreen = (props) => {
                                                                 paddingVertical: 10,
                                                                 fontSize: 15,
                                                                 color: sexOriented === item.id ? '#FF6868' : 'gray',
-                                                                borderColor: sexOriented === item.id ? '#FF6868' : 'gray',
+                                                                borderColor:
+                                                                    sexOriented === item.id ? '#FF6868' : 'gray',
                                                             },
                                                         ]}
                                                     >
@@ -1326,7 +1335,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 20,
     },
-
     buttonClose: {
         width: '100%',
         height: 46,

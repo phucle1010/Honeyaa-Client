@@ -5,9 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 const SettingName = (props) => {
     const { navigation, route } = props;
     const [err, setErr] = useState('');
-    // const { phone, pass } = route.params;
-    const phone = '0363243719';
-    const pass = '123456';
+    const { phone, pass } = route.params;
     const [name, setName] = useState('');
 
     const handlePress = () => {
@@ -25,6 +23,7 @@ const SettingName = (props) => {
                 <TouchableOpacity style={styles.vector} onPress={() => navigation.goBack()}>
                     <Icon style={styles.arrowleft} name="arrow-left" size={24} />
                 </TouchableOpacity>
+                <Text style={styles.page}>Step 1 of 7</Text>
             </View>
             <View>
                 <Text style={styles.title}>What's your first name?</Text>
@@ -60,22 +59,32 @@ const styles = StyleSheet.create({
     },
     containVector: {
         position: 'absolute',
-        width: 24,
+        width: '100%',
         height: 24,
         left: 22,
+        right: 22,
         top: 50,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     vector: {
         width: 24,
         height: 24,
+        position: 'absolute',
+        left: 22,
     },
     arrowleft: {
         color: '#8B7ED7',
     },
-
+    page: {
+        color: '#B2B2B2',
+        width: '100%',
+        height: 21,
+        textAlign: 'center',
+    },
     btn: {
         height: 46,
-        borderRadius: 100,
+        borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 1,
@@ -90,7 +99,6 @@ const styles = StyleSheet.create({
         borderColor: 'transparent',
         borderBottomColor: '#767676',
         minHeight: 46,
-        // borderRadius: 10,
         fontSize: 18,
         paddingHorizontal: 10,
         marginTop: 61,

@@ -28,7 +28,7 @@ const SettingBirth = ({ navigation, route }) => {
                     <TouchableOpacity style={{ width: 24, height: 24 }} onPress={() => navigation.goBack()}>
                         <Icon name="arrow-left" style={{ color: '#8B7ED7' }} size={24} />
                     </TouchableOpacity>
-                    <Text style={styles.page}>Step 2 of 6</Text>
+                    <Text style={styles.page}>Step 2 of 7</Text>
                 </View>
                 <View style={{ flex: 1 }}>
                     <Text style={styles.title}>When is your birthday?</Text>

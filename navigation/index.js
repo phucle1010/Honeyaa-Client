@@ -24,6 +24,7 @@ import SettingGender from '../screens/SettingGender';
 import SettingInterest from '../screens/SettingInterest';
 import SettingName from '../screens/SettingName';
 import SettingPhoneNumber from '../screens/SettingPhoneNumber';
+import SettingAddress from '../screens/SettingAddress';
 import VerifyCreatedPhone from '../screens/VerifyCreatedPhone';
 import VerifyOTP from '../screens/VerifyOTP';
 import VerifyResetPhone from '../screens/VerifyResetPhone';
@@ -252,6 +253,16 @@ const screens = [
     {
         name: 'SettingPhoneNumber',
         component: SettingPhoneNumber,
+        tabIconName: 'account-circle-outline',
+        tabIconSize: 30,
+        tabIconColor: '#faa0a0',
+        activeColor: '#ee4b2b',
+        isHideTabItem: true,
+        isHideNavigationTab: true,
+    },
+    {
+        name: 'SettingAddress',
+        component: SettingAddress,
         tabIconName: 'account-circle-outline',
         tabIconSize: 30,
         tabIconColor: '#faa0a0',

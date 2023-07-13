@@ -30,7 +30,7 @@ const SettingDatingOriented = ({ navigation, route }) => {
                             marginRight: 66 - 22,
                         }}
                     >
-                        Step 5 of 6
+                        Step 5 of 7
                     </Text>
                 </View>
                 <View style={{ marginTop: 80 }}>
@@ -39,22 +39,12 @@ const SettingDatingOriented = ({ navigation, route }) => {
             </View>
             <View style={{ marginTop: 70, flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
                 <TouchableOpacity onPress={() => chooseDateObject(1)}>
-                    <View
-                        style={[
-                            styles.frameImg,
-                            obgender === 1 ? { borderColor: '#B2B2B2' } : { borderColor: '#FFFFFF' },
-                        ]}
-                    >
+                    <View style={{ ...styles.frameImg, borderColor: '#B2B2B2' }}>
                         <Image source={require('../assets/img/man.jpg')} style={styles.img} />
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => chooseDateObject(0)}>
-                    <View
-                        style={[
-                            styles.frameImg,
-                            obgender === 0 ? { borderColor: '#B2B2B2' } : { borderColor: '#FFFFFF' },
-                        ]}
-                    >
+                    <View style={{ ...styles.frameImg, borderColor: '#B2B2B2' }}>
                         <Image source={require('../assets/img/woman.jpg')} style={styles.img} />
                     </View>
                 </TouchableOpacity>

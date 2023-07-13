@@ -29,7 +29,7 @@ const SignUp = (props) => {
         }
     }, [isFocusedScreen]);
 
-    const handleSignIn = () => {
+    const handleSignUp = () => {
         switch (true) {
             case phone === '' || pass === '' || repass === '':
                 Alert.alert('Warning', 'Please fill all fields');
@@ -44,36 +44,33 @@ const SignUp = (props) => {
                 Alert.alert('Warning', 'Password and Re-password are not the same as');
                 break;
             default:
-                axios
-                    .get(`${API_URI}/api/user/signup/phone`, {
-                        params: {
-                            phonenumber: phone,
-                        },
-                    })
-                    .then((res) => {
-                        navigation.navigate('SettingPhoneNumber', { phone: phone, pass: pass });
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                        if (error.response && error.response.status === 500) {
-                            Alert.alert('Lỗi', error.response);
-                        } else if (error.response && error.response.status === 400) {
-                            Alert.alert('Lỗi', error.response);
-                        } else if (error.response && error.response.status === 404) {
-                            Alert.alert('Lỗi', error.response);
-                        } else {
-                            Alert.alert('Lỗi', 'Unknown error, please try again later');
-                        }
-                    });
-                break;
+                navigation.navigate('SettingName', { phone: phone, pass: pass });
+            // axios
+            //     .get(`${API_URI}/api/user/signup/phone`, {
+            //         params: {
+            //             phonenumber: phone,
+            //         },
+            //     })
+            //     .then((res) => {
+            //     })
+            //     .catch((error) => {
+            //         console.log(error);
+            //         if (error.response && error.response.status === 500) {
+            //             Alert.alert('Lỗi', error.response);
+            //         } else if (error.response && error.response.status === 400) {
+            //             Alert.alert('Lỗi', error.response);
+            //         } else if (error.response && error.response.status === 404) {
+            //             Alert.alert('Lỗi', error.response);
+            //         } else {
+            //             Alert.alert('Lỗi', 'Unknown error, please try again later');
+            //         }
+            //     });
+            // break;
         }
     };
 
     return (
         <View style={styles.container}>
-            {/* <View>
-                <Image source={require('../assets/img/signup.jpg')} />
-            </View> */}
             <View style={styles.body}>
                 <Text style={styles.title}>Register</Text>
                 <TextInput
@@ -116,7 +113,7 @@ const SignUp = (props) => {
                         )}
                     </TouchableOpacity>
                 </View>
-                <TouchableOpacity style={styles.btn1} onPress={handleSignIn}>
+                <TouchableOpacity style={styles.btn1} onPress={handleSignUp}>
                     <Text style={{ color: '#FFFFFF' }}>Sign Up</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.btn2} onPress={() => navigation.navigate('Login')}>

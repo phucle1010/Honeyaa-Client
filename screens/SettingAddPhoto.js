@@ -75,7 +75,7 @@ const SettingAddPhoto = ({ navigation, route }) => {
                         marginRight: 66 - 22,
                     }}
                 >
-                    Step 3 of 6
+                    Step 3 of 7
                 </Text>
             </View>
             <View style={styles.body}>
@@ -104,7 +104,7 @@ const SettingAddPhoto = ({ navigation, route }) => {
                 <TouchableOpacity
                     style={{
                         height: 46,
-                        borderRadius: 100,
+                        borderRadius: 10,
                         justifyContent: 'center',
                         alignItems: 'center',
                         backgroundColor: '#503EBF',

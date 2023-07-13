@@ -31,7 +31,7 @@ const SettingGender = ({ navigation, route }) => {
                             marginRight: 66 - 22,
                         }}
                     >
-                        Step 4 of 6
+                        Step 4 of 7
                     </Text>
                 </View>
                 <View style={{ marginTop: 80 }}>
@@ -47,22 +47,12 @@ const SettingGender = ({ navigation, route }) => {
                 }}
             >
                 <TouchableOpacity onPress={() => chooseGender(1)}>
-                    <View
-                        style={[
-                            styles.frameImg,
-                            gender === 1 ? { borderColor: '#B2B2B2' } : { borderColor: '#FFFFFF' },
-                        ]}
-                    >
+                    <View style={{ ...styles.frameImg, borderColor: '#B2B2B2' }}>
                         <Image source={require('../assets/img/man.jpg')} style={styles.img} />
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => chooseGender(0)}>
-                    <View
-                        style={[
-                            styles.frameImg,
-                            gender === 0 ? { borderColor: '#B2B2B2' } : { borderColor: '#FFFFFF' },
-                        ]}
-                    >
+                    <View style={{ ...styles.frameImg, borderColor: '#B2B2B2' }}>
                         <Image source={require('../assets/img/woman.jpg')} style={styles.img} />
                     </View>
                 </TouchableOpacity>
