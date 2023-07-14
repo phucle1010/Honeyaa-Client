@@ -4,21 +4,25 @@ import axios from 'axios';
 import SentItem from '../components/SendItem';
 import API_URL from '../services/apiRoute';
 import { useSelector } from 'react-redux';
+import { useIsFocused } from '@react-navigation/native';
 
 export default function Sent() {
+    const isFocusedScreen = useIsFocused();
     const currentUser = useSelector((state) => state.user);
     const [data, setData] = useState([]);
 
     useEffect(() => {
-        axios
-            .get(`${API_URL}/api/user/sent/all/${currentUser.id}`)
-            .then((response) => {
-                setData(response.data);
-            })
-            .catch((error) => {
-                console.log('lỗi:', error);
-            });
-    }, []);
+        if (isFocusedScreen) {
+            axios
+                .get(`${API_URL}/api/user/sent/all/${currentUser.id}`)
+                .then((response) => {
+                    setData(response.data);
+                })
+                .catch((error) => {
+                    console.log('lỗi:', error);
+                });
+        }
+    }, [isFocusedScreen]);
 
     const handleDeleteSent = (likeId) => {
         axios

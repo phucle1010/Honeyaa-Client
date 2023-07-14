@@ -219,7 +219,7 @@ const Home = ({ navigation }) => {
                             showInteractMessage(type, res.data.responseData); /// Hiển thị thanh trượt xuống thông báo tương tác vừa thực hiện
                             setTimeout(() => {
                                 getUserProfile();
-                            }, 300);
+                            }, 100);
                         }
                     } else {
                         Alert.alert('Fail', res.data.responseData);

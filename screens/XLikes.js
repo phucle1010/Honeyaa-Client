@@ -4,22 +4,26 @@ import axios from 'axios';
 import XLikesItem from '../components/XLikesItem';
 import API_URL from '../services/apiRoute';
 import { useSelector } from 'react-redux';
+import { useIsFocused } from '@react-navigation/native';
 
 export default function Xlikes(props) {
     const { navigation } = props;
+    const isFocusedScreen = useIsFocused();
     const currentUser = useSelector((state) => state.user);
     const [dataUser, setDataUser] = useState([]);
 
     useEffect(() => {
-        axios
-            .get(`${API_URL}/api/user/xlike/${currentUser.id}`)
-            .then((response) => {
-                setDataUser(response.data);
-            })
-            .catch((error) => {
-                console.log('lỗi:', error);
-            });
-    }, []);
+        if (isFocusedScreen) {
+            axios
+                .get(`${API_URL}/api/user/xlike/${currentUser.id}`)
+                .then((response) => {
+                    setDataUser(response.data);
+                })
+                .catch((error) => {
+                    console.log('lỗi:', error);
+                });
+        }
+    }, [isFocusedScreen]);
 
     const handlePostInteract = async (props) => {
         const { item, type } = props;
