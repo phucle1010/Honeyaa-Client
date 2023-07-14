@@ -11,7 +11,7 @@ export default function Sent() {
 
     useEffect(() => {
         axios
-            .get(`${API_URL}/api/user/sent/${currentUser.id}`)
+            .get(`${API_URL}/api/user/sent/all/${currentUser.id}`)
             .then((response) => {
                 setData(response.data);
             })

@@ -23,7 +23,7 @@ const ChangePassword = ({ phone, showChangePass }) => {
 
     const handleSavePassword = () => {
         axios
-            .put(`${API_URL}/api/user/profile/password`, {
+            .put(`${API_URL}/api/user/profile/edit/password`, {
                 ...passes,
                 phone,
             })

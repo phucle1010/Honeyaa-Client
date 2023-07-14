@@ -344,7 +344,7 @@ const Home = ({ navigation }) => {
                                                 color: '#fff',
                                                 fontWeight: '500',
                                             }}
-                                        >{`Cách xa ${userProfile?.realDistance}km`}</Text>
+                                        >{`Cách xa ${userProfile?.realDistance || 1}km`}</Text>
                                         <Icon
                                             name="location-sharp"
                                             style={{
